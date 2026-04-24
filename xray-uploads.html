@@ -1,0 +1,1456 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - X-Ray Uploads</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 3%;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .notification-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Notifications Modal */
+        .notifications-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .notifications-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notifications-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .notification-item.unread {
+            background: #fef3c7;
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.reschedule {
+            border-left-color: #f59e0b;
+        }
+
+        .notification-item.activity-skip {
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.appointment-reminder {
+            border-left-color: #10b981;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .notification-message {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .notification-doctor {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .mark-read-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .mark-read-btn:hover {
+            background: #5a67d8;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .close-modal-btn {
+            background: #e5e7eb;
+            color: #333;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .close-modal-btn:hover {
+            background: #d1d5db;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .upload-section {
+            margin-bottom: 3rem;
+        }
+        
+        .upload-area {
+            border: 3px dashed #667eea;
+            border-radius: 15px;
+            padding: 3rem;
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .upload-area:hover {
+            background: linear-gradient(135deg, #e9ecef, #dee2e6);
+            border-color: #764ba2;
+        }
+        
+        .upload-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-title {
+            font-size: 1.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .upload-description {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .history-section h3 {
+            color: #333;
+            margin-bottom: 1.5rem;
+            font-size: 1.5rem;
+        }
+        
+        .uploads-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .upload-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border: 2px solid #e5e7eb;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+        
+        .upload-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-preview {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .upload-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+            font-size: 1.1rem;
+        }
+        
+        .upload-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .upload-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .detail-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: #666;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-analyzed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-pending {
+            background: #fed7aa;
+            color: #92400e;
+        }
+        
+        /* Progress Bar Styles */
+        .progress-container {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            display: none;
+        }
+        
+        .progress-container.active {
+            display: block;
+        }
+        
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .progress-stage {
+            font-size: 0.9rem;
+            color: #666;
+        }
+        
+        .progress-bar-container {
+            background: #e5e7eb;
+            height: 12px;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 1rem;
+        }
+        
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 6px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+        
+        .progress-stages {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.8rem;
+            color: #999;
+        }
+        
+        .progress-stage-item {
+            text-align: center;
+            flex: 1;
+        }
+        
+        .progress-stage-item.active {
+            color: #667eea;
+            font-weight: 600;
+        }
+        
+        .progress-stage-item.completed {
+            color: #10b981;
+            font-weight: 600;
+        }
+        
+        /* File Preview Styles */
+        .file-preview {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border: 2px solid #e5e7eb;
+            display: none;
+        }
+        
+        .file-preview.active {
+            display: block;
+        }
+        
+        .preview-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .preview-title {
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .preview-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            border-radius: 8px;
+            margin: 0 auto;
+            display: block;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .preview-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .preview-label {
+            color: #666;
+        }
+        
+        .preview-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        /* Analysis Button Styles */
+        .analysis-btn {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 1rem;
+            display: none;
+        }
+        
+        .analysis-btn.active {
+            display: block;
+        }
+        
+        .analysis-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+        }
+        
+        .analysis-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        /* Report Modal Styles */
+        .report-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .report-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .report-modal-content {
+            background-color: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .report-modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .report-modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .close-report-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-report-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .report-modal-body {
+            padding: 2rem;
+        }
+        
+        .disclaimer {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .disclaimer-title {
+            font-weight: 700;
+            color: #92400e;
+            margin-bottom: 0.5rem;
+        }
+        
+        .disclaimer-text {
+            font-size: 0.9rem;
+            color: #78350f;
+            line-height: 1.5;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            margin-top: 2rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .report-action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .download-report-btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .download-report-btn:hover {
+            background: #059669;
+            transform: translateY(-1px);
+        }
+        
+        .close-report-btn {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .close-report-btn:hover {
+            background: #4b5563;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-x-ray"></i> X-Ray Uploads</h1>
+            <div class="header-actions">
+                <button class="notification-icon" id="notificationBtn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="patient-welcome.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+        
+        <div class="content-card">
+            <div class="upload-section">
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                    </div>
+                    <h3 class="upload-title">Upload X-Ray for Self-Analysis</h3>
+                    <p class="upload-description">Click to browse and select your X-ray file</p>
+                    <p style="color: #999; font-size: 0.9rem;">Supported formats: PNG, JPG, DICOM (Max 10MB)</p>
+                    <input type="file" id="fileInput" class="file-input" accept="image/*,.dcm">
+                </div>
+                
+                <!-- File Preview -->
+                <div class="file-preview" id="filePreview">
+                    <div class="preview-header">
+                        <h4 class="preview-title">File Preview</h4>
+                        <button class="close-report-btn" onclick="clearFile()" style="padding: 0.5rem 1rem;">
+                            <i class="fas fa-times"></i> Clear
+                        </button>
+                    </div>
+                    <img id="previewImage" class="preview-image" src="" alt="X-Ray Preview">
+                    <div class="preview-details">
+                        <div class="preview-detail">
+                            <span class="preview-label">File Name:</span>
+                            <span class="preview-value" id="fileName">-</span>
+                        </div>
+                        <div class="preview-detail">
+                            <span class="preview-label">File Size:</span>
+                            <span class="preview-value" id="fileSize">-</span>
+                        </div>
+                        <div class="preview-detail">
+                            <span class="preview-label">File Type:</span>
+                            <span class="preview-value" id="fileType">-</span>
+                        </div>
+                    </div>
+                    <button class="analysis-btn" id="analysisBtn" onclick="startAnalysis()">
+                        <i class="fas fa-search"></i> Start Analysis
+                    </button>
+                </div>
+                
+                <!-- Progress Bar -->
+                <div class="progress-container" id="progressContainer">
+                    <div class="progress-header">
+                        <h4 class="progress-title">Analysis Progress</h4>
+                        <span class="progress-stage" id="currentStage">Uploading...</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-bar-fill" id="progressBarFill"></div>
+                    </div>
+                    <div class="progress-stages">
+                        <div class="progress-stage-item" id="stage1">Uploading</div>
+                        <div class="progress-stage-item" id="stage2">Analyzing</div>
+                        <div class="progress-stage-item" id="stage3">Generating Report</div>
+                        <div class="progress-stage-item" id="stage4">Ready</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Modal -->
+    <div class="report-modal" id="reportModal">
+        <div class="report-modal-content">
+            <div class="report-modal-header">
+                <h2 class="report-modal-title">X-Ray Analysis Report</h2>
+                <button class="close-report-modal" onclick="closeReportModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="report-modal-body" id="reportModalBody">
+                <!-- Report content will be dynamically loaded here -->
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let currentUser = null;
+        let selectedFile = null;
+        let analysisReport = null;
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            setupFileUpload();
+        });
+        
+        // Check if user is authenticated as patient
+        function checkAuthentication() {
+            currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            if (!currentUser || currentUser.role !== 'patient') {
+                showNotification('Please login as a patient to access this page', 'error');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return false;
+            }
+            return true;
+        }
+        
+        // Setup file upload functionality
+        function setupFileUpload() {
+            const fileInput = document.getElementById('fileInput');
+            
+            fileInput.addEventListener('change', handleFileSelection);
+            
+            // Prevent drag and drop default behavior
+            const uploadArea = document.querySelector('.upload-area');
+            
+            uploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#764ba2';
+                uploadArea.style.background = 'linear-gradient(135deg, #e9ecef, #dee2e6)';
+            });
+            
+            uploadArea.addEventListener('dragleave', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#667eea';
+                uploadArea.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+            });
+            
+            uploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadArea.style.borderColor = '#667eea';
+                uploadArea.style.background = 'linear-gradient(135deg, #f8f9fa, #e9ecef)';
+                
+                const files = e.dataTransfer.files;
+                if (files.length > 0) {
+                    handleFile(files[0]);
+                }
+            });
+        }
+        
+        // Handle file selection
+        function handleFileSelection(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+        
+        // Handle file processing
+        function handleFile(file) {
+            // Validate file type
+            const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/dicom'];
+            const validExtensions = ['.jpg', '.jpeg', '.png', '.dcm'];
+            
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!validTypes.includes(file.type) && !validExtensions.includes(fileExtension)) {
+                showNotification('Invalid file type. Please upload PNG, JPG, or DICOM files.', 'error');
+                clearFile();
+                return;
+            }
+            
+            // Validate file size (10MB limit)
+            const maxSize = 10 * 1024 * 1024; // 10MB
+            if (file.size > maxSize) {
+                showNotification('File size exceeds 10MB limit. Please choose a smaller file.', 'error');
+                clearFile();
+                return;
+            }
+            
+            selectedFile = file;
+            showFilePreview(file);
+        }
+        
+        // Show file preview
+        function showFilePreview(file) {
+            const preview = document.getElementById('filePreview');
+            const previewImage = document.getElementById('previewImage');
+            const fileName = document.getElementById('fileName');
+            const fileSize = document.getElementById('fileSize');
+            const fileType = document.getElementById('fileType');
+            const analysisBtn = document.getElementById('analysisBtn');
+            
+            // Update file details
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileType.textContent = file.type || 'Unknown';
+            
+            // Show preview for image files
+            if (file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    previewImage.src = e.target.result;
+                    previewImage.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            } else {
+                // For DICOM files, show placeholder
+                previewImage.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRjVGNUY3Ii8+CjxwYXRoIGQ9Ik0xNTAgNDBWMTIwQzE1MCAxMjAgMTIwIDEyMCAxMjAgMTUwQzEyMCAxODAgMTUwIDE4MCAxNTAgMTgwQzE4MCAxODAgMTgwIDE1MCAxODAgMTUwQzE4MCAxMjAgMTUwIDEyMCAxNTAgMTIwVjQwTDE1MCA0MFoiIGZpbGw9IiM2NjdlZWEiLz4KPHBhdGggZD0iTTE1MCAxODBWMTIwQzE1MCAxMjAgMTIwIDEyMCAxMjAgMTUwQzEyMCAxODAgMTUwIDE4MCAxNTAgMTgwQzE4MCAxODAgMTgwIDE1MCAxODAgMTUwQzE4MCAxMjAgMTUwIDEyMCAxNTAgMTIwVjE4MEwxNTAgMTgwWiIgZmlsbD0iIzY2N2VlYSIvPgo8cGF0aCBkPSJNMTAwIDEyMEgxMjAiLz4KPHA+RGlDT00gRmlsZTwvcD4KPHRleHQgeD0iMTUwIiB5PSIyMjAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IiM2NjdlZWEiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCI+RGlDT00gRmlsZTwvdGV4dD4KPC9zdmc+';
+                previewImage.style.display = 'block';
+            }
+            
+            // Show preview section and analysis button
+            preview.classList.add('active');
+            analysisBtn.classList.add('active');
+        }
+        
+        // Clear file selection
+        function clearFile() {
+            selectedFile = null;
+            
+            const fileInput = document.getElementById('fileInput');
+            const preview = document.getElementById('filePreview');
+            const analysisBtn = document.getElementById('analysisBtn');
+            
+            fileInput.value = '';
+            preview.classList.remove('active');
+            analysisBtn.classList.remove('active');
+        }
+        
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Start analysis process
+        function startAnalysis() {
+            if (!selectedFile) {
+                showNotification('Please select a file first', 'error');
+                return;
+            }
+            
+            // Show progress container
+            const progressContainer = document.getElementById('progressContainer');
+            const analysisBtn = document.getElementById('analysisBtn');
+            
+            progressContainer.classList.add('active');
+            analysisBtn.disabled = true;
+            analysisBtn.textContent = 'Analyzing...';
+            
+            // Start analysis stages
+            runAnalysisStages();
+        }
+        
+        // Run analysis stages
+        async function runAnalysisStages() {
+            const stages = [
+                { name: 'Uploading', progress: 25, duration: 2000 },
+                { name: 'Analyzing', progress: 50, duration: 3000 },
+                { name: 'Generating Report', progress: 75, duration: 2000 },
+                { name: 'Ready', progress: 100, duration: 1000 }
+            ];
+            
+            for (let i = 0; i < stages.length; i++) {
+                const stage = stages[i];
+                
+                // Update progress
+                updateProgress(stage.name, stage.progress, i + 1);
+                
+                // Simulate processing time
+                await new Promise(resolve => setTimeout(resolve, stage.duration));
+            }
+            
+            // Generate and show report
+            generateAnalysisReport();
+        }
+        
+        // Update progress bar
+        function updateProgress(stageName, progress, stageNumber) {
+            const progressBarFill = document.getElementById('progressBarFill');
+            const currentStage = document.getElementById('currentStage');
+            
+            progressBarFill.style.width = progress + '%';
+            currentStage.textContent = stageName + '...';
+            
+            // Update stage indicators
+            for (let i = 1; i <= 4; i++) {
+                const stageElement = document.getElementById(`stage${i}`);
+                stageElement.classList.remove('active', 'completed');
+                
+                if (i < stageNumber) {
+                    stageElement.classList.add('completed');
+                } else if (i === stageNumber) {
+                    stageElement.classList.add('active');
+                }
+            }
+        }
+        
+        // Generate analysis report
+        function generateAnalysisReport() {
+            // Generate mock analysis report
+            const severities = ['low', 'medium', 'high'];
+            const severity = severities[Math.floor(Math.random() * severities.length)];
+            
+            analysisReport = {
+                id: 'SELF-' + Date.now(),
+                patientName: currentUser.name,
+                patientId: currentUser.id,
+                fileName: selectedFile.name,
+                analysisDate: new Date().toISOString(),
+                severity: severity,
+                confidence: 0.75 + Math.random() * 0.2, // 75-95%
+                findings: generateFindings(severity),
+                recommendations: generateRecommendations(severity),
+                imageData: null, // Would contain the actual image data in real implementation
+                disclaimer: 'This is a self-analysis report for reference purposes only and should not be considered a substitute for professional medical advice. Please consult with your healthcare provider for proper diagnosis and treatment.'
+            };
+            
+            // Show report modal
+            showReportModal();
+        }
+        
+        // Generate findings based on severity
+        function generateFindings(severity) {
+            const baseFindings = [
+                'Joint space appears normal',
+                'No significant abnormalities detected',
+                'Bone density within expected range'
+            ];
+            
+            const severityFindings = {
+                low: [
+                    'Mild joint space narrowing observed',
+                    'Early signs of cartilage wear',
+                    'No acute pathology detected'
+                ],
+                medium: [
+                    'Moderate joint space narrowing',
+                    'Cartilage thinning detected',
+                    'Mild bone sclerosis present'
+                ],
+                high: [
+                    'Severe joint space narrowing',
+                    'Significant cartilage loss',
+                    'Bone spurs and osteophytes present',
+                    'Subchondral cysts detected'
+                ]
+            };
+            
+            return [...baseFindings, ...severityFindings[severity]];
+        }
+        
+        // Generate recommendations based on severity
+        function generateRecommendations(severity) {
+            const recommendations = {
+                low: [
+                    'Continue current treatment plan',
+                    'Regular low-impact exercise',
+                    'Maintain healthy weight'
+                ],
+                medium: [
+                    'Consider physical therapy',
+                    'Anti-inflammatory medication as needed',
+                    'Follow-up X-ray in 6 months'
+                ],
+                high: [
+                    'Consult with orthopedic specialist',
+                    'Consider surgical evaluation',
+                    'Pain management program recommended',
+                    'Assistive devices may be beneficial'
+                ]
+            };
+            
+            return recommendations[severity];
+        }
+        
+        // Show report modal
+        function showReportModal() {
+            const modal = document.getElementById('reportModal');
+            const modalBody = document.getElementById('reportModalBody');
+            
+            // Generate report HTML
+            const reportHTML = generateReportHTML(analysisReport);
+            modalBody.innerHTML = reportHTML;
+            
+            // Show modal
+            modal.classList.add('active');
+        }
+        
+        // Generate report HTML
+        function generateReportHTML(report) {
+            const severityClass = `severity-${report.severity}`;
+            const formattedDate = new Date(report.analysisDate).toLocaleDateString();
+            
+            return `
+                <div class="disclaimer">
+                    <div class="disclaimer-title">⚠️ Important Disclaimer</div>
+                    <div class="disclaimer-text">${report.disclaimer}</div>
+                </div>
+                
+                <div class="report-header" style="text-align: center; margin-bottom: 2rem;">
+                    <h3 style="color: #333; margin-bottom: 0.5rem;">X-Ray Analysis Report</h3>
+                    <p style="color: #666; margin: 0;">Self-Analysis Report</p>
+                </div>
+                
+                <div class="patient-info" style="background: #f8f9fa; padding: 1rem; border-radius: 8px; margin-bottom: 2rem;">
+                    <h4 style="margin: 0 0 1rem 0; color: #333;">Patient Information</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div>
+                            <strong>Name:</strong> ${report.patientName}
+                        </div>
+                        <div>
+                            <strong>Patient ID:</strong> #${String(report.patientId).padStart(3, '0')}
+                        </div>
+                        <div>
+                            <strong>Analysis Date:</strong> ${formattedDate}
+                        </div>
+                        <div>
+                            <strong>Report ID:</strong> ${report.id}
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="analysis-summary" style="margin-bottom: 2rem;">
+                    <h4 style="color: #333; margin-bottom: 1rem;">Analysis Summary</h4>
+                    <div style="display: flex; align-items: center; gap: 2rem; margin-bottom: 1rem;">
+                        <div>
+                            <strong>Severity:</strong> 
+                            <span class="severity-badge ${severityClass}" style="margin-left: 0.5rem;">
+                                ${report.severity.toUpperCase()}
+                            </span>
+                        </div>
+                        <div>
+                            <strong>Confidence:</strong> 
+                            <span style="margin-left: 0.5rem;">
+                                ${Math.round(report.confidence * 100)}%
+                            </span>
+                        </div>
+                    </div>
+                    <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden; margin-top: 0.5rem;">
+                        <div style="width: ${report.confidence * 100}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                    </div>
+                </div>
+                
+                <div class="findings-section" style="margin-bottom: 2rem;">
+                    <h4 style="color: #333; margin-bottom: 1rem;">Findings</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${report.findings.map(finding => `
+                            <li style="background: #f8f9fa; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 6px; border-left: 4px solid #667eea;">
+                                ${finding}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div class="recommendations-section" style="margin-bottom: 2rem;">
+                    <h4 style="color: #333; margin-bottom: 1rem;">Recommendations</h4>
+                    <ul style="list-style: none; padding: 0;">
+                        ${report.recommendations.map(rec => `
+                            <li style="background: #f0f9ff; padding: 0.75rem; margin-bottom: 0.5rem; border-radius: 6px; border-left: 4px solid #0ea5e9;">
+                                ${rec}
+                            </li>
+                        `).join('')}
+                    </ul>
+                </div>
+                
+                <div class="report-footer" style="text-align: center; margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+                    <p style="color: #666; font-size: 0.9rem;">
+                        This report was generated automatically on ${formattedDate}
+                    </p>
+                </div>
+                
+                <div class="report-actions">
+                    <button class="report-action-btn download-report-btn" onclick="downloadReport()">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                    <button class="report-action-btn close-report-btn" onclick="closeReportModal()">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                </div>
+            `;
+        }
+        
+        // Close report modal
+        function closeReportModal() {
+            const modal = document.getElementById('reportModal');
+            const progressContainer = document.getElementById('progressContainer');
+            const analysisBtn = document.getElementById('analysisBtn');
+            
+            modal.classList.remove('active');
+            progressContainer.classList.remove('active');
+            
+            // Reset analysis button
+            analysisBtn.disabled = false;
+            analysisBtn.textContent = 'Start Analysis';
+            
+            // Clear file and reset
+            clearFile();
+            
+            // Clear report (temporary - not saved)
+            analysisReport = null;
+        }
+        
+        // Download report
+        function downloadReport() {
+            if (!analysisReport) return;
+            
+            // Create report content
+            const reportContent = `
+X-RAY SELF-ANALYSIS REPORT
+============================
+
+${'='.repeat(50)}
+IMPORTANT DISCLAIMER
+${'='.repeat(50)}
+${analysisReport.disclaimer}
+
+${'='.repeat(50)}
+PATIENT INFORMATION
+${'='.repeat(50)}
+Name: ${analysisReport.patientName}
+Patient ID: #${String(analysisReport.patientId).padStart(3, '0')}
+Analysis Date: ${new Date(analysisReport.analysisDate).toLocaleDateString()}
+Report ID: ${analysisReport.id}
+File Name: ${analysisReport.fileName}
+
+${'='.repeat(50)}
+ANALYSIS SUMMARY
+${'='.repeat(50)}
+Severity: ${analysisReport.severity.toUpperCase()}
+Confidence: ${Math.round(analysisReport.confidence * 100)}%
+
+${'='.repeat(50)}
+FINDINGS
+${'='.repeat(50)}
+${analysisReport.findings.map(f => `• ${f}`).join('\n')}
+
+${'='.repeat(50)}
+RECOMMENDATIONS
+${'='.repeat(50)}
+${analysisReport.recommendations.map(r => `• ${r}`).join('\n')}
+
+${'='.repeat(50)}
+REPORT FOOTER
+${'='.repeat(50)}
+This report was generated automatically on ${new Date(analysisReport.analysisDate).toLocaleDateString()}
+
+This is a self-analysis report for reference purposes only.
+Consult with your healthcare provider for proper medical advice.
+            `;
+            
+            // Create and download file
+            const blob = new Blob([reportContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `XRay_SelfAnalysis_${analysisReport.id}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Report downloaded successfully!', 'success');
+        }
+        
+        // Show notification (fallback if app.js not available)
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                z-index: 3000;
+                max-width: 300px;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+
+        // Notification functions
+        function showNotifications() {
+            const modal = document.getElementById('notificationsModal');
+            loadNotifications();
+            modal.classList.add('active');
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationsModal').classList.remove('active');
+        }
+
+        function loadNotifications() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const list = document.getElementById('notificationsList');
+            const allNotifications = notifications.filter(n => 
+                n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder'
+            );
+
+            if (allNotifications.length === 0) {
+                list.innerHTML = `
+                    <div class="no-notifications">
+                        <i class="fas fa-bell-slash" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <p>No notifications yet</p>
+                        <p style="font-size: 0.9rem; color: #999;">You will receive notifications for appointment reminders, activity updates, and reschedule alerts.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let html = '';
+            allNotifications.forEach(notification => {
+                const isUnread = !notification.read;
+                const time = new Date(notification.createdAt).toLocaleString();
+                const typeClass = notification.type === 'reschedule' ? 'reschedule' : 
+                                 notification.type === 'activity_skip' ? 'activity-skip' : 'appointment-reminder';
+                html += `
+                    <div class="notification-item ${isUnread ? 'unread' : ''} ${typeClass}">
+                        <div class="notification-header">
+                            <span class="notification-title">${notification.title}</span>
+                            <span class="notification-time">${time}</span>
+                        </div>
+                        <div class="notification-message">
+                            ${notification.doctorName ? `<span class="notification-doctor">${notification.doctorName}</span>: ` : ''}${notification.message}
+                        </div>
+                        ${isUnread ? `<button class="mark-read-btn" onclick="markAsRead('${notification.id}')">Mark as Read</button>` : ''}
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function markAsRead(notificationId) {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const index = notifications.findIndex(n => n.id === notificationId);
+            if (index !== -1) {
+                notifications[index].read = true;
+                localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const unreadCount = notifications.filter(n => 
+                (n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder') && !n.read
+            ).length;
+            const badge = document.getElementById('notificationBadge');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Check for skipped activities and create notifications
+        function checkSkippedActivities() {
+            if (!currentUser) return;
+            
+            const patientActivities = JSON.parse(localStorage.getItem('patientActivities') || '[]');
+            const userActivities = patientActivities.filter(a => a.patientId === currentUser.id);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            userActivities.forEach(activity => {
+                if (activity.date === today && !activity.completed) {
+                    const alreadyNotified = notifications.some(n => 
+                        n.type === 'activity_skip' && 
+                        n.activityId === activity.id && 
+                        n.createdAt.startsWith(today)
+                    );
+                    
+                    if (!alreadyNotified) {
+                        notifications.push({
+                            id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            type: 'activity_skip',
+                            activityId: activity.id,
+                            title: 'Activity Skipped',
+                            message: `You missed your scheduled activity: "${activity.title}" for today. Stay consistent with your health routine!`,
+                            read: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Check for upcoming appointments and create reminder notifications
+        function checkUpcomingAppointments() {
+            if (!currentUser) return;
+            
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${currentUser.id}`) || '[]');
+            const today = new Date();
+            
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            patientAppointments.forEach(apt => {
+                if (apt.status === 'upcoming' || apt.status === 'approved') {
+                    const aptDate = new Date(apt.date);
+                    const daysUntil = Math.ceil((aptDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntil === 1 || daysUntil === 0) {
+                        const timeMsg = daysUntil === 0 ? 'today' : 'tomorrow';
+                        
+                        const alreadyNotified = notifications.some(n => 
+                            n.type === 'appointment_reminder' && 
+                            n.appointmentId === apt.id &&
+                            n.createdAt.startsWith(today.toISOString().split('T')[0])
+                        );
+                        
+                        if (!alreadyNotified) {
+                            notifications.push({
+                                id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                                type: 'appointment_reminder',
+                                appointmentId: apt.id,
+                                title: 'Appointment Reminder',
+                                message: `You have an appointment ${timeMsg} at ${apt.time} with Dr. ${apt.doctorName}. Don't forget to attend!`,
+                                read: false,
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeNotifications();
+        });
+
+        // Close notifications modal when clicking outside
+        document.getElementById('notificationsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeNotifications();
+        });
+
+        // Update notification badge on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUser) {
+                checkSkippedActivities();
+                checkUpcomingAppointments();
+                updateNotificationBadge();
+            }
+        });
+    </script>
+
+    <!-- Notifications Modal -->
+    <div class="notifications-modal" id="notificationsModal">
+        <div class="notifications-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: #333;"><i class="fas fa-bell"></i> Notifications</h3>
+                <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;" onclick="closeNotifications()">&times;</button>
+            </div>
+            <div id="notificationsList"></div>
+            <button class="close-modal-btn" onclick="closeNotifications()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+</body>
+</html>

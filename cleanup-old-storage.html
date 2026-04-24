@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cleanup Old Activity Storage</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .container { max-width: 600px; margin: 0 auto; }
+        .section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        .btn { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .btn-danger { background: #ef4444; color: white; border: none; }
+        .btn-success { background: #10b981; color: white; border: none; }
+        .result { margin: 10px 0; padding: 10px; border-radius: 3px; }
+        .success { background: #d1fae5; color: #065f46; }
+        .error { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cleanup Old Activity Storage</h1>
+        
+        <div class="section">
+            <h2>Current Storage Status</h2>
+            <div id="storageStatus"></div>
+        </div>
+        
+        <div class="section">
+            <h2>Cleanup Actions</h2>
+            <button class="btn btn-danger" onclick="clearOldStorage()">Clear Old Storage (arthrosheild_activities_v2)</button>
+            <button class="btn btn-success" onclick="checkStorage()">Check Storage Status</button>
+        </div>
+        
+        <div class="section">
+            <h2>Results</h2>
+            <div id="results"></div>
+        </div>
+    </div>
+
+    <script>
+        function checkStorage() {
+            const statusDiv = document.getElementById('storageStatus');
+            const resultsDiv = document.getElementById('results');
+            
+            const oldStorage = localStorage.getItem('arthrosheild_activities_v2');
+            const newStorage = localStorage.getItem('arthrosheild_activity_plans');
+            
+            let statusHTML = '<h3>Storage Keys:</h3>';
+            statusHTML += `<p><strong>arthrosheild_activities_v2:</strong> ${oldStorage ? `${JSON.parse(oldStorage).length} items` : 'Empty'}</p>`;
+            statusHTML += `<p><strong>arthrosheild_activity_plans:</strong> ${newStorage ? `${JSON.parse(newStorage).length} items` : 'Empty'}</p>`;
+            
+            if (oldStorage) {
+                statusHTML += '<p style="color: #ef4444;">⚠️ Old storage exists and should be cleaned up</p>';
+            } else {
+                statusHTML += '<p style="color: #10b981;">✅ Old storage is empty</p>';
+            }
+            
+            statusDiv.innerHTML = statusHTML;
+            
+            // Show sample data
+            if (newStorage) {
+                const plans = JSON.parse(newStorage);
+                resultsDiv.innerHTML = `
+                    <div class="result success">
+                        <strong>Sample activity plans:</strong><br>
+                        ${plans.slice(0, 2).map(p => `ID: ${p.id}, Patient: ${p.patientName}, Type: ${p.type}`).join('<br>')}
+                    </div>
+                `;
+            }
+        }
+        
+        function clearOldStorage() {
+            if (confirm('Are you sure you want to clear the old activity storage? This will remove arthrosheild_activities_v2 data.')) {
+                try {
+                    const oldData = localStorage.getItem('arthrosheild_activities_v2');
+                    const itemCount = oldData ? JSON.parse(oldData).length : 0;
+                    
+                    localStorage.removeItem('arthrosheild_activities_v2');
+                    
+                    document.getElementById('results').innerHTML = `
+                        <div class="result success">
+                            ✅ Successfully cleared old storage! Removed ${itemCount} items.
+                        </div>
+                    `;
+                    
+                    checkStorage();
+                } catch (error) {
+                    document.getElementById('results').innerHTML = `
+                        <div class="result error">
+                            ❌ Error clearing storage: ${error.message}
+                        </div>
+                    `;
+                }
+            }
+        }
+        
+        // Check storage on page load
+        checkStorage();
+    </script>
+</body>
+</html>

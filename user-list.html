@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Registered Users</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 3%;
+        }
+
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .section-title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .section-title i {
+            color: #667eea;
+        }
+
+        .user-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .user-table th,
+        .user-table td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .user-table th {
+            background: #f8f9fa;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .user-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .role-badge {
+            padding: 0.4rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .role-doctor {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .role-patient {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .credential-cell {
+            font-family: monospace;
+            background: #f3f4f6;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #6b7280;
+        }
+
+        .empty-icon {
+            font-size: 3rem;
+            color: #d1d5db;
+            margin-bottom: 1rem;
+        }
+
+        .count-badge {
+            background: #667eea;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            margin-left: 0.5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-users"></i> Registered Users</h1>
+            <a href="home.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+        </div>
+
+        <!-- Doctors Section -->
+        <div class="content-card">
+            <h2 class="section-title">
+                <i class="fas fa-user-md"></i>
+                Doctors
+                <span class="count-badge" id="doctorCount">0</span>
+            </h2>
+            <div id="doctorsTableContainer">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Specialization</th>
+                            <th>Hospital</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody id="doctorsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Patients Section -->
+        <div class="content-card">
+            <h2 class="section-title">
+                <i class="fas fa-user"></i>
+                Patients
+                <span class="count-badge" id="patientCount">0</span>
+            </h2>
+            <div id="patientsTableContainer">
+                <table class="user-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Password</th>
+                            <th>Age</th>
+                            <th>Gender</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientsTableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUsers();
+        });
+
+        function loadUsers() {
+            const users = JSON.parse(localStorage.getItem('arthrosheild_users') || '[]');
+
+            // Separate doctors and patients
+            const doctors = users.filter(u => u.role === 'doctor');
+            const patients = users.filter(u => u.role === 'patient');
+
+            // Display counts
+            document.getElementById('doctorCount').textContent = doctors.length;
+            document.getElementById('patientCount').textContent = patients.length;
+
+            // Helper function to get display name
+            function getDisplayName(user) {
+                if (user.name && user.name.trim()) {
+                    return user.name;
+                }
+                // Fallback: extract name from email
+                if (user.email) {
+                    const emailName = user.email.split('@')[0];
+                    return emailName.split('.').map(part =>
+                        part.charAt(0).toUpperCase() + part.slice(1)
+                    ).join(' ');
+                }
+                return '-';
+            }
+
+            // Display doctors
+            const doctorsTableBody = document.getElementById('doctorsTableBody');
+            if (doctors.length === 0) {
+                document.getElementById('doctorsTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-user-md"></i></div>
+                        <p>No registered doctors found</p>
+                    </div>
+                `;
+            } else {
+                doctorsTableBody.innerHTML = doctors.map(doc => `
+                    <tr>
+                        <td><strong>${getDisplayName(doc)}</strong></td>
+                        <td>${doc.email || '-'}</td>
+                        <td><span class="credential-cell">${doc.password || '-'}</span></td>
+                        <td>${doc.specialization || '-'}</td>
+                        <td>${doc.hospital || '-'}</td>
+                        <td>${doc.phone || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+
+            // Display patients
+            const patientsTableBody = document.getElementById('patientsTableBody');
+            if (patients.length === 0) {
+                document.getElementById('patientsTableContainer').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-user"></i></div>
+                        <p>No registered patients found</p>
+                    </div>
+                `;
+            } else {
+                patientsTableBody.innerHTML = patients.map(patient => `
+                    <tr>
+                        <td><strong>${getDisplayName(patient)}</strong></td>
+                        <td>${patient.email || '-'}</td>
+                        <td><span class="credential-cell">${patient.password || '-'}</span></td>
+                        <td>${patient.age || '-'}</td>
+                        <td>${patient.gender || '-'}</td>
+                        <td>${patient.phone || '-'}</td>
+                    </tr>
+                `).join('');
+            }
+        }
+    </script>
+</body>
+</html>

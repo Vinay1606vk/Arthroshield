@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Doctor Appointments</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 3%;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tabs-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        
+        .tab {
+            background: none;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab:hover {
+            color: #333;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .requests-section, .appointments-section {
+            display: none;
+        }
+        
+        .requests-section.active, .appointments-section.active {
+            display: block;
+        }
+        
+        .requests-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .request-card {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border: 2px solid #f59e0b;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .request-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: #92400e;
+            margin: 0;
+        }
+        
+        .request-date {
+            font-size: 0.9rem;
+            color: #78350f;
+        }
+        
+        .request-details {
+            margin-bottom: 1rem;
+        }
+        
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .detail-label {
+            color: #666;
+            font-weight: 600;
+        }
+        
+        .detail-value {
+            color: #333;
+        }
+        
+        .request-actions {
+            display: flex;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+        
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-accept {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-accept:hover {
+            background: #059669;
+        }
+        
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-reject:hover {
+            background: #dc2626;
+        }
+        
+        .appointments-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .appointment-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        
+        .appointment-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .appointment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+        
+        .appointment-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            margin-right: 1rem;
+        }
+        
+        .appointment-info h4 {
+            margin: 0 0 0.25rem 0;
+            color: #333;
+            font-size: 1.2rem;
+        }
+        
+        .appointment-info p {
+            margin: 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .appointment-details {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .status-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-upcoming {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        .status-completed {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status-cancelled {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #ccc;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .empty-description {
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+        
+        .notification-badge {
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+            margin-left: 0.5rem;
+        }
+        
+        /* Filter Tabs */
+        .filter-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0;
+        }
+        
+        .filter-tab {
+            background: none;
+            border: none;
+            padding: 0.75rem 1rem;
+            font-weight: 600;
+            color: #666;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .filter-tab:hover {
+            color: #333;
+            background: rgba(102, 126, 234, 0.05);
+        }
+        
+        .filter-tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+        
+        /* Appointment Actions */
+        .appointment-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .btn-complete {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-complete:hover {
+            background: #059669;
+        }
+        
+        .btn-reschedule {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .btn-reschedule:hover {
+            background: #d97706;
+        }
+        
+        .btn-cancel {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-cancel:hover {
+            background: #dc2626;
+        }
+
+        /* Reschedule Modal Styles */
+        .reschedule-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .reschedule-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .appointment-info-summary {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1.5rem;
+        }
+
+        .appointment-info-summary h4 {
+            margin: 0 0 0.5rem 0;
+            color: #333;
+        }
+
+        .appointment-info-summary p {
+            margin: 0.25rem 0;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .current-datetime {
+            color: #ef4444;
+            font-weight: 600;
+        }
+
+        .form-textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn-confirm {
+            background: #667eea;
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #5a67d8;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title">
+                <i class="fas fa-calendar-check"></i> Manage Appointments
+                <span class="notification-badge" id="requestCount" style="display: none;">0</span>
+            </h1>
+            <a href="doctor-welcome.html" class="back-btn">
+                <i class="fas fa-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+        
+        <div class="content-card">
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <button class="tab active" onclick="showTab('requests')">
+                    <i class="fas fa-clock"></i> Appointment Requests
+                </button>
+                <button class="tab" onclick="showTab('appointments')">
+                    <i class="fas fa-calendar"></i> My Appointments
+                </button>
+            </div>
+            
+            <!-- Appointment Requests Section -->
+            <div class="requests-section active" id="requestsSection">
+                <div class="requests-grid" id="requestsGrid">
+                    <!-- Requests will be loaded here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="requestsEmptyState" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-inbox"></i>
+                    </div>
+                    <h3 class="empty-title">No Appointment Requests</h3>
+                    <p class="empty-description">You don't have any appointment requests from patients yet.</p>
+                </div>
+            </div>
+            
+            <!-- My Appointments Section -->
+            <div class="appointments-section" id="appointmentsSection">
+                <!-- Status Filters -->
+                <div class="filter-tabs">
+                    <button class="filter-tab" onclick="filterAppointments('all')">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                    <button class="filter-tab active" onclick="filterAppointments('upcoming')">
+                        <i class="fas fa-clock"></i> Upcoming
+                    </button>
+                    <button class="filter-tab" onclick="filterAppointments('completed')">
+                        <i class="fas fa-check-circle"></i> Completed
+                    </button>
+                    <button class="filter-tab" onclick="filterAppointments('cancelled')">
+                        <i class="fas fa-times-circle"></i> Cancelled
+                    </button>
+                </div>
+                
+                <div class="appointments-grid" id="appointmentsGrid">
+                    <!-- Appointments will be loaded here -->
+                </div>
+                
+                <!-- Empty State -->
+                <div class="empty-state" id="appointmentsEmptyState" style="display: none;">
+                    <div class="empty-icon">
+                        <i class="fas fa-calendar-times"></i>
+                    </div>
+                    <h3 class="empty-title">No Scheduled Appointments</h3>
+                    <p class="empty-description">You don't have any appointments scheduled yet.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Reschedule Modal -->
+    <div class="reschedule-modal" id="rescheduleModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title"><i class="fas fa-calendar-alt"></i> Reschedule Appointment</h3>
+                <button class="close-btn" onclick="closeRescheduleModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="appointment-info-summary" id="rescheduleInfo">
+                    <!-- Appointment info will be displayed here -->
+                </div>
+                <form id="rescheduleForm">
+                    <div class="form-group">
+                        <label class="form-label" for="newDate">New Date</label>
+                        <input type="date" class="form-input" id="newDate" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="newTime">New Time</label>
+                        <select class="form-select" id="newTime" required>
+                            <option value="">Select Time</option>
+                            <!-- Time slots will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="rescheduleReason">Reason for Rescheduling (Optional)</label>
+                        <textarea class="form-textarea" id="rescheduleReason" rows="3" placeholder="Enter reason for rescheduling..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-actions">
+                <button class="modal-btn btn-cancel" onclick="closeRescheduleModal()">
+                    <i class="fas fa-times"></i> Cancel
+                </button>
+                <button class="modal-btn btn-confirm" onclick="confirmReschedule()">
+                    <i class="fas fa-check"></i> Confirm Reschedule
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let appointmentRequests = [];
+        let doctorAppointments = [];
+        let currentTab = 'requests';
+        let currentFilter = 'upcoming'; // Show only upcoming appointments by default
+        
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            loadAppointmentData();
+            renderRequests();
+            renderDoctorAppointments();
+            updateRequestCount();
+            startRealTimeUpdates();
+
+            // Close reschedule modal on ESC key
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    closeRescheduleModal();
+                }
+            });
+
+            // Close reschedule modal when clicking outside
+            document.getElementById('rescheduleModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    closeRescheduleModal();
+                }
+            });
+        });
+        
+        // Check authentication
+        function checkAuthentication() {
+            currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            // Check 1: User must be logged in
+            if (!currentUser) {
+                showNotification('Please login to access this page', 'error');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return false;
+            }
+            
+            // Check 2: User must be a doctor
+            if (currentUser.role !== 'doctor') {
+                showNotification('Access denied. This page is for doctors only.', 'error');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return false;
+            }
+            
+            // Check 3: Valid doctor access
+            return true;
+        }
+        
+        // Helper to get doctor identifier (email is used as ID)
+        function getDoctorId() {
+            return currentUser.email || currentUser.id;
+        }
+
+        // Load appointment data
+        function loadAppointmentData() {
+            appointmentRequests = JSON.parse(localStorage.getItem('appointment_requests') || '[]');
+            doctorAppointments = JSON.parse(localStorage.getItem(`doctor_appointments_${getDoctorId()}`) || '[]');
+        }
+
+        // Save doctor appointments
+        function saveDoctorAppointments() {
+            localStorage.setItem(`doctor_appointments_${getDoctorId()}`, JSON.stringify(doctorAppointments));
+        }
+        
+        // Show tab
+        function showTab(tab) {
+            currentTab = tab;
+            
+            // Update tab styles
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show corresponding section
+            const requestsSection = document.getElementById('requestsSection');
+            const appointmentsSection = document.getElementById('appointmentsSection');
+            
+            if (tab === 'requests') {
+                requestsSection.classList.add('active');
+                appointmentsSection.classList.remove('active');
+            } else {
+                requestsSection.classList.remove('active');
+                appointmentsSection.classList.add('active');
+            }
+        }
+        
+        // Filter appointments
+        function filterAppointments(filter) {
+            currentFilter = filter;
+            
+            // Update tab styles
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Re-render appointments with new filter
+            renderDoctorAppointments();
+        }
+        
+        // Render appointment requests
+        function renderRequests() {
+            const requestsGrid = document.getElementById('requestsGrid');
+            const emptyState = document.getElementById('requestsEmptyState');
+            
+            // Filter requests for current doctor
+            const myRequests = appointmentRequests.filter(req => req.doctorId === getDoctorId());
+            
+            if (myRequests.length === 0) {
+                requestsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            requestsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            let html = '';
+            myRequests.forEach(request => {
+                const date = new Date(request.date);
+                const time = request.time;
+                
+                html += `
+                    <div class="request-card">
+                        <div class="request-header">
+                            <h4 class="request-title">Appointment Request</h4>
+                            <div class="request-date">${date.toLocaleDateString()} at ${time}</div>
+                        </div>
+                        <div class="request-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Patient:</span>
+                                <span class="detail-value">${request.patientName}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Reason:</span>
+                                <span class="detail-value">${request.reason || 'General consultation'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Requested:</span>
+                                <span class="detail-value">${new Date(request.createdAt).toLocaleString()}</span>
+                            </div>
+                        </div>
+                        <div class="request-actions">
+                            <button class="action-btn btn-accept" onclick="acceptRequest('${request.id}')">
+                                <i class="fas fa-check"></i> Accept
+                            </button>
+                            <button class="action-btn btn-reject" onclick="rejectRequest('${request.id}')">
+                                <i class="fas fa-times"></i> Reject
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            requestsGrid.innerHTML = html;
+        }
+        
+        // Render doctor appointments
+        function renderDoctorAppointments() {
+            const appointmentsGrid = document.getElementById('appointmentsGrid');
+            const emptyState = document.getElementById('appointmentsEmptyState');
+            
+            // Filter appointments based on current filter
+            let filteredAppointments = doctorAppointments;
+            if (currentFilter !== 'all') {
+                filteredAppointments = doctorAppointments.filter(apt => apt.status === currentFilter);
+            }
+            
+            if (filteredAppointments.length === 0) {
+                appointmentsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            appointmentsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            // Sort by date (newest first)
+            filteredAppointments.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            let html = '';
+            filteredAppointments.forEach(appointment => {
+                const date = new Date(appointment.date);
+                const statusClass = `status-${appointment.status}`;
+                const statusText = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1);
+                
+                html += `
+                    <div class="appointment-card">
+                        <div class="appointment-header">
+                            <div class="appointment-icon">
+                                <i class="fas fa-user-md"></i>
+                            </div>
+                            <div class="appointment-info">
+                                <h4>${appointment.reason || 'Consultation'}</h4>
+                                <p>${appointment.patientName}</p>
+                            </div>
+                        </div>
+                        <div class="appointment-details">
+                            <div class="detail-row">
+                                <span class="detail-label">Date:</span>
+                                <span class="detail-value">${date.toLocaleDateString()}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Time:</span>
+                                <span class="detail-value">${appointment.time}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Email:</span>
+                                <span class="detail-value">${appointment.patientEmail || 'Not provided'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Phone:</span>
+                                <span class="detail-value">${appointment.patientPhone || 'Not provided'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Medical History:</span>
+                                <span class="detail-value">${appointment.medicalHistory || 'No history available'}</span>
+                            </div>
+                            <div class="detail-row">
+                                <span class="detail-label">Status:</span>
+                                <span class="detail-value"><span class="status-badge ${statusClass}">${statusText}</span></span>
+                            </div>
+                        </div>
+                        <div class="appointment-actions">
+                            ${appointment.status === 'upcoming' ? `
+                                <button class="action-btn btn-complete" onclick="markCompleted('${appointment.id}')">
+                                    <i class="fas fa-check"></i> Mark Completed
+                                </button>
+                                <button class="action-btn btn-reschedule" onclick="rescheduleAppointment('${appointment.id}')">
+                                    <i class="fas fa-calendar"></i> Reschedule
+                                </button>
+                                <button class="action-btn btn-cancel" onclick="cancelAppointment('${appointment.id}')">
+                                    <i class="fas fa-times"></i> Cancel
+                                </button>
+                            ` : appointment.status === 'completed' ? `
+                                <button class="action-btn btn-reschedule" onclick="rescheduleAppointment('${appointment.id}')">
+                                    <i class="fas fa-calendar"></i> Reschedule
+                                </button>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            appointmentsGrid.innerHTML = html;
+        }
+        
+        // Accept appointment request
+        function acceptRequest(requestId) {
+            const request = appointmentRequests.find(req => req.id === requestId);
+            if (!request) return;
+            
+            // Update request status
+            const requestIndex = appointmentRequests.findIndex(req => req.id === requestId);
+            if (requestIndex !== -1) {
+                appointmentRequests[requestIndex].status = 'accepted';
+                appointmentRequests[requestIndex].acceptedAt = new Date().toISOString();
+                appointmentRequests[requestIndex].acceptedBy = currentUser.name;
+            }
+            
+            // Add to doctor's appointments
+            const appointment = {
+                id: 'APT-' + Date.now(),
+                patientId: request.patientId,
+                patientName: request.patientName,
+                doctorId: getDoctorId(),
+                doctorName: currentUser.name,
+                date: request.date,
+                time: request.time,
+                reason: request.reason,
+                status: 'upcoming',
+                createdAt: new Date().toISOString()
+            };
+            
+            doctorAppointments.push(appointment);
+            
+            // Save to localStorage
+            localStorage.setItem('appointment_requests', JSON.stringify(appointmentRequests));
+            saveDoctorAppointments();
+            
+            // Update patient's appointments
+            updatePatientAppointment(requestId, 'upcoming', appointment);
+            
+            // Refresh UI
+            renderRequests();
+            renderDoctorAppointments();
+            updateRequestCount();
+            
+            showNotification(`Appointment accepted for ${request.patientName}`, 'success');
+        }
+        
+        // Reject appointment request
+        function rejectRequest(requestId) {
+            const request = appointmentRequests.find(req => req.id === requestId);
+            if (!request) return;
+            
+            if (!confirm(`Are you sure you want to reject this appointment request from ${request.patientName}?`)) {
+                return;
+            }
+            
+            // Update request status
+            const requestIndex = appointmentRequests.findIndex(req => req.id === requestId);
+            if (requestIndex !== -1) {
+                appointmentRequests[requestIndex].status = 'rejected';
+                appointmentRequests[requestIndex].rejectedAt = new Date().toISOString();
+                appointmentRequests[requestIndex].rejectedBy = currentUser.name;
+            }
+            
+            // Save to localStorage
+            localStorage.setItem('appointment_requests', JSON.stringify(appointmentRequests));
+            
+            // Update patient's appointments
+            updatePatientAppointment(requestId, 'rejected');
+            
+            // Refresh UI
+            renderRequests();
+            updateRequestCount();
+            
+            showNotification(`Appointment request rejected for ${request.patientName}`, 'success');
+        }
+        
+        // Update patient appointment
+        function updatePatientAppointment(requestId, status, appointment = null) {
+            // Find the request to get patientId
+            const request = appointmentRequests.find(req => req.id === requestId);
+            if (!request || !request.patientId) return;
+
+            // Get patient appointments
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${request.patientId}`) || '[]');
+
+            const aptIndex = patientAppointments.findIndex(apt => apt.id === requestId);
+            if (aptIndex !== -1) {
+                if (appointment) {
+                    // Replace with new appointment (if accepted)
+                    patientAppointments[aptIndex] = {
+                        ...appointment,
+                        id: requestId,
+                        status: status
+                    };
+                } else {
+                    // Just update status
+                    patientAppointments[aptIndex].status = status;
+                }
+
+                localStorage.setItem(`patient_appointments_${request.patientId}`, JSON.stringify(patientAppointments));
+            }
+        }
+        
+        // Update request count
+        function updateRequestCount() {
+            const pendingRequests = appointmentRequests.filter(req =>
+                req.doctorId === getDoctorId() && req.status === 'pending'
+            ).length;
+            
+            const countBadge = document.getElementById('requestCount');
+            if (pendingRequests > 0) {
+                countBadge.textContent = pendingRequests;
+                countBadge.style.display = 'flex';
+            } else {
+                countBadge.style.display = 'none';
+            }
+        }
+        
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            // Check for new requests every 30 seconds
+            setInterval(() => {
+                checkForNewRequests();
+            }, 30000);
+        }
+        
+        // Check for new requests
+        function checkForNewRequests() {
+            const currentRequests = JSON.parse(localStorage.getItem('appointment_requests') || '[]');
+            const newRequests = currentRequests.filter(req =>
+                req.doctorId === getDoctorId() &&
+                !appointmentRequests.some(existingReq => existingReq.id === req.id)
+            );
+            
+            if (newRequests.length > 0) {
+                appointmentRequests = currentRequests;
+                renderRequests();
+                updateRequestCount();
+                
+                showNotification('You have new appointment requests!', 'success');
+            }
+        }
+        
+        // Doctor Appointment Management Functions
+        
+        // Mark appointment as completed
+        function markCompleted(appointmentId) {
+            if (!confirm('Are you sure you want to mark this appointment as completed?')) {
+                return;
+            }
+            
+            const appointmentIndex = doctorAppointments.findIndex(apt => apt.id === appointmentId);
+            if (appointmentIndex !== -1) {
+                const appointment = doctorAppointments[appointmentIndex];
+                
+                // Update status
+                doctorAppointments[appointmentIndex].status = 'completed';
+                doctorAppointments[appointmentIndex].completedAt = new Date().toISOString();
+                doctorAppointments[appointmentIndex].completedBy = currentUser.name;
+                
+                // Save to doctor's appointments
+                saveDoctorAppointments();
+                
+                // Update patient's appointments
+                updatePatientAppointmentStatus(appointment, 'completed');
+                
+                // Refresh UI
+                renderDoctorAppointments();
+                
+                showNotification(`Appointment marked as completed for ${appointment.patientName}`, 'success');
+            }
+        }
+        
+        // Cancel appointment
+        function cancelAppointment(appointmentId) {
+            if (!confirm('Are you sure you want to cancel this appointment?')) {
+                return;
+            }
+            
+            const appointmentIndex = doctorAppointments.findIndex(apt => apt.id === appointmentId);
+            if (appointmentIndex !== -1) {
+                const appointment = doctorAppointments[appointmentIndex];
+                
+                // Update status
+                doctorAppointments[appointmentIndex].status = 'cancelled';
+                doctorAppointments[appointmentIndex].cancelledAt = new Date().toISOString();
+                doctorAppointments[appointmentIndex].cancelledBy = currentUser.name;
+                
+                // Save to doctor's appointments
+                saveDoctorAppointments();
+                
+                // Update patient's appointments
+                updatePatientAppointmentStatus(appointment, 'cancelled');
+                
+                // Refresh UI
+                renderDoctorAppointments();
+                
+                showNotification(`Appointment cancelled for ${appointment.patientName}`, 'success');
+            }
+        }
+        
+        // Global variable to store the appointment being rescheduled
+        let currentRescheduleAppointment = null;
+
+        // Reschedule appointment
+        function rescheduleAppointment(appointmentId) {
+            const appointment = doctorAppointments.find(apt => apt.id === appointmentId);
+            if (!appointment) return;
+
+            currentRescheduleAppointment = appointment;
+
+            // Populate modal with appointment info
+            const infoDiv = document.getElementById('rescheduleInfo');
+            const currentDate = new Date(appointment.date);
+            infoDiv.innerHTML = `
+                <h4>${appointment.patientName}</h4>
+                <p>Current Date: <span class="current-datetime">${currentDate.toLocaleDateString()}</span></p>
+                <p>Current Time: <span class="current-datetime">${appointment.time}</span></p>
+                <p>Reason: ${appointment.reason || 'Consultation'}</p>
+            `;
+
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('newDate').min = today;
+
+            // Populate time slots
+            populateTimeSlots();
+
+            // Show modal
+            document.getElementById('rescheduleModal').classList.add('active');
+        }
+
+        // Close reschedule modal
+        function closeRescheduleModal() {
+            document.getElementById('rescheduleModal').classList.remove('active');
+            document.getElementById('rescheduleForm').reset();
+            currentRescheduleAppointment = null;
+        }
+
+        // Populate time slots dropdown
+        function populateTimeSlots() {
+            const timeSelect = document.getElementById('newTime');
+            timeSelect.innerHTML = '<option value="">Select Time</option>';
+
+            // Generate slots from 8 AM to 6 PM (20-minute intervals)
+            for (let hour = 8; hour < 18; hour++) {
+                for (let minute = 0; minute < 60; minute += 20) {
+                    const time = `${hour.toString().padStart(2, '0')}:${minute.toString().padStart(2, '0')}`;
+                    const option = document.createElement('option');
+                    option.value = time;
+                    option.textContent = time;
+                    timeSelect.appendChild(option);
+                }
+            }
+        }
+
+        // Confirm reschedule
+        function confirmReschedule() {
+            if (!currentRescheduleAppointment) return;
+
+            const newDate = document.getElementById('newDate').value;
+            const newTime = document.getElementById('newTime').value;
+            const reason = document.getElementById('rescheduleReason').value;
+
+            if (!newDate || !newTime) {
+                showNotification('Please select both date and time', 'error');
+                return;
+            }
+
+            // Find and update the appointment
+            const appointmentIndex = doctorAppointments.findIndex(apt => apt.id === currentRescheduleAppointment.id);
+            if (appointmentIndex !== -1) {
+                const oldDate = doctorAppointments[appointmentIndex].date;
+                const oldTime = doctorAppointments[appointmentIndex].time;
+
+                // Update appointment
+                doctorAppointments[appointmentIndex].date = new Date(newDate).toISOString();
+                doctorAppointments[appointmentIndex].time = newTime;
+                doctorAppointments[appointmentIndex].rescheduledAt = new Date().toISOString();
+                doctorAppointments[appointmentIndex].rescheduledBy = currentUser.name;
+                if (reason) {
+                    doctorAppointments[appointmentIndex].rescheduleReason = reason;
+                }
+
+                // Save to doctor's appointments
+                saveDoctorAppointments();
+
+                // Update patient's appointments
+                updatePatientAppointmentReschedule(doctorAppointments[appointmentIndex], oldDate, oldTime);
+
+                // Notify patient
+                notifyPatient(
+                    currentRescheduleAppointment.patientId,
+                    'Appointment Rescheduled',
+                    `Your appointment has been rescheduled from ${new Date(oldDate).toLocaleDateString()} at ${oldTime} to ${new Date(newDate).toLocaleDateString()} at ${newTime}. ${reason ? 'Reason: ' + reason : ''}`,
+                    currentRescheduleAppointment.id
+                );
+
+                // Refresh UI
+                renderDoctorAppointments();
+                closeRescheduleModal();
+
+                showNotification(`Appointment rescheduled successfully for ${currentRescheduleAppointment.patientName}`, 'success');
+            }
+        }
+
+        // Update patient appointment reschedule info
+        function updatePatientAppointmentReschedule(appointment, oldDate, oldTime) {
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${appointment.patientId}`) || '[]');
+            const aptIndex = patientAppointments.findIndex(apt => apt.id === appointment.id);
+
+            if (aptIndex !== -1) {
+                patientAppointments[aptIndex].date = appointment.date;
+                patientAppointments[aptIndex].time = appointment.time;
+                patientAppointments[aptIndex].rescheduledAt = appointment.rescheduledAt;
+                patientAppointments[aptIndex].rescheduledBy = appointment.rescheduledBy;
+                patientAppointments[aptIndex].previousDate = oldDate;
+                patientAppointments[aptIndex].previousTime = oldTime;
+                if (appointment.rescheduleReason) {
+                    patientAppointments[aptIndex].rescheduleReason = appointment.rescheduleReason;
+                }
+
+                localStorage.setItem(`patient_appointments_${appointment.patientId}`, JSON.stringify(patientAppointments));
+            }
+        }
+
+        // Notify patient about appointment changes
+        function notifyPatient(patientId, title, message, appointmentId) {
+            // Get existing notifications or create new array
+            let notifications = JSON.parse(localStorage.getItem(`patient_notifications_${patientId}`) || '[]');
+
+            // Add new notification
+            notifications.push({
+                id: 'NOTIF-' + Date.now(),
+                appointmentId: appointmentId,
+                title: title,
+                message: message,
+                type: 'reschedule',
+                read: false,
+                createdAt: new Date().toISOString(),
+                doctorName: currentUser.name
+            });
+
+            // Keep only the last 5 notifications (remove oldest if more than 5)
+            if (notifications.length > 5) {
+                notifications = notifications.slice(-5);
+            }
+
+            // Save notifications
+            localStorage.setItem(`patient_notifications_${patientId}`, JSON.stringify(notifications));
+
+            console.log(`Notification sent to patient ${patientId}: ${title}`);
+        }
+        
+        // Update patient appointment status
+        function updatePatientAppointmentStatus(appointment, status) {
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${appointment.patientId}`) || '[]');
+            const aptIndex = patientAppointments.findIndex(apt => apt.id === appointment.id);
+            
+            if (aptIndex !== -1) {
+                patientAppointments[aptIndex].status = status;
+                if (status === 'completed') {
+                    patientAppointments[aptIndex].completedAt = appointment.completedAt;
+                } else if (status === 'cancelled') {
+                    patientAppointments[aptIndex].cancelledAt = appointment.cancelledAt;
+                }
+                
+                localStorage.setItem(`patient_appointments_${appointment.patientId}`, JSON.stringify(patientAppointments));
+            }
+        }
+        
+        // Show notification (fallback if app.js not available)
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+                z-index: 3000;
+                max-width: 300px;
+                transform: translateX(400px);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(400px)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 4000);
+        }
+    </script>
+</body>
+</html>

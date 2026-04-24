@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Data Setup</title>
+</head>
+<body>
+    <h1>Setting up test data...</h1>
+    <script>
+        // Create sample patients
+        const patients = [
+            {
+                id: '1',
+                name: 'John Doe',
+                age: 45,
+                gender: 'male',
+                phone: '123-456-7890',
+                address: '123 Main St, City, State',
+                doctorId: 'doc1',
+                doctorName: 'Dr. Sarah Johnson',
+                createdAt: new Date().toISOString()
+            },
+            {
+                id: '2',
+                name: 'Jane Smith',
+                age: 52,
+                gender: 'female',
+                phone: '098-765-4321',
+                address: '456 Oak Ave, City, State',
+                doctorId: 'doc1',
+                doctorName: 'Dr. Sarah Johnson',
+                createdAt: new Date().toISOString()
+            }
+        ];
+
+        // Create sample reports
+        const reports = [
+            {
+                id: 'XR001',
+                patientId: '1',
+                patientName: 'John Doe',
+                doctorId: 'doc1',
+                doctorName: 'Dr. Sarah Johnson',
+                severity: 'medium',
+                findings: [
+                    'Moderate joint space narrowing observed',
+                    'Early signs of cartilage thinning',
+                    'Mild bone sclerosis detected'
+                ],
+                recommendations: [
+                    'Low-impact exercises recommended',
+                    'Weight management program',
+                    'Anti-inflammatory medication as needed'
+                ],
+                doctorComments: 'Patient shows moderate osteoarthritis progression. Follow up in 4 weeks.',
+                analysisDate: new Date('2026-03-30').toISOString(),
+                confidence: 0.87,
+                imageData: null,
+                diet: [
+                    'Increase omega-3 fatty acids',
+                    'Add more leafy greens',
+                    'Reduce processed foods'
+                ],
+                exercise: [
+                    'Swimming 3x per week',
+                    'Gentle yoga sessions',
+                    'Stationary cycling'
+                ],
+                followUp: '4 weeks',
+                createdAt: new Date('2026-03-30').toISOString()
+            },
+            {
+                id: 'XR002',
+                patientId: '1',
+                patientName: 'John Doe',
+                doctorId: 'doc1',
+                doctorName: 'Dr. Sarah Johnson',
+                severity: 'low',
+                findings: [
+                    'Mild joint space narrowing',
+                    'No significant cartilage loss',
+                    'Bone density within normal range'
+                ],
+                recommendations: [
+                    'Continue current exercise routine',
+                    'Maintain healthy weight',
+                    'Annual follow-up recommended'
+                ],
+                doctorComments: 'Condition appears stable. Continue current treatment plan.',
+                analysisDate: new Date('2026-03-15').toISOString(),
+                confidence: 0.92,
+                imageData: null,
+                diet: [
+                    'Maintain balanced diet',
+                    'Adequate calcium intake',
+                    'Vitamin D supplementation'
+                ],
+                exercise: [
+                    'Regular walking',
+                    'Light stretching',
+                    'Tai chi classes'
+                ],
+                followUp: '6 months',
+                createdAt: new Date('2026-03-15').toISOString()
+            },
+            {
+                id: 'XR003',
+                patientId: '2',
+                patientName: 'Jane Smith',
+                doctorId: 'doc1',
+                doctorName: 'Dr. Sarah Johnson',
+                severity: 'high',
+                findings: [
+                    'Severe joint space narrowing',
+                    'Significant cartilage loss',
+                    'Bone spurs present',
+                    'Subchondral cysts detected'
+                ],
+                recommendations: [
+                    'Consider surgical consultation',
+                    'Pain management program',
+                    'Assistive devices as needed'
+                ],
+                doctorComments: 'Advanced osteoarthritis detected. Referral to orthopedic surgeon recommended.',
+                analysisDate: new Date('2026-03-25').toISOString(),
+                confidence: 0.91,
+                imageData: null,
+                diet: [
+                    'Anti-inflammatory diet strict',
+                    'Glucosamine supplements',
+                    'Avoid high-impact activities'
+                ],
+                exercise: [
+                    'Water aerobics only',
+                    'Range of motion exercises',
+                    'Strength training with minimal impact'
+                ],
+                followUp: '2 weeks',
+                createdAt: new Date('2026-03-25').toISOString()
+            }
+        ];
+
+        // Create sample doctors
+        const doctors = [
+            {
+                id: 'doc1',
+                name: 'Dr. Sarah Johnson',
+                email: 'sarah.johnson@arthrosheild.com',
+                specialization: 'Orthopedic Surgeon',
+                hospital: 'City Medical Center',
+                role: 'doctor',
+                password: 'password123'
+            }
+        ];
+
+        // Create sample patient users
+        const patientUsers = [
+            {
+                id: '1',
+                name: 'John Doe',
+                email: 'john.doe@email.com',
+                role: 'patient',
+                password: 'password123'
+            },
+            {
+                id: '2',
+                name: 'Jane Smith',
+                email: 'jane.smith@email.com',
+                role: 'patient',
+                password: 'password123'
+            }
+        ];
+
+        // Save all data to localStorage
+        localStorage.setItem('arthrosheild_patients', JSON.stringify(patients));
+        localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+        localStorage.setItem('arthrosheild_doctors', JSON.stringify(doctors));
+        localStorage.setItem('arthrosheild_users', JSON.stringify([...doctors, ...patientUsers]));
+
+        document.body.innerHTML = '<h1>Test data setup complete!</h1><p>You can now test the application with:</p><ul><li>Doctor login: sarah.johnson@arthrosheild.com / password123</li><li>Patient login (John): john.doe@email.com / password123</li><li>Patient login (Jane): jane.smith@email.com / password123</li></ul><p><a href="home.html">Go to Home Page</a></p>';
+    </script>
+</body>
+</html>

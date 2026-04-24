@@ -1,0 +1,1507 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - My Reports</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 3%;
+        }
+        
+        .page-header {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .notification-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Notifications Modal */
+        .notifications-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .notifications-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notifications-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .notification-item.unread {
+            background: #fef3c7;
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.reschedule {
+            border-left-color: #f59e0b;
+        }
+
+        .notification-item.activity-skip {
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.appointment-reminder {
+            border-left-color: #10b981;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .notification-message {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .notification-doctor {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .mark-read-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .mark-read-btn:hover {
+            background: #5a67d8;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .close-modal-btn {
+            background: #e5e7eb;
+            color: #333;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .close-modal-btn:hover {
+            background: #d1d5db;
+        }
+
+        .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .reports-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .report-card {
+            background: #f8f8f8;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .report-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        }
+        
+        .report-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .patient-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
+        
+        .patient-name-row {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .patient-name {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #333;
+        }
+        
+        .report-date {
+            font-size: 0.8rem;
+            color: #6b7280;
+            font-weight: 500;
+        }
+        
+        .severity-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.2rem 0.65rem;
+            border-radius: 999px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+        }
+        
+        .severity-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .severity-medium {
+            background: #fed7aa;
+            color: #92400e;
+        }
+        
+        .severity-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .report-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.55rem 0.85rem;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .btn-primary {
+            background: #2f7d68;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #e5e7eb;
+            color: #374151;
+        }
+        
+        .btn-danger {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-view {
+            background: #4f46e5;
+            color: white;
+        }
+        
+        .btn-download {
+            background: #10b981;
+            color: white;
+        }
+        
+        .detail-label {
+            color: #666;
+        }
+        
+        .detail-value {
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .severity-badge {
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .severity-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .severity-medium {
+            background: #fed7aa;
+            color: #92400e;
+        }
+        
+        .severity-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .action-btn {
+            flex: 1;
+            padding: 0.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-view {
+            background: #667eea;
+            color: white;
+        }
+        
+        .btn-download {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-share {
+            background: #f59e0b;
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Summary Card Styles */
+        .summary-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.3);
+        }
+        
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .summary-item {
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .summary-value {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .summary-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        
+        .trend-indicator {
+            display: inline-flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-top: 1rem;
+        }
+        
+        .trend-improving {
+            background: rgba(16, 185, 129, 0.2);
+            color: #10b981;
+        }
+        
+        .trend-worsening {
+            background: rgba(239, 68, 68, 0.2);
+            color: #ef4444;
+        }
+        
+        .trend-stable {
+            background: rgba(245, 158, 11, 0.2);
+            color: #f59e0b;
+        }
+        
+        /* Filter Styles */
+        .filter-section {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .filter-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .filter-btn {
+            padding: 0.75rem 1.5rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .filter-btn:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+        
+        .filter-btn.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+        
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: #666;
+        }
+        
+        .empty-icon {
+            font-size: 4rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .empty-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+        
+        .empty-message {
+            font-size: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .refresh-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.375rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+        
+        .refresh-btn:hover {
+            background: #5a67d8;
+            transform: translateY(-2px);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+        
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+        }
+        
+        .modal-header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem 2rem;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin: 0;
+        }
+        
+        .close-modal {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-modal:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .modal-body {
+            padding: 2rem;
+        }
+        
+        .report-section {
+            margin-bottom: 2rem;
+        }
+        
+        .report-section h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #667eea;
+        }
+        
+        .report-image {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            border-radius: 10px;
+            margin: 1rem 0;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .finding-item, .recommendation-item {
+            background: #f8f9fa;
+            padding: 0.75rem;
+            margin: 0.5rem 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .doctor-comments {
+            background: #fef3c7;
+            border: 1px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .confidence-bar {
+            width: 100%;
+            height: 20px;
+            background: #e5e7eb;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 0.5rem 0;
+        }
+        
+        .confidence-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            transition: width 0.5s ease;
+        }
+        
+        .loading-spinner {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <h1 class="page-title"><i class="fas fa-file-medical"></i> My Medical Reports</h1>
+            <div class="header-actions">
+                <button class="notification-icon" id="notificationBtn" onclick="showNotifications()">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                </button>
+                <a href="patient-welcome.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i> Back to Dashboard
+                </a>
+            </div>
+        </div>
+        
+        <!-- Summary Card -->
+        <div class="summary-card" id="summaryCard">
+            <div class="summary-header">
+                <h2 class="summary-title">Your Report Summary</h2>
+                <div id="refreshIndicator">
+                    <i class="fas fa-sync-alt"></i> Live Updates
+                </div>
+            </div>
+            <div class="summary-grid">
+                <div class="summary-item">
+                    <div class="summary-value" id="totalReports">0</div>
+                    <div class="summary-label">Total Reports</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="latestSeverity">-</div>
+                    <div class="summary-label">Current Severity</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="lastAnalysisDate">-</div>
+                    <div class="summary-label">Last Analysis</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value" id="lastDoctor">-</div>
+                    <div class="summary-label">Last Doctor</div>
+                </div>
+            </div>
+            <div id="severityBreakdown" style="margin-bottom: 1rem;">
+                <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #10b981;" id="lowCount">0</div>
+                        <div style="font-size: 0.8rem; opacity: 0.9;">LOW</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #f59e0b;" id="mediumCount">0</div>
+                        <div style="font-size: 0.8rem; opacity: 0.9;">MEDIUM</div>
+                    </div>
+                    <div style="text-align: center;">
+                        <div style="font-size: 1.2rem; font-weight: 700; color: #ef4444;" id="highCount">0</div>
+                        <div style="font-size: 0.8rem; opacity: 0.9;">HIGH</div>
+                    </div>
+                </div>
+            </div>
+            <div class="trend-indicator" id="trendIndicator">
+                <i class="fas fa-chart-line"></i>
+                <span id="trendText">Analyzing trend...</span>
+            </div>
+        </div>
+        
+        <!-- Filter Section -->
+        <div class="filter-section">
+            <h3 style="margin: 0 0 1rem 0; color: #333;">Filter Reports</h3>
+            <div class="filter-buttons">
+                <button class="filter-btn active" data-filter="all" onclick="filterReports('all')">
+                    <i class="fas fa-list"></i> All Reports
+                </button>
+                <button class="filter-btn" data-filter="low" onclick="filterReports('low')">
+                    <i class="fas fa-check-circle"></i> Low Severity
+                </button>
+                <button class="filter-btn" data-filter="medium" onclick="filterReports('medium')">
+                    <i class="fas fa-exclamation-triangle"></i> Medium Severity
+                </button>
+                <button class="filter-btn" data-filter="high" onclick="filterReports('high')">
+                    <i class="fas fa-times-circle"></i> High Severity
+                </button>
+            </div>
+        </div>
+        
+        <!-- Loading Spinner -->
+        <div class="loading-spinner" id="loadingSpinner">
+            <div class="spinner"></div>
+            <p>Loading your reports...</p>
+        </div>
+        
+        <!-- Content Card -->
+        <div class="content-card" id="contentCard">
+            <div class="reports-grid" id="reportsGrid">
+                <!-- Reports will be dynamically loaded here -->
+            </div>
+            
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon">
+                    <i class="fas fa-file-medical"></i>
+                </div>
+                <h3 class="empty-title">No Reports Available</h3>
+                <p class="empty-message">
+                    No reports uploaded by your doctor yet. Your doctor will upload reports after X-ray analysis.
+                </p>
+                <button class="refresh-btn" onclick="loadReports()">
+                    <i class="fas fa-sync-alt"></i> Refresh
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Report Detail Modal -->
+    <div id="reportModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="modalTitle">Report Details</h2>
+                <button class="close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modalBody">
+                <!-- Report details will be loaded here -->
+            </div>
+        </div>
+    </div>
+    </div>
+    
+    <script>
+        // Global variables
+        let currentUser = null;
+        let allReports = [];
+        let filteredReports = [];
+        let currentFilter = 'all';
+        let refreshInterval = null;
+        
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthentication();
+            loadReports();
+            startRealTimeUpdates();
+        });
+        
+        // Check if user is authenticated as patient
+        function checkAuthentication() {
+            currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            if (!currentUser || currentUser.role !== 'patient') {
+                showNotification('Please login as a patient to view reports', 'error');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return false;
+            }
+            return true;
+        }
+        
+        // Load all reports for the current patient
+        function loadReports() {
+            if (!checkAuthentication()) return;
+            
+            showLoading(true);
+            
+            try {
+                // Load reports from patient-specific storage
+                const patientReportsKey = `patient_reports_${currentUser.id}`;
+                const patientSpecificReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                
+                // Use patient-specific reports as primary source
+                if (patientSpecificReports.length > 0) {
+                    allReports = patientSpecificReports;
+                    console.log(`Loaded ${allReports.length} reports from patient-specific storage (${patientReportsKey})`);
+                } else {
+                    // Fallback: Load from global collection and filter by patient (for backward compatibility)
+                    const allPatientReports = JSON.parse(localStorage.getItem('arthrosheild_reports') || '[]');
+                    
+                    // Filter reports for current patient (strict matching)
+                    allReports = allPatientReports.filter(report => {
+                        // Match by patient ID (most reliable)
+                        if (currentUser.id && report.patientId === currentUser.id.toString()) {
+                            return true;
+                        }
+                        // Match by patient name (fallback)
+                        if (currentUser.name && report.patientName === currentUser.name) {
+                            return true;
+                        }
+                        return false;
+                    });
+                    console.log(`Loaded ${allReports.length} reports from global collection (fallback)`);
+                }
+                
+                // Debug logging
+                console.log('Current Patient:', currentUser);
+                console.log('Patient Reports:', allReports);
+                
+                // Sort by most recent first
+                allReports.sort((a, b) => new Date(b.analysisDate) - new Date(a.analysisDate));
+                
+                // Apply current filter
+                applyFilter(currentFilter);
+                
+                // Update summary card
+                updateSummaryCard();
+                
+                // Hide loading spinner
+                showLoading(false);
+                
+            } catch (error) {
+                console.error('Error loading reports:', error);
+                showNotification('Error loading reports. Please try again.', 'error');
+                showLoading(false);
+            }
+        }
+        
+        // Apply filter to reports
+        function applyFilter(filter) {
+            currentFilter = filter;
+            
+            if (filter === 'all') {
+                filteredReports = [...allReports];
+            } else {
+                filteredReports = allReports.filter(report => 
+                    report.severity.toLowerCase() === filter.toLowerCase()
+                );
+            }
+            
+            // Update filter buttons
+            updateFilterButtons(filter);
+            
+            // Display filtered reports
+            displayReports();
+        }
+        
+        // Update filter button states
+        function updateFilterButtons(activeFilter) {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.dataset.filter === activeFilter) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+        }
+        
+        // Display reports in the grid
+        function displayReports() {
+            const reportsGrid = document.getElementById('reportsGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (filteredReports.length === 0) {
+                reportsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            reportsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            reportsGrid.innerHTML = filteredReports.map(report => createReportCard(report)).join('');
+        }
+        
+        // Create report card HTML
+        function createReportCard(report) {
+            const severityClass = `severity-${report.severity.toLowerCase()}`;
+            const formattedDate = formatDate(report.analysisDate);
+            
+            return `
+                <div class="report-card" onclick="viewReport('${report.id}')">
+                    <div class="report-top">
+                        <div class="patient-meta">
+                            <div class="patient-name-row">
+                                <div class="severity-badge ${severityClass}">${report.severity.toUpperCase()}</div>
+                                <div class="patient-name">${report.patientName || 'X-Ray Analysis Report'}</div>
+                            </div>
+                            <div class="report-date">${formattedDate}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">ID: #${report.id}</div>
+                        </div>
+                    </div>
+                    <div class="report-actions" style="margin-top: 0.75rem;">
+                        <button class="action-btn btn-view" onclick="event.stopPropagation(); viewReport('${report.id}')"><i class="fas fa-eye"></i> View</button>
+                        <button class="action-btn btn-download" onclick="event.stopPropagation(); downloadReport('${report.id}')"><i class="fas fa-download"></i> Download</button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Update summary card with statistics
+        function updateSummaryCard() {
+            const totalReports = allReports.length;
+            const latestReport = allReports[0]; // Most recent (already sorted)
+            
+            // Update basic stats
+            document.getElementById('totalReports').textContent = totalReports;
+            
+            if (latestReport) {
+                document.getElementById('latestSeverity').textContent = latestReport.severity.toUpperCase();
+                document.getElementById('lastAnalysisDate').textContent = formatDate(latestReport.analysisDate);
+                document.getElementById('lastDoctor').textContent = latestReport.doctorName || 'Dr. Unknown';
+            } else {
+                document.getElementById('latestSeverity').textContent = '-';
+                document.getElementById('lastAnalysisDate').textContent = '-';
+                document.getElementById('lastDoctor').textContent = '-';
+            }
+            
+            // Calculate severity breakdown
+            const severityCounts = {
+                low: allReports.filter(r => r.severity.toLowerCase() === 'low').length,
+                medium: allReports.filter(r => r.severity.toLowerCase() === 'medium').length,
+                high: allReports.filter(r => r.severity.toLowerCase() === 'high').length
+            };
+            
+            document.getElementById('lowCount').textContent = severityCounts.low;
+            document.getElementById('mediumCount').textContent = severityCounts.medium;
+            document.getElementById('highCount').textContent = severityCounts.high;
+            
+            // Calculate and display trend
+            updateTrendIndicator();
+        }
+        
+        // Calculate and update trend indicator
+        function updateTrendIndicator() {
+            const trendIndicator = document.getElementById('trendIndicator');
+            const trendText = document.getElementById('trendText');
+            
+            if (allReports.length < 2) {
+                trendIndicator.className = 'trend-indicator trend-stable';
+                trendText.textContent = 'Insufficient data for trend analysis';
+                return;
+            }
+            
+            // Get last 3 reports for trend analysis
+            const recentReports = allReports.slice(0, 3);
+            const severityValues = recentReports.map(r => {
+                const s = r.severity.toLowerCase();
+                return s === 'low' ? 1 : s === 'medium' ? 2 : 3;
+            });
+            
+            // Calculate trend
+            const firstValue = severityValues[severityValues.length - 1];
+            const lastValue = severityValues[0];
+            
+            if (lastValue < firstValue) {
+                trendIndicator.className = 'trend-indicator trend-improving';
+                trendText.textContent = 'Condition Improving';
+            } else if (lastValue > firstValue) {
+                trendIndicator.className = 'trend-indicator trend-worsening';
+                trendText.textContent = 'Condition Worsening';
+            } else {
+                trendIndicator.className = 'trend-indicator trend-stable';
+                trendText.textContent = 'Condition Stable';
+            }
+        }
+        
+        // Filter reports function
+        function filterReports(filter) {
+            applyFilter(filter);
+        }
+        
+        // View report details in modal
+        function viewReport(reportId) {
+            const report = allReports.find(r => r.id === reportId);
+            if (!report) {
+                showNotification('Report not found', 'error');
+                return;
+            }
+            
+            const modal = document.getElementById('reportModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const modalBody = document.getElementById('modalBody');
+            
+            modalTitle.textContent = `Report Details - #${report.id.toUpperCase()}`;
+            
+            modalBody.innerHTML = `
+                <div class="report-section">
+                    <h3>Report Information</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                        <div><strong>Report ID:</strong> #${report.id.toUpperCase()}</div>
+                        <div><strong>Patient:</strong> ${report.patientName}</div>
+                        <div><strong>Doctor:</strong> ${report.doctorName || 'Dr. Unknown'}</div>
+                        <div><strong>Analysis Date:</strong> ${formatDate(report.analysisDate)}</div>
+                        <div><strong>Severity:</strong> <span class="severity-badge severity-${report.severity.toLowerCase()}">${report.severity.toUpperCase()}</span></div>
+                        <div><strong>Confidence:</strong> ${Math.round((report.confidence || 0.85) * 100)}%</div>
+                    </div>
+                </div>
+                
+                ${report.imageData ? `
+                <div class="report-section">
+                    <h3>X-Ray Image</h3>
+                    <img src="${report.imageData}" alt="X-Ray Image" class="report-image">
+                </div>
+                ` : ''}
+                
+                <div class="report-section">
+                    <h3>Analysis Findings</h3>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: ${(report.confidence || 0.85) * 100}%"></div>
+                    </div>
+                    ${(report.findings || []).map(finding => `
+                        <div class="finding-item">
+                            <i class="fas fa-check-circle" style="color: #667eea; margin-right: 0.5rem;"></i>
+                            ${finding}
+                        </div>
+                    `).join('') || '<p>No specific findings recorded.</p>'}
+                </div>
+                
+                <div class="report-section">
+                    <h3>Recommendations</h3>
+                    ${(report.recommendations || []).map(rec => `
+                        <div class="recommendation-item">
+                            <i class="fas fa-lightbulb" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+                            ${rec}
+                        </div>
+                    `).join('') || '<p>No specific recommendations recorded.</p>'}
+                </div>
+                
+                ${report.doctorComments ? `
+                <div class="report-section">
+                    <h3>Doctor's Comments</h3>
+                    <div class="doctor-comments">
+                        <i class="fas fa-user-md" style="color: #f59e0b; margin-right: 0.5rem;"></i>
+                        <strong>${report.doctorName || 'Doctor'}:</strong>
+                        <p style="margin: 0.5rem 0 0 0;">${report.doctorComments}</p>
+                    </div>
+                </div>
+                ` : ''}
+                
+                <div style="text-align: center; margin-top: 2rem;">
+                    <button class="action-btn btn-download" onclick="downloadReport('${report.id}')" style="margin: 0 0.5rem;">
+                        <i class="fas fa-download"></i> Download PDF
+                    </button>
+                    <button class="action-btn btn-view" onclick="printReport()" style="margin: 0 0.5rem;">
+                        <i class="fas fa-print"></i> Print Report
+                    </button>
+                </div>
+            `;
+            
+            modal.style.display = 'block';
+        }
+        
+        // Close modal
+        function closeModal() {
+            document.getElementById('reportModal').style.display = 'none';
+        }
+        
+        // Download report as PDF
+        function downloadReport(reportId) {
+            const report = allReports.find(r => r.id === reportId);
+            if (!report) {
+                showNotification('Report not found', 'error');
+                return;
+            }
+            
+            // Create PDF content
+            const pdfContent = generatePDFContent(report);
+            
+            // Create download link
+            const blob = new Blob([pdfContent], { type: 'text/html' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ARTHROSHIELD_Report_${report.id}_${new Date().toISOString().split('T')[0]}.html`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+            
+            showNotification('Report downloaded successfully!', 'success');
+        }
+        
+        // Generate PDF content (HTML format for simplicity)
+        function generatePDFContent(report) {
+            return `
+<!DOCTYPE html>
+<html>
+<head>
+    <title>ARTHROSHIELD Report - ${report.id}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .header { text-align: center; border-bottom: 2px solid #667eea; padding-bottom: 20px; margin-bottom: 30px; }
+        .section { margin-bottom: 30px; }
+        .finding, .recommendation { background: #f8f9fa; padding: 10px; margin: 5px 0; border-left: 4px solid #667eea; }
+        .severity-${report.severity.toLowerCase()} { background: ${report.severity === 'low' ? '#d1fae5' : report.severity === 'medium' ? '#fed7aa' : '#fee2e2'}; color: ${report.severity === 'low' ? '#065f46' : report.severity === 'medium' ? '#92400e' : '#991b1b'}; padding: 4px 8px; border-radius: 4px; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>ARTHROSHIELD Medical Report</h1>
+        <h2>Knee Osteoarthritis Analysis</h2>
+    </div>
+    
+    <div class="section">
+        <h3>Report Information</h3>
+        <p><strong>Report ID:</strong> #${report.id.toUpperCase()}</p>
+        <p><strong>Patient:</strong> ${report.patientName}</p>
+        <p><strong>Doctor:</strong> ${report.doctorName || 'Dr. Unknown'}</p>
+        <p><strong>Analysis Date:</strong> ${formatDate(report.analysisDate)}</p>
+        <p><strong>Severity:</strong> <span class="severity-${report.severity.toLowerCase()}">${report.severity.toUpperCase()}</span></p>
+        <p><strong>Confidence:</strong> ${Math.round((report.confidence || 0.85) * 100)}%</p>
+    </div>
+    
+    <div class="section">
+        <h3>Findings</h3>
+        ${(report.findings || []).map(f => `<div class="finding">${f}</div>`).join('') || '<p>No specific findings recorded.</p>'}
+    </div>
+    
+    <div class="section">
+        <h3>Recommendations</h3>
+        ${(report.recommendations || []).map(r => `<div class="recommendation">${r}</div>`).join('') || '<p>No specific recommendations recorded.</p>'}
+    </div>
+    
+    ${report.doctorComments ? `
+    <div class="section">
+        <h3>Doctor's Comments</h3>
+        <p><strong>${report.doctorName || 'Doctor'}:</strong> ${report.doctorComments}</p>
+    </div>
+    ` : ''}
+    
+    <div style="text-align: center; margin-top: 40px; color: #666; font-size: 12px;">
+        <p>Generated by ARTHROSHIELD on ${new Date().toLocaleString()}</p>
+        <p>This report is for informational purposes only and should not replace professional medical advice.</p>
+    </div>
+</body>
+</html>
+            `;
+        }
+        
+        // Print report
+        function printReport() {
+            window.print();
+        }
+        
+        // Show/hide loading spinner
+        function showLoading(show) {
+            const spinner = document.getElementById('loadingSpinner');
+            const content = document.getElementById('contentCard');
+            
+            if (show) {
+                spinner.style.display = 'block';
+                content.style.display = 'none';
+            } else {
+                spinner.style.display = 'none';
+                content.style.display = 'block';
+            }
+        }
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            });
+        }
+        
+        // Start real-time updates
+        function startRealTimeUpdates() {
+            // Check for updates every 5 seconds
+            refreshInterval = setInterval(() => {
+                const previousReportCount = allReports.length;
+                loadReports();
+                
+                // If new reports were added, show notification
+                if (allReports.length > previousReportCount) {
+                    showNotification('New report available!', 'success');
+                }
+            }, 5000);
+        }
+        
+        // Stop real-time updates
+        function stopRealTimeUpdates() {
+            if (refreshInterval) {
+                clearInterval(refreshInterval);
+                refreshInterval = null;
+            }
+        }
+        
+        // Show notification (using existing function from app.js)
+        function showNotification(message, type = 'info') {
+            // This function should exist in app.js
+            if (typeof window.showNotification === 'function') {
+                window.showNotification(message, type);
+            } else {
+                console.log(`Notification (${type}): ${message}`);
+            }
+        }
+        
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('reportModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+        
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', function() {
+            stopRealTimeUpdates();
+        });
+
+        // Notification functions
+        function showNotifications() {
+            const modal = document.getElementById('notificationsModal');
+            loadNotifications();
+            modal.classList.add('active');
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationsModal').classList.remove('active');
+        }
+
+        function loadNotifications() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const list = document.getElementById('notificationsList');
+            const allNotifications = notifications.filter(n => 
+                n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder'
+            );
+
+            if (allNotifications.length === 0) {
+                list.innerHTML = `
+                    <div class="no-notifications">
+                        <i class="fas fa-bell-slash" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <p>No notifications yet</p>
+                        <p style="font-size: 0.9rem; color: #999;">You will receive notifications for appointment reminders, activity updates, and reschedule alerts.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let html = '';
+            allNotifications.forEach(notification => {
+                const isUnread = !notification.read;
+                const time = new Date(notification.createdAt).toLocaleString();
+                const typeClass = notification.type === 'reschedule' ? 'reschedule' : 
+                                 notification.type === 'activity_skip' ? 'activity-skip' : 'appointment-reminder';
+                html += `
+                    <div class="notification-item ${isUnread ? 'unread' : ''} ${typeClass}">
+                        <div class="notification-header">
+                            <span class="notification-title">${notification.title}</span>
+                            <span class="notification-time">${time}</span>
+                        </div>
+                        <div class="notification-message">
+                            ${notification.doctorName ? `<span class="notification-doctor">${notification.doctorName}</span>: ` : ''}${notification.message}
+                        </div>
+                        ${isUnread ? `<button class="mark-read-btn" onclick="markAsRead('${notification.id}')">Mark as Read</button>` : ''}
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function markAsRead(notificationId) {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const index = notifications.findIndex(n => n.id === notificationId);
+            if (index !== -1) {
+                notifications[index].read = true;
+                localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const unreadCount = notifications.filter(n => 
+                (n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder') && !n.read
+            ).length;
+            const badge = document.getElementById('notificationBadge');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Check for skipped activities and create notifications
+        function checkSkippedActivities() {
+            if (!currentUser) return;
+            
+            const patientActivities = JSON.parse(localStorage.getItem('patientActivities') || '[]');
+            const userActivities = patientActivities.filter(a => a.patientId === currentUser.id);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            userActivities.forEach(activity => {
+                if (activity.date === today && !activity.completed) {
+                    const alreadyNotified = notifications.some(n => 
+                        n.type === 'activity_skip' && 
+                        n.activityId === activity.id && 
+                        n.createdAt.startsWith(today)
+                    );
+                    
+                    if (!alreadyNotified) {
+                        notifications.push({
+                            id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            type: 'activity_skip',
+                            activityId: activity.id,
+                            title: 'Activity Skipped',
+                            message: `You missed your scheduled activity: "${activity.title}" for today. Stay consistent with your health routine!`,
+                            read: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Check for upcoming appointments and create reminder notifications
+        function checkUpcomingAppointments() {
+            if (!currentUser) return;
+            
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${currentUser.id}`) || '[]');
+            const today = new Date();
+            
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            patientAppointments.forEach(apt => {
+                if (apt.status === 'upcoming' || apt.status === 'approved') {
+                    const aptDate = new Date(apt.date);
+                    const daysUntil = Math.ceil((aptDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntil === 1 || daysUntil === 0) {
+                        const timeMsg = daysUntil === 0 ? 'today' : 'tomorrow';
+                        
+                        const alreadyNotified = notifications.some(n => 
+                            n.type === 'appointment_reminder' && 
+                            n.appointmentId === apt.id &&
+                            n.createdAt.startsWith(today.toISOString().split('T')[0])
+                        );
+                        
+                        if (!alreadyNotified) {
+                            notifications.push({
+                                id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                                type: 'appointment_reminder',
+                                appointmentId: apt.id,
+                                title: 'Appointment Reminder',
+                                message: `You have an appointment ${timeMsg} at ${apt.time} with Dr. ${apt.doctorName}. Don't forget to attend!`,
+                                read: false,
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeNotifications();
+        });
+
+        // Close notifications modal when clicking outside
+        document.getElementById('notificationsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeNotifications();
+        });
+
+        // Update notification badge on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUser) {
+                checkSkippedActivities();
+                checkUpcomingAppointments();
+                updateNotificationBadge();
+            }
+        });
+    </script>
+
+    <!-- Notifications Modal -->
+    <div class="notifications-modal" id="notificationsModal">
+        <div class="notifications-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: #333;"><i class="fas fa-bell"></i> Notifications</h3>
+                <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;" onclick="closeNotifications()">&times;</button>
+            </div>
+            <div id="notificationsList"></div>
+            <button class="close-modal-btn" onclick="closeNotifications()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+</body>
+</html>

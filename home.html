@@ -1,0 +1,4053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Advanced Medical Care Platform</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background: #ffffff;
+        }
+
+        /* Navigation */
+        .navbar {
+     position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 1rem 4%;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+    height: 80px;
+    display: flex;
+    align-items: center;
+        }
+
+        .navbar.scrolled {
+            padding: 0.75rem 4%;
+    background: rgba(255, 255, 255, 0.98);
+    height: 70px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1400px;
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+            padding: 0 4rem;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 4rem;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            background: transparent !important;
+            flex-shrink: 0;
+        }
+
+        .logo img {
+            height: 175px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
+        .btn-nav {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav-login {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-nav-login:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-nav-signup {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-nav-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Profile Icon Styles */
+        .navbar .profile-container {
+            display: none;
+            position: relative;
+        }
+
+        .navbar .profile-container.logged-in {
+            display: block !important;
+        }
+
+        .navbar .auth-buttons.logged-out {
+            display: none !important;
+        }
+
+        .profile-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            min-width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .profile-info h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .profile-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .profile-menu {
+            padding: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: rgba(102, 126, 234, 0.1);
+            margin: 0.5rem 1rem;
+        }
+
+        .profile-menu-item.logout {
+            color: #ef4444;
+        }
+
+        .profile-menu-item.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Hero Section */
+        .hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 0 4%;
+    padding-top: 95px;
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 50%, #f8f9ff 100%);
+    position: relative;
+    overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -20%;
+            width: 80%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(102, 126, 234, 0.1) 0%, transparent 70%);
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+
+        .hero-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            z-index: 1;
+            position: relative;
+            padding: 3rem 0;
+        }
+
+        .hero-content {
+            animation: slideInLeft 1s ease-out;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+    .hero-title {
+        font-size: 3.5rem;
+        font-weight: 800;
+        line-height: 1.3;
+        color: #1f2937;
+        margin-bottom: 1.8rem;
+        margin-top: 0;
+    }
+
+    .hero-title span {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            color: #6b7280;
+            line-height: 1.7;
+            margin-bottom: 2.5rem;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-hero {
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-hero-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-hero-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-hero-secondary:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-3px);
+        }
+
+        .hero-image {
+            position: relative;
+            animation: slideInRight 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            max-height: 600px;
+            object-fit: contain;
+            object-position: center;
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Features Section */
+        .features {
+            padding: 5rem 4%;
+            background: #f8f9ff;
+        }
+
+        .features-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+        }
+
+        /* FAQ Section specific header colors */
+        .faq .section-title {
+            color: #1e293b;
+        }
+
+        .faq .section-subtitle {
+            color: #475569;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2.5rem;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .feature-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            border-color: #667eea;
+        }
+
+        .feature-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 2rem;
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(5deg);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .feature-description {
+            color: #6b7280;
+            line-height: 1.6;
+        }
+
+        /* Stats Section */
+        .stats {
+            padding: 5rem 4%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .stats-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .stat-item {
+            padding: 2rem;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            color: #000000;
+            animation: countUp 2s ease-out;
+        }
+
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* Footer */
+        .footer {
+            padding: 3rem 4%;
+            background: #1f2937;
+            color: white;
+            text-align: center;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* About Section */
+        .about {
+            padding: 5rem 4%;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 50%, #f8f9ff 100%);
+        }
+
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .about-content {
+            animation: slideInLeft 1s ease-out;
+        }
+
+        .about-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            line-height: 1.3;
+        }
+
+        .about-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .about-features {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+            margin-bottom: 2.5rem;
+        }
+
+        .about-feature {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .about-feature:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .about-feature-icon {
+            width: 50px;
+            height: 50px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            margin-bottom: 1rem;
+        }
+
+        .about-feature-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .about-feature-description {
+            color: #6b7280;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .about-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .about-cta:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .about-visual {
+            position: relative;
+            animation: slideInRight 1s ease-out;
+        }
+
+        .about-image-placeholder {
+            width: 100%;
+            height: 400px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            color: white;
+        }
+
+        /* Services Section */
+        .services {
+            padding: 5rem 4%;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9ff 50%, #ffffff 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .services::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at top, rgba(102, 126, 234, 0.05) 0%, transparent 50%),
+                        radial-gradient(ellipse at bottom, rgba(118, 75, 162, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+
+        .services-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2.5rem;
+            margin-bottom: 4rem;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 24px;
+            padding: 3rem;
+            box-shadow: 
+                0 20px 60px rgba(0, 0, 0, 0.08),
+                0 10px 30px rgba(102, 126, 234, 0.12),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .service-card::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .service-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 
+                0 30px 80px rgba(0, 0, 0, 0.12),
+                0 15px 40px rgba(102, 126, 234, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                0 0 0 1px rgba(102, 126, 234, 0.1);
+        }
+
+        .service-card:hover::after {
+            opacity: 1;
+        }
+
+        .service-card:hover .service-icon {
+            transform: scale(1.1) rotate(5deg);
+            box-shadow: 
+                0 15px 40px rgba(102, 126, 234, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .service-card:hover .service-title {
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .service-card:hover .service-description {
+            color: #374151;
+            transform: translateY(-1px);
+        }
+
+        .service-card:hover .service-features li {
+            background: rgba(102, 126, 234, 0.1);
+            transform: translateX(8px);
+            border-left-color: #667eea;
+        }
+
+        .service-card:hover .service-features i {
+            color: #667eea;
+            transform: scale(1.2);
+        }
+
+        .service-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(102, 126, 234, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .service-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-description {
+            color: #6b7280;
+            line-height: 1.7;
+            margin-bottom: 1.8rem;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        .service-features {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 2.5rem;
+        }
+
+        .service-features li {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #374151;
+            font-size: 0.95rem;
+            margin-bottom: 0.8rem;
+            padding: 0.5rem;
+            background: rgba(102, 126, 234, 0.03);
+            border-radius: 8px;
+            border-left: 3px solid #10b981;
+            transition: all 0.3s ease;
+        }
+
+        .service-features li:hover {
+            background: rgba(102, 126, 234, 0.08);
+            transform: translateX(5px);
+        }
+
+        .service-features i {
+            color: #10b981;
+            font-size: 0.9rem;
+            text-shadow: 0 1px 2px rgba(16, 185, 129, 0.3);
+        }
+
+        .service-cta {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-weight: 600;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 
+                0 8px 25px rgba(102, 126, 234, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-cta::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .service-cta:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 
+                0 15px 40px rgba(102, 126, 234, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
+        }
+
+        .service-cta:hover::before {
+            left: 100%;
+        }
+
+        .service-benefits {
+            background: white;
+            border-radius: 24px;
+            padding: 4rem;
+            box-shadow: 
+                0 25px 70px rgba(0, 0, 0, 0.1),
+                0 10px 30px rgba(102, 126, 234, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .service-benefits::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.03) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .benefits-header h3 {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1.2rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefits-header p {
+            color: #6b7280;
+            font-size: 1.15rem;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefits-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 2.5rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .benefit-item {
+            text-align: center;
+            padding: 1.5rem;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.8);
+            box-shadow: 
+                0 8px 25px rgba(0, 0, 0, 0.06),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        .benefit-item:hover {
+            transform: translateY(-8px) scale(1.03);
+            box-shadow: 
+                0 15px 40px rgba(0, 0, 0, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+
+        .benefit-icon {
+            width: 70px;
+            height: 70px;
+            background: linear-gradient(135deg, #10b981, #059669);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+            font-size: 1.8rem;
+            color: white;
+            box-shadow: 
+                0 10px 30px rgba(16, 185, 129, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .benefit-icon::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 30%, rgba(255, 255, 255, 0.3) 50%, transparent 70%);
+            animation: shimmer 3s infinite;
+        }
+
+        .benefit-item h4 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #1f2937;
+            margin-bottom: 0.8rem;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+        }
+
+        .benefit-item p {
+            color: #6b7280;
+            font-size: 0.95rem;
+            text-shadow: 0 1px 1px rgba(255, 255, 255, 0.8);
+        }
+
+        /* Parallax and Reveal Effects */
+        .parallax-section {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .parallax-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 120%;
+            background-size: cover;
+            background-position: center;
+            will-change: transform;
+            z-index: -1;
+        }
+
+        .reveal-element {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-element.revealed {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .reveal-left {
+            transform: translateX(-50px);
+        }
+
+        .reveal-right {
+            transform: translateX(50px);
+        }
+
+        .reveal-left.revealed,
+        .reveal-right.revealed {
+            transform: translateX(0);
+        }
+
+        .reveal-scale {
+            transform: scale(0.8);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-scale.revealed {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        .reveal-rotate {
+            transform: rotate(-5deg) scale(0.9);
+            opacity: 0;
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .reveal-rotate.revealed {
+            transform: rotate(0deg) scale(1);
+            opacity: 1;
+        }
+
+        /* Enhanced section backgrounds for parallax */
+        .features {
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #e0e7ff 100%);
+        }
+
+        .features::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(99, 102, 241, 0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+            z-index: -1;
+        }
+
+        .about {
+            position: relative;
+            background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 50%, #f8f9ff 100%);
+        }
+
+        .about::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 50%, rgba(118, 75, 162, 0.1) 0%, transparent 50%);
+            z-index: -1;
+        }
+
+        .stats {
+            position: relative;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            overflow: hidden;
+        }
+
+        .stats::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="dots" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="10" cy="10" r="1" fill="rgba(255,255,255,0.1)"/></pattern></defs><rect width="100" height="100" fill="url(%23dots)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+            z-index: -1;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .faq {
+            position: relative;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+        }
+
+        .faq::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="lines" width="50" height="50" patternUnits="userSpaceOnUse"><path d="M 0 25 L 50 25 M 0 50 L 50 50 M 0 75 L 50 75" stroke="rgba(99, 102, 241, 0.03)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23lines)"/></svg>');
+            opacity: 0.5;
+            z-index: -1;
+        }
+
+        .contact {
+            position: relative;
+            background: linear-gradient(135deg, #f8fafc 0%, #ffffff 100%);
+        }
+
+        .contact::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(ellipse at center, rgba(102, 126, 234, 0.05) 0%, transparent 70%);
+            z-index: -1;
+        }
+
+        /* Enhanced section title styling */
+        .services .section-title {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+        }
+
+        .services .section-subtitle {
+            font-size: 1.3rem;
+            color: #6b7280;
+            margin-bottom: 3rem;
+        }
+
+        /* Smooth scroll behavior */
+        html {
+            scroll-behavior: smooth;
+        }
+
+        /* Enhanced animations for elements */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in-up.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .fade-in-left {
+            opacity: 0;
+            transform: translateX(-30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in-left.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .fade-in-right {
+            opacity: 0;
+            transform: translateX(30px);
+            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .fade-in-right.active {
+            opacity: 1;
+            transform: translateX(0);
+        }
+
+        .stagger-animation > * {
+            opacity: 0;
+            transition: all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        .stagger-animation.active > *:nth-child(1) { transition-delay: 0.1s; }
+        .stagger-animation.active > *:nth-child(2) { transition-delay: 0.2s; }
+        .stagger-animation.active > *:nth-child(3) { transition-delay: 0.3s; }
+        .stagger-animation.active > *:nth-child(4) { transition-delay: 0.4s; }
+        .stagger-animation.active > *:nth-child(5) { transition-delay: 0.5s; }
+        .stagger-animation.active > *:nth-child(6) { transition-delay: 0.6s; }
+
+        .stagger-animation.active > * {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        @keyframes slideInRight {
+            from {
+                opacity: 0;
+                transform: translateX(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Contact Section */
+        .contact {
+            padding: 5rem 4%;
+            background: #ffffff;
+        }
+
+        .contact-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .contact-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .contact-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 1rem;
+        }
+
+        .contact-subtitle {
+            font-size: 1.2rem;
+            color: #6b7280;
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.6;
+        }
+
+        .contact-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .contact-info {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+            border-color: rgba(102, 126, 234, 0.2);
+        }
+
+        .contact-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .contact-details h4 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.25rem;
+        }
+
+        .contact-details p {
+            color: #6b7280;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+
+        .contact-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+
+        .form-submit {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.5rem;
+        }
+
+        .footer-links a {
+            color: #9ca3af;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: #667eea;
+        }
+
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid #374151;
+            color: #9ca3af;
+        }
+
+        /* Mobile Responsive */
+@media (max-width: 1024px) {
+    .hero-container {
+        grid-template-columns: 1fr;
+        gap: 3rem;
+        text-align: center;
+        padding: 2rem 0;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
+    }
+    
+    .nav-links {
+        display: none;
+    }
+    
+    .hero {
+        padding-top: 95px;
+    }
+}
+
+        @media (max-width: 768px) {
+    .navbar {
+        padding: 1rem 4%;
+        height: 80px;
+    }
+    
+    .navbar.scrolled {
+        padding: 0.75rem 4%;
+        height: 70px;
+    }
+    
+    .hero {
+        padding: 0 4%;
+        padding-top: 95px;
+    }
+    
+    .hero-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+        padding: 1.5rem 0;
+    }
+
+    .hero-title {
+        font-size: 2.2rem;
+        line-height: 1.3;
+    }
+
+    .hero-subtitle {
+        font-size: 1.1rem;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+    }
+
+    .hero-image {
+        display: none;
+    }
+     .features {
+        padding: 3rem 4%;
+    }
+    
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .stats {
+        padding: 3rem 4%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+    }
+    
+    .stat-number {
+        font-size: 2.5rem;
+    }
+    
+    .about {
+        padding: 3rem 4%;
+    }
+    
+    .about-container {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+        text-align: center;
+    }
+    
+    .about-features {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+    
+    .about-title {
+        font-size: 2rem;
+    }
+    
+    .about-visual {
+        order: -1;
+    }
+    
+    .about-image-placeholder {
+        height: 250px;
+        font-size: 3rem;
+    }
+    
+    .contact {
+        padding: 3rem 4%;
+    }
+    
+    .contact-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+    
+    .contact-title {
+        font-size: 2rem;
+    }
+    
+    .footer {
+        padding: 2rem 4%;
+    }
+    
+    .footer-content {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
+    /* FAQ Section */
+    .faq {
+        padding: 5rem 4%;
+        background: 
+            linear-gradient(135deg, #f0f4ff 0%, #ffffff 35%, #fafbff 65%, #f0f4ff 100%),
+            radial-gradient(circle at 20% 80%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+            radial-gradient(circle at 80% 20%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .faq::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -20%;
+        width: 80%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(102, 126, 234, 0.08) 0%, transparent 70%);
+        animation: float 25s ease-in-out infinite;
+    }
+
+    .faq-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+    }
+
+    /* FAQ Category Tabs */
+    .faq-categories {
+        display: flex;
+        gap: 1rem;
+        margin: 2rem 0;
+        padding: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 15px;
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .category-tab {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: rgba(255, 255, 255, 0.9);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        color: #4b5563;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 0.95rem;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .category-tab::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transition: left 0.3s ease;
+        z-index: -1;
+    }
+
+    .category-tab:hover {
+        background: rgba(255, 255, 255, 1);
+        border-color: rgba(102, 126, 234, 0.4);
+        color: #667eea;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(102, 126, 234, 0.25);
+    }
+
+    .category-tab.active {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .category-tab i {
+        font-size: 1rem;
+    }
+
+    .faq-grid {
+        display: grid;
+        gap: 1.5rem;
+        margin-top: 2rem;
+    }
+
+    .faq-grid.hidden {
+        display: none;
+    }
+
+    .faq-item {
+        background: white;
+        border-radius: 20px;
+        overflow: hidden;
+        border: 2px solid transparent;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        animation: slideInUp 0.6s ease-out;
+        animation-fill-mode: both;
+        cursor: pointer;
+        position: relative;
+    }
+
+    .faq-item:nth-child(1) { animation-delay: 0.1s; }
+    .faq-item:nth-child(2) { animation-delay: 0.2s; }
+    .faq-item:nth-child(3) { animation-delay: 0.3s; }
+    .faq-item:nth-child(4) { animation-delay: 0.4s; }
+    .faq-item:nth-child(5) { animation-delay: 0.5s; }
+    .faq-item:nth-child(6) { animation-delay: 0.6s; }
+    .faq-item:nth-child(7) { animation-delay: 0.7s; }
+    .faq-item:nth-child(8) { animation-delay: 0.8s; }
+
+    @keyframes slideInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .faq-item::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .faq-item:hover::before,
+    .faq-item.active::before {
+        transform: scaleX(1);
+    }
+
+    .faq-item:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(102, 126, 234, 0.15);
+        border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .faq-item.active {
+        border-color: #667eea;
+        box-shadow: 0 20px 50px rgba(102, 126, 234, 0.2);
+    }
+
+    .faq-question {
+        display: flex;
+        align-items: center;
+        padding: 2rem;
+        gap: 1.5rem;
+        position: relative;
+    }
+
+    .faq-icon {
+        width: 60px;
+        height: 60px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+        transition: all 0.3s ease;
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .faq-item:hover .faq-icon {
+        transform: scale(1.1) rotate(5deg);
+        box-shadow: 0 12px 35px rgba(102, 126, 234, 0.5);
+    }
+
+    .faq-item.active .faq-icon {
+        transform: scale(1.1) rotate(360deg);
+        background: linear-gradient(135deg, #764ba2, #667eea);
+        box-shadow: 0 15px 40px rgba(118, 75, 162, 0.4);
+    }
+
+    .faq-question h3 {
+        flex: 1;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin: 0;
+        transition: color 0.3s ease;
+    }
+
+    .faq-item:hover .faq-question h3 {
+        color: #667eea;
+    }
+
+    .faq-item.active .faq-question h3 {
+        color: #667eea;
+    }
+
+    .faq-toggle {
+        width: 40px;
+        height: 40px;
+        background: rgba(102, 126, 234, 0.1);
+        border: 2px solid rgba(102, 126, 234, 0.2);
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #667eea;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        flex-shrink: 0;
+    }
+
+    .faq-item:hover .faq-toggle {
+        background: rgba(102, 126, 234, 0.2);
+        border-color: rgba(102, 126, 234, 0.3);
+        transform: scale(1.1);
+    }
+
+    .faq-item.active .faq-toggle {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-color: transparent;
+        color: white;
+        transform: rotate(180deg);
+        box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    .faq-answer {
+        max-height: 0;
+        overflow: hidden;
+        transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        opacity: 0;
+    }
+
+    .faq-item.active .faq-answer {
+        max-height: 500px;
+        opacity: 1;
+        padding: 0 2rem 2rem 5.5rem;
+    }
+
+    .faq-answer p {
+        color: #6b7280;
+        line-height: 1.7;
+        font-size: 1rem;
+        margin: 0;
+        animation: fadeInText 0.5s ease-out 0.2s both;
+    }
+
+    @keyframes fadeInText {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .faq-cta {
+        text-align: center;
+        margin-top: 3rem;
+        padding: 2rem;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        border: 2px solid rgba(102, 126, 234, 0.1);
+        animation: slideInUp 0.8s ease-out 0.9s both;
+    }
+
+    .faq-cta h3 {
+        font-size: 1.8rem;
+        color: #1f2937;
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .faq-cta > p {
+        font-size: 1.2rem;
+        color: #6b7280;
+        margin-bottom: 2rem;
+        font-weight: 400;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+
+    .faq-cta-options {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .cta-option {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: rgba(102, 126, 234, 0.05);
+        border-radius: 15px;
+        border: 1px solid rgba(102, 126, 234, 0.1);
+        transition: all 0.3s ease;
+    }
+
+    .cta-option:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
+        border-color: rgba(102, 126, 234, 0.2);
+    }
+
+    .cta-icon {
+        width: 50px;
+        height: 50px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.2rem;
+        flex-shrink: 0;
+    }
+
+    .cta-content h4 {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1f2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .cta-content p {
+        font-size: 1rem;
+        color: #667eea;
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .cta-content span {
+        font-size: 0.9rem;
+        color: #9ca3af;
+    }
+
+    .faq-cta-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-bottom: 2.5rem;
+        flex-wrap: wrap;
+    }
+
+    .faq-cta-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        transition: all 0.3s ease;
+        cursor: pointer;
+        border: none;
+    }
+
+    .faq-cta-btn.primary {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    }
+
+    .faq-cta-btn.primary:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 35px rgba(102, 126, 234, 0.6);
+    }
+
+    .faq-cta-btn.secondary {
+        background: white;
+        color: #667eea;
+        border: 2px solid #667eea;
+    }
+
+    .faq-cta-btn.secondary:hover {
+        background: #667eea;
+        color: white;
+        transform: translateY(-3px);
+        box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+    }
+
+    
+    /* FAQ Mobile Responsive */
+    @media (max-width: 768px) {
+        .faq {
+            padding: 3rem 4%;
+        }
+
+        .faq-categories {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .category-tab {
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .faq-question {
+            padding: 1.5rem;
+            gap: 1rem;
+        }
+
+        .faq-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.2rem;
+        }
+
+        .faq-question h3 {
+            font-size: 1.1rem;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 1.5rem 1.5rem 4.5rem;
+        }
+
+        .faq-cta {
+            padding: 2rem 1.5rem;
+        }
+
+        .faq-cta h3 {
+            font-size: 1.5rem;
+        }
+
+        .faq-cta > p {
+            font-size: 1.1rem;
+        }
+
+        .faq-cta-options {
+            grid-template-columns: 1fr;
+            gap: 1rem;
+        }
+
+        .cta-option {
+            padding: 1rem;
+        }
+
+        .cta-icon {
+            width: 45px;
+            height: 45px;
+            font-size: 1.1rem;
+        }
+
+        .faq-cta-buttons {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .faq-cta-btn {
+            padding: 1rem;
+            font-size: 1rem;
+            justify-content: center;
+        }
+    }
+
+    /* Activity Modal Styles */
+    .activity-modal {
+        max-width: 800px;
+        width: 95%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid #e5e7eb;
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        color: #1f2937;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .duration-section {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 1rem;
+        background: #f8fafc;
+        padding: 1rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .duration-info {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .duration-info label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+    }
+
+    .duration-info span {
+        color: #1f2937;
+        font-weight: 500;
+    }
+
+    .activity-sections {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .activity-section {
+        background: white;
+        border: 2px solid #e5e7eb;
+        border-radius: 15px;
+        padding: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .activity-section:hover {
+        border-color: #667eea;
+        box-shadow: 0 10px 30px rgba(102, 126, 234, 0.1);
+    }
+
+    .section-title {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #1f2937;
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #f3f4f6;
+    }
+
+    .section-title i {
+        color: #667eea;
+    }
+
+    .activity-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .activity-item {
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 10px;
+        padding: 1rem;
+        transition: all 0.3s ease;
+    }
+
+    .activity-item:hover {
+        background: #f1f5f9;
+        border-color: #cbd5e1;
+    }
+
+    .activity-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        cursor: pointer;
+    }
+
+    .activity-name {
+        color: #374151;
+        font-weight: 500;
+        flex: 1;
+    }
+
+    .activity-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .activity-checkbox {
+        width: 18px;
+        height: 18px;
+        cursor: pointer;
+        accent-color: #667eea;
+    }
+
+    .complete-text {
+        color: #667eea;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    /* Role-based visibility */
+    .activity-status[data-role="patient"] {
+        display: flex;
+    }
+
+    .activity-status[data-role="doctor"] {
+        display: flex;
+    }
+
+    .activity-status[data-role="patient"] .activity-checkbox {
+        display: block;
+    }
+
+    .activity-status[data-role="doctor"] .activity-checkbox {
+        display: none;
+    }
+
+    .activity-status[data-role="doctor"] .complete-text {
+        color: #6b7280;
+        font-style: italic;
+    }
+
+    /* Activity Details Popup */
+    .popup {
+        display: none;
+        position: fixed;
+        z-index: 10001;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        animation: fadeIn 0.3s ease;
+    }
+
+    .popup-content {
+        background-color: white;
+        margin: 10% auto;
+        padding: 2rem;
+        border: none;
+        border-radius: 20px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        animation: slideIn 0.3s ease;
+        position: relative;
+    }
+
+    .popup-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    .popup-header h3 {
+        color: #1f2937;
+        font-size: 1.3rem;
+        font-weight: 600;
+    }
+
+    .close-popup {
+        color: #6b7280;
+        font-size: 24px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .close-popup:hover {
+        color: #667eea;
+    }
+
+    .popup-body {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .detail-section {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+
+    .detail-section label {
+        font-weight: 600;
+        color: #374151;
+        font-size: 0.9rem;
+    }
+
+    .detail-section span,
+    .detail-section p {
+        color: #1f2937;
+        font-weight: 400;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-badge.completed {
+        background: #d1fae5;
+        color: #065f46;
+    }
+
+    .status-badge.pending {
+        background: #fef3c7;
+        color: #92400e;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .activity-modal {
+            width: 98%;
+            max-height: 90vh;
+        }
+
+        .duration-section {
+            grid-template-columns: 1fr;
+        }
+
+        .activity-details {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .activity-status {
+            align-self: flex-end;
+        }
+    }
+</style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">
+                <img src="images/logo.png" alt="ARTHROSHIELD">
+            </a>
+            <div class="nav-right">
+                <div class="nav-links">
+                    <a href="#features" class="nav-link">Features</a>
+                    <a href="#services" class="nav-link">Services</a>
+                    <a href="#about" class="nav-link">About</a>
+                    <a href="#faq" class="nav-link">FAQ</a>
+                    <a href="#contact" class="nav-link">Contact</a>
+                </div>
+                <div class="auth-buttons">
+                    <a href="login.html" class="btn-nav btn-nav-login">
+                        <i class="fas fa-sign-in-alt"></i> Login
+                    </a>
+                    <a href="signup.html" class="btn-nav btn-nav-signup">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </a>
+                </div>
+            </div>
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileDropdown()">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h4 id="profileName">John Doe</h4>
+                            <p id="profileEmail">john.doe@example.com</p>
+                        </div>
+                    </div>
+                    <div class="profile-menu">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-user"></i>
+                            <span>My Profile</span>
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-file-medical"></i>
+                            <span>Medical Records</span>
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-calendar"></i>
+                            <span>Appointments</span>
+                        </a>
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-cog"></i>
+                            <span>Settings</span>
+                        </a>
+                        <div class="profile-menu-divider"></div>
+                        <a href="#" class="profile-menu-item logout" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-container">
+            <div class="hero-content">
+                <h1 class="hero-title">
+                    Protecting Your <span>Mobility</span>,<br>
+                    Empowering Your <span>Recovery</span>
+                </h1>
+                <p class="hero-subtitle">
+                    Experience the future of orthopedic care with our advanced AI-powered X-ray analysis platform. 
+                    Get accurate diagnoses, personalized treatment plans, and comprehensive health monitoring.
+                </p>
+                <div class="hero-buttons">
+                    <a href="signup.html" class="btn-hero btn-hero-primary">
+                        <i class="fas fa-rocket"></i> Get Started
+                    </a>
+                    <a href="#features" class="btn-hero btn-hero-secondary">
+                        <i class="fas fa-play-circle"></i> Learn More
+                    </a>
+                </div>
+            </div>
+            <div class="hero-image">
+                <img src="images/beautiful-young-female-doctor-looking-camera-office-removebg-preview.png" alt="Doctor">
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="features-container">
+            <div class="section-header">
+                <h2 class="section-title" style="font-size: 3.5rem;">Revolutionary Features</h2>
+                <p class="section-subtitle">Cutting-edge technology meets compassionate care</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3 class="feature-title">AI-Powered Analysis</h3>
+                    <p class="feature-description">
+                        Advanced machine learning algorithms analyze X-rays with unprecedented accuracy, 
+                        providing detailed insights and severity assessments.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-md"></i>
+                    </div>
+                    <h3 class="feature-title">Expert Medical Care</h3>
+                    <p class="feature-description">
+                        Connect with board-certified orthopedic specialists who review AI findings 
+                        and provide personalized treatment recommendations.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="feature-title">Progress Tracking</h3>
+                    <p class="feature-description">
+                        Monitor your recovery journey with comprehensive analytics, activity tracking, 
+                        and milestone celebrations.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Mobile Access</h3>
+                    <p class="feature-description">
+                        Access your medical records, reports, and treatment plans anytime, anywhere 
+                        through our secure mobile-optimized platform.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3 class="feature-title">Secure & Private</h3>
+                    <p class="feature-description">
+                        Your health data is protected with enterprise-grade security and HIPAA-compliant 
+                        privacy measures.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h3 class="feature-title">24/7 Support</h3>
+                    <p class="feature-description">
+                        Round-the-clock medical support and emergency consultation services whenever 
+                        you need them most.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="stats">
+        <div class="stats-container" style="text-align: center;">
+            <h2 class="section-title" style="color: black; font-size: 3.5rem; margin-bottom: 1rem; font-weight: 700; display: inline-block; position: relative;">Trusted by Thousands</h2>
+            <hr style="width: 80%; margin: 1.5rem auto; border: none; height: 2px; background-color: #667eea;">
+            <p class="section-subtitle" style="color: black; font-size: 1.1rem; margin-bottom: 2rem; font-weight: 500;">Join our growing community of healthy patients</p>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">10,000+</div>
+                    <div class="stat-label">Patients Treated</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <div class="stat-label">Expert Doctors</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">50,000+</div>
+                    <div class="stat-label">X-Rays Analyzed</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">98%</div>
+                    <div class="stat-label">Success Rate</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about" id="about">
+        <div class="about-container">
+            <div class="about-content">
+                <h2 class="about-title">About ARTHROSHIELD</h2>
+                <p class="about-subtitle">
+                    ARTHROSHIELD is an AI-powered orthopedic care platform dedicated to improving mobility, 
+                    accelerating recovery, and enhancing patient outcomes through cutting-edge technology 
+                    and compassionate medical care.
+                </p>
+                
+                <div class="about-features">
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h3 class="about-feature-title">AI-Powered Diagnosis</h3>
+                        <p class="about-feature-description">
+                            Advanced machine learning algorithms provide accurate and timely medical analysis.
+                        </p>
+                    </div>
+                    
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3 class="about-feature-title">Trusted Specialists</h3>
+                        <p class="about-feature-description">
+                            Network of experienced orthopedic specialists dedicated to your care.
+                        </p>
+                    </div>
+                    
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-heart"></i>
+                        </div>
+                        <h3 class="about-feature-title">Personalized Recovery</h3>
+                        <p class="about-feature-description">
+                            Custom treatment plans tailored to your unique recovery journey.
+                        </p>
+                    </div>
+                    
+                    <div class="about-feature">
+                        <div class="about-feature-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3 class="about-feature-title">Secure Data</h3>
+                        <p class="about-feature-description">
+                    Your medical information is protected with enterprise-grade security.
+                        </p>
+                    </div>
+                </div>
+                
+                <a href="#contact" class="about-cta">
+                    <i class="fas fa-users"></i> Meet Our Team
+                </a>
+            </div>
+            
+            <div class="about-visual" style="width: 100%; height: 100%; min-height: 400px;">
+                <img src="images/portrait-confident-male-doctor.jpg" alt="Doctor" style="width: 100%; height: 100%; object-fit: contain; display: block;">
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services" id="services">
+        <div class="services-container">
+            <div class="section-header">
+                <h2 class="section-title">Our Services</h2>
+                <p class="section-subtitle">Comprehensive orthopedic care powered by advanced AI technology</p>
+            </div>
+            
+            <div class="services-grid">
+                <!-- AI X-Ray Analysis -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-x-ray"></i>
+                    </div>
+                    <h3 class="service-title">AI X-Ray Analysis</h3>
+                    <p class="service-description">
+                        Advanced machine learning algorithms analyze X-rays with unprecedented accuracy, providing detailed insights and severity assessments for orthopedic conditions.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> 98% Accuracy Rate</li>
+                        <li><i class="fas fa-check"></i> Instant Results</li>
+                        <li><i class="fas fa-check"></i> Multiple Condition Detection</li>
+                    </ul>
+                </div>
+
+                <!-- Doctor Consultation -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-stethoscope"></i>
+                    </div>
+                    <h3 class="service-title">Doctor Consultation</h3>
+                    <p class="service-description">
+                        Connect with board-certified orthopedic specialists who review AI findings and provide personalized treatment recommendations.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Expert Orthopedic Doctors</li>
+                        <li><i class="fas fa-check"></i> Video Consultations</li>
+                        <li><i class="fas fa-check"></i> Second Opinions Available</li>
+                    </ul>
+                </div>
+
+                <!-- Treatment Planning -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-clipboard-list"></i>
+                    </div>
+                    <h3 class="service-title">Treatment Planning</h3>
+                    <p class="service-description">
+                        Personalized treatment plans created by combining AI insights with expert medical knowledge for optimal recovery outcomes.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Custom Recovery Plans</li>
+                        <li><i class="fas fa-check"></i> Progress Tracking</li>
+                        <li><i class="fas fa-check"></i> Activity Management</li>
+                    </ul>
+                </div>
+
+                <!-- Progress Monitoring -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="service-title">Progress Monitoring</h3>
+                    <p class="service-description">
+                        Continuous monitoring of your recovery journey with comprehensive analytics, milestone tracking, and adaptive treatment adjustments.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Real-time Analytics</li>
+                        <li><i class="fas fa-check"></i> Milestone Tracking</li>
+                        <li><i class="fas fa-check"></i> Progress Reports</li>
+                    </ul>
+                </div>
+
+                <!-- Emergency Care -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-ambulance"></i>
+                    </div>
+                    <h3 class="service-title">Emergency Care</h3>
+                    <p class="service-description">
+                        24/7 emergency orthopedic support with rapid assessment and immediate care coordination for urgent medical situations.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> 24/7 Availability</li>
+                        <li><i class="fas fa-check"></i> Emergency Assessment</li>
+                        <li><i class="fas fa-check"></i> Care Coordination</li>
+                    </ul>
+                </div>
+
+                <!-- Rehabilitation -->
+                <div class="service-card">
+                    <div class="service-icon">
+                        <i class="fas fa-dumbbell"></i>
+                    </div>
+                    <h3 class="service-title">Rehabilitation</h3>
+                    <p class="service-description">
+                        Structured rehabilitation programs with guided exercises, physical therapy coordination, and recovery milestone management.
+                    </p>
+                    <ul class="service-features">
+                        <li><i class="fas fa-check"></i> Guided Exercises</li>
+                        <li><i class="fas fa-check"></i> Physical Therapy</li>
+                        <li><i class="fas fa-check"></i> Recovery Milestones</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Service Benefits -->
+            <div class="service-benefits">
+                <div class="benefits-header">
+                    <h3>Why Choose ARTHROSHIELD?</h3>
+                    <p>Experience the future of orthopedic care with our comprehensive service offerings</p>
+                </div>
+                <div class="benefits-grid">
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-rocket"></i>
+                        </div>
+                        <h4>Fast & Accurate</h4>
+                        <p>Get results in minutes with 98% accuracy</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h4>Secure & Private</h4>
+                        <p>HIPAA-compliant data protection</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h4>Expert Care</h4>
+                        <p>Board-certified specialists</p>
+                    </div>
+                    <div class="benefit-item">
+                        <div class="benefit-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h4>Accessible Anywhere</h4>
+                        <p>Mobile-friendly platform</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq" id="faq">
+        <div class="faq-container">
+            <div class="section-header">
+                <h2 class="section-title">Frequently Asked Questions</h2>
+                <p class="section-subtitle">Find answers to common questions about ARTHROSHIELD</p>
+            </div>
+            
+            <!-- FAQ Category Tabs -->
+            <div class="faq-categories">
+                <button class="category-tab active" onclick="switchCategory('general')">
+                    <i class="fas fa-info-circle"></i>
+                    <span>General</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('doctor')">
+                    <i class="fas fa-user-md"></i>
+                    <span>For Doctors</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('patient')">
+                    <i class="fas fa-user"></i>
+                    <span>For Patients</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('technical')">
+                    <i class="fas fa-cog"></i>
+                    <span>Technical</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('payment')">
+                    <i class="fas fa-credit-card"></i>
+                    <span>Payment</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('legal')">
+                    <i class="fas fa-gavel"></i>
+                    <span>Legal</span>
+                </button>
+                <button class="category-tab" onclick="switchCategory('support')">
+                    <i class="fas fa-headset"></i>
+                    <span>Support</span>
+                </button>
+            </div>
+            
+            <div class="faq-grid" id="general-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-question-circle"></i>
+                        </div>
+                        <h3>What is ARTHROSHIELD and how does it work?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>ARTHROSHIELD is an AI-powered orthopedic care platform that analyzes X-rays using advanced machine learning algorithms. Our system provides accurate diagnoses, severity assessments, and personalized treatment recommendations by combining cutting-edge technology with expert medical oversight.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Is my medical data secure and private?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! We use enterprise-grade encryption and HIPAA-compliant security measures to protect your medical information. All data is stored securely, and only authorized healthcare professionals can access your records with your explicit consent.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-globe"></i>
+                        </div>
+                        <h3>Is ARTHROSHIELD available worldwide?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, ARTHROSHIELD is available globally. Our platform supports multiple languages and complies with international medical standards. However, specialist availability may vary by region, and some features require local medical licensing.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-certificate"></i>
+                        </div>
+                        <h3>What certifications and approvals do you have?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our platform is FDA-approved, CE-marked for European markets, and certified under ISO 13485 for medical devices. We maintain strict compliance with healthcare regulations including HIPAA, GDPR, and local medical device regulations.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Doctor FAQ Section -->
+            <div class="faq-grid hidden" id="doctor-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-user-md"></i>
+                        </div>
+                        <h3>How can doctors join ARTHROSHIELD?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Medical professionals can join by completing our verification process, which includes license verification, credential checks, and a brief platform training. The onboarding process typically takes 2-3 business days. Start by clicking "Sign Up" and selecting "Doctor" as your role.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-stethoscope"></i>
+                        </div>
+                        <h3>What specialties are supported?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We support orthopedic surgeons, radiologists, sports medicine physicians, physical therapists, and general practitioners with orthopedic focus. Our AI is specifically trained for musculoskeletal conditions and bone-related diagnostics.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h3>How does AI assist in diagnosis?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our AI provides preliminary analysis, highlights potential issues, measures angles and distances, and suggests severity grades. You maintain full clinical control - the AI serves as an advanced assistant that saves time and improves accuracy while you make the final diagnosis.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-file-medical"></i>
+                        </div>
+                        <h3>Can I integrate with my existing EMR system?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! We offer seamless integration with major EMR systems including Epic, Cerner, and Allscripts. Our API allows for automatic patient data sync, result import, and streamlined workflow integration. Custom integrations are available for specialized systems.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <h3>How do I get paid for consultations?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Doctors receive payments through secure bank transfers within 7 days of completed consultations. We handle billing, insurance claims, and payment processing. Rates vary by specialty and case complexity, with top specialists earning $150-300 per review.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Patient FAQ Section -->
+            <div class="faq-grid hidden" id="patient-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <h3>How do I create a patient account?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Creating an account is simple and takes just 2 minutes. Click "Sign Up", select "Patient", and provide basic information including your name, email, and date of birth. You'll need to verify your email and can then immediately start using our services.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-x-ray"></i>
+                        </div>
+                        <h3>How do I upload my X-rays?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>You can upload X-rays directly through our secure portal. We accept DICOM files, JPEG, PNG, and PDF formats. Simply drag and drop your files or use the upload button. For best results, ensure images are clear and properly oriented. Maximum file size is 50MB per image.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <h3>Can I schedule appointments with doctors?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! After your X-ray analysis, you can schedule virtual consultations with board-certified orthopedic specialists. Video calls are available within 24-48 hours, and in-person appointments can be arranged at partner facilities in your area.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-notes-medical"></i>
+                        </div>
+                        <h3>How do I access my medical reports?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All your medical reports are stored securely in your patient portal. You can view, download, or share them with other healthcare providers. Reports include AI analysis, specialist reviews, treatment recommendations, and follow-up instructions.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h3>Is there a mobile app for patients?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! Our mobile app is available for both iOS and Android. You can upload X-rays, view results, schedule appointments, track recovery progress, and communicate with your care team. The app includes push notifications for important updates and reminders.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-heartbeat"></i>
+                        </div>
+                        <h3>Can I track my recovery progress?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Absolutely! Our platform includes comprehensive recovery tracking tools. You can log symptoms, track pain levels, monitor mobility improvements, and record physical therapy progress. Visual charts help you and your doctors track your healing journey over time.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payment FAQ Section -->
+            <div class="faq-grid hidden" id="payment-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <h3>What are the pricing plans?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer three main plans: Basic ($49 per analysis), Professional ($99/month for 5 analyses), and Enterprise (custom pricing). Annual subscriptions save 20%. All plans include AI analysis, specialist review, and secure storage.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h3>What payment methods do you accept?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We accept all major credit cards (Visa, MasterCard, American Express), debit cards, PayPal, Apple Pay, and Google Pay. For enterprise clients, we also offer invoicing and bank transfer options. All payments are processed securely through Stripe.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-shield-alt"></i>
+                        </div>
+                        <h3>Is my payment information secure?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we use industry-standard SSL encryption and never store your payment details on our servers. All transactions are processed through PCI-compliant payment processors. We're also GDPR and CCPA compliant for data protection.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                        </div>
+                        <h3>Do you provide invoices for insurance claims?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we provide detailed invoices with CPT codes and medical documentation for insurance claims. Invoices include provider information, service dates, and diagnosis codes. Most major insurers cover our services under telemedicine benefits.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-undo"></i>
+                        </div>
+                        <h3>What is your refund policy?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We offer a 100% satisfaction guarantee. If you're not satisfied with our service, request a refund within 30 days. For monthly subscriptions, you can cancel anytime and continue using the service until the end of your billing period.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-hospital"></i>
+                        </div>
+                        <h3>Do you work with insurance companies?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we're in-network with major insurance providers including Blue Cross, Aetna, UnitedHealth, and Cigna. We can submit claims directly to your insurance. Check with your provider about coverage for AI-assisted diagnostics and telemedicine services.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical FAQ Section -->
+            <div class="faq-grid hidden" id="technical-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-laptop-code"></i>
+                        </div>
+                        <h3>What are the system requirements?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our web platform works on all modern browsers (Chrome 90+, Firefox 88+, Safari 14+, Edge 90+). Mobile apps require iOS 13+ or Android 8+. Minimum internet speed: 5 Mbps for uploads, 2 Mbps for general use. We recommend 8GB RAM for optimal performance.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <h3>How is data stored and backed up?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>All data is stored in secure, HIPAA-compliant cloud servers with automatic hourly backups. We maintain redundant copies across multiple geographic locations. Data retention: 7 years for medical records, 2 years for financial data. Export options available anytime.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-plug"></i>
+                        </div>
+                        <h3>What integrations are available?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We integrate with major EMR/EHR systems (Epic, Cerner, Allscripts), PACS systems, lab information systems, and billing platforms. API access available for custom integrations. HL7, FHIR, and DICOM standards supported.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-shield-virus"></i>
+                        </div>
+                        <h3>How do you handle system downtime?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We maintain 99.9% uptime with automatic failover systems. Scheduled maintenance announced 48 hours in advance. Real-time status available at status.arthrosheild.com. Emergency protocols ensure critical services remain operational.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Legal FAQ Section -->
+            <div class="faq-grid hidden" id="legal-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h3>What are your terms of service?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our terms govern use of the ARTHROSHIELD platform, including service availability, user responsibilities, payment terms, and dispute resolution. Key points: 30-day notice for service changes, binding arbitration for disputes, compliance with applicable laws.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                        <h3>How does HIPAA compliance work?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We are HIPAA Business Associates with comprehensive compliance programs. All protected health information is encrypted, access is logged, and we maintain Business Associate Agreements with all partners. Regular audits and staff training ensure ongoing compliance.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3>What about medical liability?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Our AI provides decision support, not medical diagnosis. Licensed healthcare professionals make final clinical decisions. We maintain comprehensive malpractice insurance and clearly define scope of practice. Users agree to telemedicine terms during onboarding.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-globe-americas"></i>
+                        </div>
+                        <h3>International compliance and regulations?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>We comply with GDPR (Europe), PIPEDA (Canada), HIPAA (US), and local medical device regulations. Data processing agreements available for international clients. Localization options for language and regulatory requirements.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support FAQ Section -->
+            <div class="faq-grid hidden" id="support-faq">
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <h3>What are your support hours?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>24/7 emergency technical support for critical issues. Business support: Monday-Friday 6 AM-8 PM EST, Saturday-Sunday 8 AM-6 PM EST. Average response time: 2 hours for priority issues, 24 hours for general inquiries.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                        <h3>What training resources are available?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Comprehensive onboarding program with video tutorials, documentation, and live training sessions. Certification courses for advanced features. Monthly webinars on best practices. Dedicated customer success managers for enterprise clients.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <h3>How do I report technical issues?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Report issues via in-app support ticket, email support@arthrosheild.com, or call 1-800-ARTHRO. Include screenshots, error messages, and steps to reproduce. Critical issues automatically routed to engineering team with 30-minute response SLA.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" onclick="toggleFAQ(this)">
+                    <div class="faq-question">
+                        <div class="faq-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <h3>What communication channels are available?</h3>
+                        <div class="faq-toggle">
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Live chat (website and app), email support, phone support, video calls for complex issues, community forum, and dedicated account managers. Priority support channels available for premium plans with guaranteed response times.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="faq-cta">
+                <h3>Still have questions? We're here to help!</h3>
+                <p>Our dedicated support team is available 24/7 to assist you with any questions or concerns about ARTHROSHIELD services.</p>
+                
+                <div class="faq-cta-options">
+                    <div class="cta-option" onclick="callUs()" style="cursor: pointer;">
+                        <div class="cta-icon">
+                            <i class="fas fa-phone-alt"></i>
+                        </div>
+                        <div class="cta-content">
+                            <h4>Call Us</h4>
+                            <p>1-800-ARTHRO (278-476)</p>
+                            <span>Mon-Fri: 6AM-8PM EST</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-option" onclick="emailSupport()" style="cursor: pointer;">
+                        <div class="cta-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="cta-content">
+                            <h4>Email Support</h4>
+                            <p>support@arthrosheild.com</p>
+                            <span>Response within 24 hours</span>
+                        </div>
+                    </div>
+                    
+                    <div class="cta-option" onclick="startLiveChat()" style="cursor: pointer;">
+                        <div class="cta-icon">
+                            <i class="fas fa-comments"></i>
+                        </div>
+                        <div class="cta-content">
+                            <h4>Live Chat</h4>
+                            <p>Available on website & app</p>
+                            <span>Instant responses</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="faq-cta-buttons">
+                    <a href="#contact" class="faq-cta-btn primary">
+                        <i class="fas fa-calendar-check"></i> Get In Touch
+                    </a>
+                    <a href="#" class="faq-cta-btn secondary" onclick="openChatWindow()">
+                        <i class="fas fa-comment-dots"></i> Start Live Chat
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section class="contact" id="contact">
+        <div class="contact-container">
+            <div class="contact-header">
+                <h2 class="contact-title">Get In Touch</h2>
+                <p class="contact-subtitle">
+                    Have questions about our services? Need to schedule an appointment? 
+                    Our team is here to help you on your journey to better health.
+                </p>
+            </div>
+            
+            <div class="contact-content">
+                <div class="contact-info">
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Email Address</h4>
+                            <p>support@arthrosheild.com</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Phone Number</h4>
+                            <p>+1 (800) 123-4567</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Office Address</h4>
+                            <p>123 Medical Center Drive, Suite 100<br>Healthcare City, HC 12345</p>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-card">
+                        <div class="contact-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div class="contact-details">
+                            <h4>Working Hours</h4>
+                            <p>Monday - Friday: 8:00 AM - 6:00 PM<br>Saturday: 9:00 AM - 2:00 PM</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="contact-form">
+                    <form id="contactForm">
+                        <div class="form-group">
+                            <label for="name">Full Name</label>
+                            <input type="text" id="name" name="name" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="email">Email Address</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="subject">Subject</label>
+                            <input type="text" id="subject" name="subject" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" name="message" required></textarea>
+                        </div>
+                        
+                        <button type="submit" class="form-submit">
+                            <i class="fas fa-paper-plane"></i> Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>ARTHROSHIELD</h3>
+                    <p>Advanced medical care platform powered by AI and compassion.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#services">Services</a></li>
+                        <li><a href="privacy-policy.html">Privacy Policy</a></li>
+                        <li><a href="terms-of-service.html">Terms of Service</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">support@arthrosheild.com</a></li>
+                        <li><a href="#">+1 (800) 123-4567</a></li>
+                        <li><a href="#">Live Chat</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Follow Us</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Facebook</a></li>
+                        <li><a href="#">Twitter</a></li>
+                        <li><a href="#">LinkedIn</a></li>
+                        <li><a href="#">Instagram</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                &copy; 2026 ARTHROSHIELD. All rights reserved.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe elements for animation
+        document.addEventListener('DOMContentLoaded', function() {
+            const animatedElements = document.querySelectorAll('.about-content, .about-visual, .contact-card, .contact-form');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+            });
+
+            // Parallax and reveal effects on scroll
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const element = entry.target;
+                        
+                        // Add reveal classes based on element type
+                        if (element.classList.contains('service-card')) {
+                            element.classList.add('reveal-scale', 'revealed');
+                        } else if (element.classList.contains('feature-card')) {
+                            element.classList.add('reveal-left', 'revealed');
+                        } else if (element.classList.contains('about-content')) {
+                            element.classList.add('fade-in-left', 'active');
+                        } else if (element.classList.contains('about-visual')) {
+                            element.classList.add('fade-in-right', 'active');
+                        } else if (element.classList.contains('stat-item')) {
+                            element.classList.add('reveal-scale', 'revealed');
+                        } else if (element.classList.contains('benefit-item')) {
+                            element.classList.add('reveal-scale', 'revealed');
+                        } else if (element.classList.contains('faq-item')) {
+                            element.classList.add('fade-in-up', 'active');
+                        } else if (element.classList.contains('contact-card') || element.classList.contains('contact-form')) {
+                            element.classList.add('fade-in-up', 'active');
+                        } else {
+                            element.classList.add('fade-in-up', 'active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            // Observe all elements for reveal animations
+            const elementsToObserve = document.querySelectorAll(`
+                .service-card,
+                .feature-card,
+                .about-content,
+                .about-visual,
+                .stat-item,
+                .benefit-item,
+                .faq-item,
+                .contact-card,
+                .contact-form,
+                .section-header,
+                .section-title,
+                .section-subtitle
+            `);
+            
+            elementsToObserve.forEach(el => {
+                el.classList.add('reveal-element');
+                observer.observe(el);
+            });
+
+            // Stagger animation for service cards
+            const serviceCards = document.querySelectorAll('.service-card');
+            const serviceObserver = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const container = entry.target.closest('.services-grid');
+                        if (container) {
+                            container.classList.add('stagger-animation', 'active');
+                        }
+                    }
+                });
+            }, { threshold: 0.1 });
+
+            serviceCards.forEach(card => {
+                serviceObserver.observe(card);
+            });
+
+            // Parallax effect for backgrounds
+            let ticking = false;
+            function updateParallax() {
+                const scrolled = window.pageYOffset;
+                const parallaxElements = document.querySelectorAll('.parallax-bg');
+                
+                parallaxElements.forEach(element => {
+                    const speed = element.dataset.speed || 0.5;
+                    const yPos = -(scrolled * speed);
+                    element.style.transform = `translateY(${yPos}px)`;
+                });
+                
+                ticking = false;
+            }
+
+            function requestTick() {
+                if (!ticking) {
+                    window.requestAnimationFrame(updateParallax);
+                    ticking = true;
+                }
+            }
+
+            window.addEventListener('scroll', requestTick);
+
+            // Enhanced reveal animations
+            setTimeout(() => {
+                animatedElements.forEach((el, index) => {
+                    setTimeout(() => {
+                        el.style.transition = 'all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                        el.style.opacity = '1';
+                        el.style.transform = 'translateY(0)';
+                    }, index * 100);
+                });
+            }, 500);
+
+            // Smooth scroll for navigation links
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const target = document.querySelector(this.getAttribute('href'));
+                    if (target) {
+                        const offsetTop = target.offsetTop - 80; // Account for fixed navbar
+                        window.scrollTo({
+                            top: offsetTop,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+
+            // Add parallax backgrounds to sections
+            const sections = document.querySelectorAll('.features, .about, .services, .stats, .faq, .contact');
+            sections.forEach((section, index) => {
+                const parallaxBg = document.createElement('div');
+                parallaxBg.className = 'parallax-bg';
+                parallaxBg.dataset.speed = 0.3 + (index * 0.1);
+                
+                // Set different background patterns for each section
+                if (section.classList.contains('features')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(248, 250, 252, 0.8), rgba(224, 231, 255, 0.8))';
+                } else if (section.classList.contains('about')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(248, 249, 255, 0.8), rgba(255, 255, 255, 0.8))';
+                } else if (section.classList.contains('services')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 249, 255, 0.8))';
+                } else if (section.classList.contains('stats')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1))';
+                } else if (section.classList.contains('faq')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(255, 255, 255, 0.8), rgba(248, 250, 252, 0.8))';
+                } else if (section.classList.contains('contact')) {
+                    parallaxBg.style.background = 'linear-gradient(135deg, rgba(248, 249, 255, 0.8), rgba(255, 255, 255, 0.8))';
+                }
+                
+                section.style.position = 'relative';
+                section.style.overflow = 'hidden';
+                section.insertBefore(parallaxBg, section.firstChild);
+            });
+        });
+
+        // Contact form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(this);
+            const submitBtn = this.querySelector('.form-submit');
+            const originalText = submitBtn.innerHTML;
+            
+            // Show loading state
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Sending...';
+            submitBtn.disabled = true;
+            
+            // Simulate form submission
+            setTimeout(() => {
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> Message Sent!';
+                submitBtn.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+                
+                // Reset form
+                this.reset();
+                
+                // Reset button after 3 seconds
+                setTimeout(() => {
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.style.background = '';
+                    submitBtn.disabled = false;
+                }, 3000);
+            }, 2000);
+        });
+
+        // Observe feature cards
+        document.querySelectorAll('.feature-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
+
+        // Counter animation for stats
+        function animateCounter(element, target) {
+            let current = 0;
+            const increment = target / 100;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= target) {
+                    element.textContent = element.textContent.replace(/\d+/, target);
+                    clearInterval(timer);
+                } else {
+                    element.textContent = element.textContent.replace(/\d+/, Math.floor(current));
+                }
+            }, 20);
+        }
+
+        // Observe stats section
+        const statsObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const statNumbers = entry.target.querySelectorAll('.stat-number');
+                    statNumbers.forEach(stat => {
+                        const text = stat.textContent;
+                        const match = text.match(/(\d+)/);
+                        if (match) {
+                            const target = parseInt(match[1]);
+                            animateCounter(stat, target);
+                        }
+                    });
+                    statsObserver.unobserve(entry.target);
+                }
+            });
+        }, { threshold: 0.5 });
+
+        const statsSection = document.querySelector('.stats');
+        if (statsSection) {
+            statsObserver.observe(statsSection);
+        }
+
+        // FAQ Category Switch Function
+        function switchCategory(category) {
+            // Hide all FAQ grids
+            document.querySelectorAll('.faq-grid').forEach(grid => {
+                grid.classList.add('hidden');
+            });
+            
+            // Remove active class from all tabs
+            document.querySelectorAll('.category-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected FAQ grid
+            const selectedGrid = document.getElementById(category + '-faq');
+            if (selectedGrid) {
+                selectedGrid.classList.remove('hidden');
+                
+                // Reset animations for new items
+                const items = selectedGrid.querySelectorAll('.faq-item');
+                items.forEach((item, index) => {
+                    item.style.animation = 'none';
+                    item.offsetHeight; // Trigger reflow
+                    item.style.animation = `slideInUp 0.6s ease-out ${index * 0.1}s both`;
+                });
+            }
+            
+            // Add active class to clicked tab
+            event.target.closest('.category-tab').classList.add('active');
+        }
+
+        // FAQ Toggle Function
+        function toggleFAQ(element) {
+            const allFAQItems = document.querySelectorAll('.faq-item');
+            const currentFAQ = element;
+            const isActive = currentFAQ.classList.contains('active');
+
+            // Close all other FAQ items
+            allFAQItems.forEach(item => {
+                if (item !== currentFAQ) {
+                    item.classList.remove('active');
+                }
+            });
+
+            // Toggle current FAQ item
+            if (isActive) {
+                currentFAQ.classList.remove('active');
+            } else {
+                currentFAQ.classList.add('active');
+            }
+
+            // Smooth scroll to FAQ item if opening
+            if (!isActive) {
+                setTimeout(() => {
+                    currentFAQ.scrollIntoView({ 
+                        behavior: 'smooth', 
+                        block: 'nearest' 
+                    });
+                }, 100);
+            }
+        }
+
+        // Add keyboard support for FAQ items
+        document.querySelectorAll('.faq-item').forEach(item => {
+            item.setAttribute('tabindex', '0');
+            item.setAttribute('role', 'button');
+            item.setAttribute('aria-expanded', 'false');
+            
+            item.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    toggleFAQ(this);
+                }
+            });
+        });
+
+        // Update ARIA attributes when FAQ items are toggled
+        const faqObserver = new MutationObserver(function(mutations) {
+            mutations.forEach(function(mutation) {
+                if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                    const target = mutation.target;
+                    if (target.classList.contains('faq-item')) {
+                        const isExpanded = target.classList.contains('active');
+                        target.setAttribute('aria-expanded', isExpanded);
+                    }
+                }
+            });
+        });
+
+        document.querySelectorAll('.faq-item').forEach(item => {
+            faqObserver.observe(item, { attributes: true });
+        });
+
+        // Contact functionality functions
+        function callUs() {
+            window.location.href = 'tel:1800278476';
+        }
+
+        function emailSupport() {
+            window.location.href = 'mailto:support@arthrosheild.com?subject=ARTHROSHIELD Support Request&body=Hello, I need help with...';
+        }
+
+        function scheduleConsultation() {
+            // Smooth scroll to contact section
+            document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function startLiveChat() {
+            // Simulate opening live chat
+            alert('Live chat feature would open here. In production, this would connect to your live chat system.');
+        }
+
+        function openChatWindow() {
+            startLiveChat();
+        }
+
+        // Profile Dropdown Toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const isActive = dropdown.classList.contains('active');
+            
+            // Close all dropdowns
+            document.querySelectorAll('.profile-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Toggle current dropdown
+            if (!isActive) {
+                dropdown.classList.add('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileContainer = document.querySelector('.profile-container');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (!profileContainer.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Check login state on page load
+        function checkLoginState() {
+            const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
+            const authButtons = document.querySelector('.auth-buttons');
+            const profileContainer = document.querySelector('.profile-container');
+            
+            console.log('Checking login state:', isLoggedIn);
+            console.log('Auth buttons:', authButtons);
+            console.log('Profile container:', profileContainer);
+            
+            if (isLoggedIn) {
+                // Show profile icon, hide login buttons using CSS classes
+                authButtons.classList.add('logged-out');
+                profileContainer.classList.add('logged-in');
+                
+                // Load user data
+                const userName = localStorage.getItem('userName') || 'John Doe';
+                const userEmail = localStorage.getItem('userEmail') || 'john.doe@example.com';
+                
+                document.getElementById('profileName').textContent = userName;
+                document.getElementById('profileEmail').textContent = userEmail;
+                
+                // Update profile icon with user initials
+                const profileIcon = document.querySelector('.profile-icon');
+                const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                profileIcon.innerHTML = initials;
+                
+                // Update profile avatar with user initials
+                const profileAvatar = document.querySelector('.profile-avatar');
+                profileAvatar.innerHTML = initials;
+                
+                console.log('User logged in, showing profile');
+            } else {
+                // Show login buttons, hide profile icon using CSS classes
+                authButtons.classList.remove('logged-out');
+                profileContainer.classList.remove('logged-in');
+                
+                console.log('User not logged in, showing login buttons');
+            }
+        }
+
+        // Simulate login function (to be called from login page)
+        function simulateLogin(userName, userEmail) {
+            console.log('Simulating login for:', userName, userEmail);
+            localStorage.setItem('isLoggedIn', 'true');
+            localStorage.setItem('userName', userName);
+            localStorage.setItem('userEmail', userEmail);
+            console.log('Login data stored, calling checkLoginState');
+            checkLoginState();
+        }
+
+        // Handle logout
+        function handleLogout() {
+            localStorage.setItem('isLoggedIn', 'false');
+            localStorage.removeItem('userName');
+            localStorage.removeItem('userEmail');
+            
+            // Close dropdown
+            document.getElementById('profileDropdown').classList.remove('active');
+            
+            // Update UI using CSS classes
+            const authButtons = document.querySelector('.auth-buttons');
+            const profileContainer = document.querySelector('.profile-container');
+            authButtons.classList.remove('logged-out');
+            profileContainer.classList.remove('logged-in');
+            
+            // Show logout message
+            showNotification('You have been logged out successfully');
+        }
+
+        // Show notification function
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+                font-weight: 500;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize login state on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            checkLoginState();
+            
+        });
+
+        // Close modals when clicking outside
+        window.addEventListener('click', function(event) {
+            const activityModal = document.getElementById('activityPlanModal');
+            const detailsPopup = document.getElementById('activityDetailsPopup');
+            
+            if (event.target === activityModal) {
+                closeActivityPlanModal();
+            }
+            if (event.target === detailsPopup) {
+                closeActivityDetailsPopup();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - ARTHROSHIELD</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar.scrolled {
+            padding: 0.75rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            height: 70px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding-left: 45px;
+            text-decoration: none;
+            background: transparent !important;
+        }
+
+        .logo img {
+            height: 175px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav-login {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-nav-login:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-nav-signup {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-nav-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Login Container */
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 3%;
+            padding-top: 95px;
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 600px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Left Panel - Visual */
+        .login-visual {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-visual::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .visual-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .visual-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .visual-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .visual-features {
+            list-style: none;
+            text-align: left;
+        }
+
+        .visual-features li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .visual-features i {
+            margin-right: 1rem;
+            color: #10b981;
+        }
+
+        /* Right Panel - Form */
+        .login-form {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            margin-bottom: 2rem;
+        }
+
+        .role-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .role-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .role-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .role-card {
+            background: #f8f9fa;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .role-option input[type="radio"]:checked + .role-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .role-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .role-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Login Form */
+        .login-form-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .login-form-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input-group {
+            position: relative;
+        }
+
+        .form-input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .form-input-group .form-input {
+            padding-left: 3rem;
+        }
+
+        /* Password Toggle Styles */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input-group {
+            position: relative;
+        }
+
+        .form-input-group .form-input {
+            padding-right: 3rem;
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+        }
+
+        .remember-me input {
+            margin-right: 0.5rem;
+        }
+
+        .forgot-password {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: #764ba2;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e5e7eb;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 1rem;
+            color: #9ca3af;
+        }
+
+        .quick-login {
+            text-align: center;
+        }
+
+        .quick-login-title {
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .quick-login-buttons {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .quick-btn {
+            flex: 1;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            background: white;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .quick-btn:hover {
+            border-color: #667eea;
+            color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .signup-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6b7280;
+        }
+
+        .signup-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .signup-link a:hover {
+            color: #764ba2;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .login-card {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .login-visual {
+                display: none;
+            }
+
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-login-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <img src="images/logo.png" alt="ARTHROSHIELD">
+            </a>
+            <div class="nav-links">
+                <a href="home.html#features" class="nav-link">Features</a>
+                <a href="home.html#about" class="nav-link">About</a>
+                <a href="home.html#faq" class="nav-link">FAQ</a>
+                <a href="home.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-nav btn-nav-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="signup.html" class="btn-nav btn-nav-signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Login Container -->
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Left Panel -->
+            <div class="login-visual">
+                <div class="visual-content">
+                    <div class="visual-icon">
+                        <i class="fas fa-heartbeat"></i>
+                    </div>
+                    <h2 class="visual-title">Welcome Back</h2>
+                    <p class="visual-subtitle">Your health journey continues here</p>
+                    <ul class="visual-features">
+                        <li><i class="fas fa-check-circle"></i> AI-Powered Analysis</li>
+                        <li><i class="fas fa-check-circle"></i> Expert Medical Care</li>
+                        <li><i class="fas fa-check-circle"></i> Secure & Private</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 Support</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="login-form">
+                <div class="form-header">
+                    <h2 class="form-title">Login to Your Account</h2>
+                    <p class="form-subtitle">Access your personalized medical dashboard</p>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="role-selection">
+                    <label class="role-label">I am a:</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" name="role" id="doctor" value="doctor">
+                            <div class="role-card" onclick="selectRole('doctor')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="role-name">Doctor</div>
+                            </div>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" name="role" id="patient" value="patient">
+                            <div class="role-card" onclick="selectRole('patient')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="role-name">Patient</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Login Form -->
+                <div class="login-form-content" id="loginForm">
+                    <form onsubmit="handleLogin(event)">
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" class="form-input" id="loginEmail" required placeholder="Enter your email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Password</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-lock"></i>
+                                <input type="password" class="form-input" id="loginPassword" required placeholder="Enter your password">
+                                <button type="button" class="password-toggle" onclick="togglePassword('loginPassword')">
+                                    <i class="fas fa-eye" id="loginPassword-toggle-icon"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="#" class="forgot-password">Forgot password?</a>
+                        </div>
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-sign-in-alt"></i> Login
+                        </button>
+                    </form>
+
+                    <div class="divider">
+                        <span>OR</span>
+                    </div>
+
+                    <div class="quick-login">
+                        <p class="quick-login-title">Quick Test Login</p>
+                        <div class="quick-login-buttons">
+                            <button class="quick-btn" onclick="quickLogin('doctor')">
+                                <i class="fas fa-user-md"></i> Doctor
+                            </button>
+                            <button class="quick-btn" onclick="quickLogin('patient')">
+                                <i class="fas fa-user"></i> Patient
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="signup-link">
+                        Don't have an account? <a href="signup.html">Sign up here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectRole(role) {
+            const radio = document.getElementById(role);
+            radio.checked = true;
+            
+            // Show login form
+            const loginForm = document.getElementById('loginForm');
+            loginForm.classList.add('active');
+            
+            // Update form title based on role
+            const formTitle = document.querySelector('.form-title');
+            const formSubtitle = document.querySelector('.form-subtitle');
+            
+            if (role === 'doctor') {
+                formTitle.textContent = 'Doctor Login';
+                formSubtitle.textContent = 'Access your medical dashboard';
+            } else {
+                formTitle.textContent = 'Patient Login';
+                formSubtitle.textContent = 'Access your health portal';
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const email = document.getElementById('loginEmail').value;
+            const password = document.getElementById('loginPassword').value;
+            const selectedRole = document.querySelector('input[name="role"]:checked')?.value;
+            
+            if (!selectedRole) {
+                alert('Please select your role (Doctor or Patient)');
+                return;
+            }
+            
+            console.log('Login attempt:', { email, password, role: selectedRole });
+            
+            // Get stored users from localStorage
+            const users = JSON.parse(localStorage.getItem('arthrosheild_users') || '[]');
+            console.log('Login attempt:', { email, password, role: selectedRole });
+            console.log('Stored users:', users);
+            
+            // Find user with matching email, password, and role
+            const authenticatedUser = users.find(user => 
+                user.email === email && 
+                user.password === password && 
+                user.role === selectedRole
+            );
+            
+            console.log('Authenticated user found:', authenticatedUser);
+            
+            if (authenticatedUser) {
+                // Create user object for session
+                const userSession = {
+                    id: authenticatedUser.id || Date.now(),
+                    email: authenticatedUser.email,
+                    role: authenticatedUser.role,
+                    name: `${authenticatedUser.firstName} ${authenticatedUser.lastName}`,
+                    firstName: authenticatedUser.firstName,
+                    lastName: authenticatedUser.lastName,
+                    phone: authenticatedUser.phone,
+                    address: authenticatedUser.address
+                };
+                
+                // Add role-specific data
+                if (authenticatedUser.role === 'doctor') {
+                    userSession.specialization = authenticatedUser.specialization;
+                    userSession.licenseNumber = authenticatedUser.licenseNumber;
+                    userSession.hospital = authenticatedUser.hospital;
+                } else {
+                    userSession.age = authenticatedUser.age;
+                    userSession.gender = authenticatedUser.gender;
+                    userSession.preferredHospital = authenticatedUser.preferredHospital;
+                    userSession.patientId = authenticatedUser.patientId;
+                }
+                
+                // Store current user session
+                localStorage.setItem('arthrosheild_current_user', JSON.stringify(userSession));
+                
+                // Show success and redirect
+                const successMessage = `${authenticatedUser.role.charAt(0).toUpperCase() + authenticatedUser.role.slice(1)} login successful! Redirecting to dashboard...`;
+                showSuccessAnimation(successMessage);
+                
+                setTimeout(() => {
+                    if (authenticatedUser.role === 'doctor') {
+                        window.location.href = 'doctor-welcome.html';
+                    } else {
+                        window.location.href = 'patient-welcome.html';
+                    }
+                }, 2000);
+                
+            } else {
+                // Check if user exists but credentials don't match
+                const userExists = users.find(user => 
+                    user.email === email && user.role === selectedRole
+                );
+                
+                console.log('User exists check:', userExists);
+                
+                if (userExists) {
+                    console.log('Password mismatch - expected:', userExists.password, 'got:', password);
+                    showErrorAnimation('Incorrect password. Please try again.');
+                } else {
+                    console.log('No user found with email:', email, 'and role:', selectedRole);
+                    showErrorAnimation('No account found with these credentials. Please sign up first.');
+                }
+            }
+        }
+
+        function quickLogin(role) {
+            // Auto-select role
+            selectRole(role);
+            
+            // Auto-fill credentials
+            if (role === 'doctor') {
+                document.getElementById('loginEmail').value = 'dr.sarah@citymedical.com';
+                document.getElementById('loginPassword').value = 'doctor123';
+            } else {
+                document.getElementById('loginEmail').value = 'john.doe@email.com';
+                document.getElementById('loginPassword').value = 'patient123';
+            }
+            
+            // Auto-submit after a short delay
+            setTimeout(() => {
+                handleLogin(new Event('submit'));
+            }, 500);
+        }
+
+        function showSuccessAnimation(message) {
+            const button = document.querySelector('.submit-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> ' + message;
+            button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        }
+
+        function showErrorAnimation(message) {
+            const button = document.querySelector('.submit-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-times"></i> ' + message;
+            button.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 3000);
+        }
+
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(inputId + '-toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Add smooth animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.login-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.8s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+    </script>
+</body>
+</html>

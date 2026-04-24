@@ -1,0 +1,1410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Upload X-Rays</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 2rem 3%;
+        }
+        
+        .page-header, .content-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        
+        .page-header { 
+            margin-bottom: 2rem; 
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .page-title {
+            font-size: 2rem;
+            color: #333;
+            font-weight: 700;
+        }
+        
+        .back-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 10px;
+            text-decoration: none;
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+        
+        .back-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .notification-icon {
+            position: relative;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            border: none;
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .notification-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #ef4444;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        /* Notifications Modal */
+        .notifications-modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+        }
+
+        .notifications-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notifications-content {
+            background: white;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .notification-item {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border-radius: 8px;
+        }
+
+        .notification-item.unread {
+            background: #fef3c7;
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.reschedule {
+            border-left-color: #f59e0b;
+        }
+
+        .notification-item.activity-skip {
+            border-left-color: #ef4444;
+        }
+
+        .notification-item.appointment-reminder {
+            border-left-color: #10b981;
+        }
+
+        .notification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .notification-time {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .notification-message {
+            color: #555;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        .notification-doctor {
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .mark-read-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 0.5rem;
+        }
+
+        .mark-read-btn:hover {
+            background: #5a67d8;
+        }
+
+        .no-notifications {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
+
+        .close-modal-btn {
+            background: #e5e7eb;
+            color: #333;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 1rem;
+        }
+
+        .close-modal-btn:hover {
+            background: #d1d5db;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .upload-area {
+            border: 2px dashed #667eea;
+            border-radius: 10px;
+            padding: 2rem;
+            text-align: center;
+            background: #f8f9fa;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .upload-area:hover {
+            background: #e9ecef;
+            border-color: #764ba2;
+        }
+        
+        .upload-area.dragover {
+            background: #e0e7ff;
+            border-color: #4f46e5;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .upload-btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            border: none;
+            cursor: pointer;
+            margin: 1rem auto 0;
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .upload-btn:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+        
+        .upload-btn:disabled {
+            background: #9ca3af;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .preview-item {
+            position: relative;
+            height: 120px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: white;
+            overflow: hidden;
+        }
+        
+        .preview-item img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
+        .preview-item .file-name {
+            position: absolute;
+            bottom: 0;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            font-size: 0.7rem;
+            width: 100%;
+            text-align: center;
+            padding: 2px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .remove-btn {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.3s ease;
+        }
+        
+        .remove-btn:hover {
+            background: rgba(220, 38, 38, 1);
+        }
+        
+        .message {
+            text-align: center;
+            margin-top: 1rem;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+        }
+        
+        .error { 
+            background: #fee; 
+            color: #721c24; 
+        }
+        
+        .success { 
+            background: #e6fffa; 
+            color: #065f46; 
+        }
+        
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            overflow-y: auto;
+        }
+        
+        .modal.active {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 2rem 0;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            color: #333;
+            font-weight: 600;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            transition: all 0.3s ease;
+        }
+        
+        .close-btn:hover {
+            background: #f3f4f6;
+            color: #333;
+        }
+        
+        .report-content {
+            padding: 1.5rem;
+        }
+        
+        .report-section {
+            margin-bottom: 2rem;
+            padding: 1rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 10px;
+            background: #f9fafb;
+        }
+        
+        .report-section h3 {
+            color: #333;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .severity-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .severity-low {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .severity-medium {
+            background: #fed7aa;
+            color: #92400e;
+        }
+        
+        .severity-high {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        .report-image {
+            width: 100%;
+            max-width: 300px;
+            border-radius: 10px;
+            margin: 1rem 0;
+            border: 2px solid #e5e7eb;
+        }
+        
+        .findings-list, .recommendations-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .findings-list li, .recommendations-list li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid #e5e7eb;
+            color: #4b5563;
+        }
+        
+        .findings-list li:last-child, .recommendations-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .editable {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 5px;
+            padding: 0.5rem;
+            min-height: 60px;
+            width: 100%;
+            resize: vertical;
+        }
+        
+        .editable:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-danger {
+            background: #ef4444;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .section-title {
+            font-size: 1.3rem;
+            color: #333;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+        
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            
+            .preview-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title"><i class="fas fa-x-ray"></i> Upload X-Rays</h1>
+                <div class="header-actions">
+                    <button class="notification-icon" id="notificationBtn" onclick="showNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                    </button>
+                    <a href="doctor-welcome.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <!-- Patient Selection -->
+            <div class="form-group">
+                <label class="form-label">Select Patient</label>
+                <select id="patientSelect" class="form-select">
+                    <option value="">Select Patient</option>
+                </select>
+            </div>
+
+            <!-- Upload Area -->
+            <div class="form-group">
+                <label class="upload-area" for="fileInput">
+                    <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                    <h3 style="margin: 1rem 0 0.5rem 0; color: #333;">Upload X-Ray Images</h3>
+                    <p style="margin: 0; color: #666;">Click or drag files here</p>
+                    <p style="margin: 0.5rem 0 0 0; font-size: 0.9rem; color: #999;">Supported formats: PNG, JPG, DICOM (Max 10MB per file)</p>
+                    <input type="file" id="fileInput" class="file-input" multiple accept="image/*,.dcm">
+                </label>
+            </div>
+
+            <button class="upload-btn" id="uploadBtn" disabled>Analyze X-Rays</button>
+
+            <!-- Preview Grid -->
+            <div id="previewGrid" class="preview-grid"></div>
+
+            <!-- Message Box -->
+            <div id="messageBox" class="message"></div>
+        </div>
+    </div>
+
+    <!-- Report Modal -->
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">X-Ray Analysis Report</h2>
+                <button class="close-btn" onclick="closeReportModal()">&times;</button>
+            </div>
+            
+            <div class="report-content" id="reportContent">
+                <!-- Report content will be generated here -->
+            </div>
+            
+            <div class="action-buttons">
+                <button class="action-btn btn-secondary" onclick="editReport()">
+                    <i class="fas fa-edit"></i> Edit Report
+                </button>
+                <button class="action-btn btn-success" onclick="saveReport()">
+                    <i class="fas fa-save"></i> Save Report
+                </button>
+                <button class="action-btn btn-primary" onclick="downloadPDF()">
+                    <i class="fas fa-download"></i> Download PDF
+                </button>
+                <button class="action-btn btn-danger" onclick="deleteReport()">
+                    <i class="fas fa-trash"></i> Delete Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Include app.js for application functions -->
+    <script src="js/app.js"></script>
+    
+    <script>
+        let currentUser = null;
+        let selectedFiles = [];
+        let currentReports = [];
+        let currentReport = null;
+        let currentReportIndex = 0;
+        let currentPatientId = null;
+        const fileInput = document.getElementById('fileInput');
+        const previewGrid = document.getElementById('previewGrid');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const patientSelect = document.getElementById('patientSelect');
+        const messageBox = document.getElementById('messageBox');
+        const uploadArea = document.querySelector('.upload-area');
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Upload page loaded');
+            
+            // Check authentication and get current user
+            currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            if (!currentUser || currentUser.role !== 'doctor') {
+                showMessage('Please login as a doctor to access this page', 'error');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return;
+            }
+            
+            loadPatients();
+            setupEventListeners();
+            
+            // Check for patient ID in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const patientId = urlParams.get('patientId');
+            if (patientId) {
+                patientSelect.value = patientId;
+                updateButton();
+            }
+        });
+
+        // Load patients from localStorage
+        function loadPatients() {
+            const patients = JSON.parse(localStorage.getItem('arthrosheild_patients') || '[]');
+            
+            if (patients.length === 0) {
+                showMessage("No patients found. Please add patients first.", "error");
+                return;
+            }
+
+            // Clear existing options except default
+            patientSelect.innerHTML = '<option value="">Select Patient</option>';
+            
+            patients.forEach(p => {
+                const opt = document.createElement('option');
+                opt.value = p.id;
+                opt.textContent = `${p.name} (ID: #P${String(p.id).padStart(3, '0')})`;
+                patientSelect.appendChild(opt);
+            });
+        }
+
+        // Setup all event listeners
+        function setupEventListeners() {
+            // File input change
+            fileInput.addEventListener('change', handleFileSelection);
+            
+            // Drag and drop events
+            uploadArea.addEventListener('dragover', handleDragOver);
+            uploadArea.addEventListener('dragleave', handleDragLeave);
+            uploadArea.addEventListener('drop', handleDrop);
+            
+            // Patient selection change
+            patientSelect.addEventListener('change', updateButton);
+            
+            // Upload button click
+            uploadBtn.addEventListener('click', startUpload);
+        }
+
+        // Handle file selection
+        function handleFileSelection(e) {
+            console.log('Files selected via input');
+            const files = Array.from(e.target.files);
+            processFiles(files);
+        }
+
+        // Drag and drop handlers
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadArea.classList.remove('dragover');
+            
+            const files = Array.from(e.dataTransfer.files);
+            console.log('Files dropped:', files);
+            processFiles(files);
+        }
+
+        // Process files
+        function processFiles(files) {
+            let validCount = 0;
+            
+            files.forEach(file => {
+                const isDicom = file.name.toLowerCase().endsWith('.dcm');
+                const valid = file.type.startsWith('image/') || isDicom;
+
+                if (!valid) {
+                    showMessage("Invalid file: " + file.name, "error");
+                    return;
+                }
+                
+                if (file.size > 10 * 1024 * 1024) {
+                    showMessage("Too large: " + file.name + " (Max 10MB)", "error");
+                    return;
+                }
+
+                // Check for duplicates
+                if (!selectedFiles.find(f => f.name === file.name)) {
+                    file.preview = URL.createObjectURL(file);
+                    selectedFiles.push(file);
+                    validCount++;
+                }
+            });
+
+            if (validCount > 0) {
+                showMessage(`Added ${validCount} file(s)`, "success");
+            }
+            
+            renderPreview();
+            updateButton();
+        }
+
+        // Render preview
+        function renderPreview() {
+            previewGrid.innerHTML = "";
+
+            selectedFiles.forEach((file, i) => {
+                const div = document.createElement('div');
+                div.className = "preview-item";
+
+                if (file.name.endsWith('.dcm')) {
+                    div.innerHTML = `
+                        <span style="font-size: 0.8rem; color: #666;">DICOM</span>
+                    `;
+                } else {
+                    div.innerHTML = `
+                        <img src="${file.preview}" alt="${file.name}">
+                    `;
+                }
+
+                div.innerHTML += `
+                    <div class="file-name">${file.name}</div>
+                    <button class="remove-btn" onclick="removeFile(${i})">×</button>
+                `;
+
+                previewGrid.appendChild(div);
+            });
+        }
+
+        // Remove file
+        function removeFile(i) {
+            URL.revokeObjectURL(selectedFiles[i].preview);
+            selectedFiles.splice(i, 1);
+            renderPreview();
+            updateButton();
+            showMessage("File removed", "success");
+        }
+
+        // Update button state
+        function updateButton() {
+            uploadBtn.disabled = !(selectedFiles.length && patientSelect.value);
+        }
+
+        // Start upload
+        async function startUpload() {
+            if (!patientSelect.value) {
+                showMessage("Please select a patient first", "error");
+                return;
+            }
+
+            if (selectedFiles.length === 0) {
+                showMessage("Please select at least one X-ray image", "error");
+                return;
+            }
+
+            currentPatientId = patientSelect.value;
+            console.log('Starting upload...');
+            console.log('Patient ID:', patientSelect.value);
+            console.log('Files:', selectedFiles);
+
+            // Show progress
+            showMessage("Uploading & analyzing X-rays...", "success");
+
+            uploadBtn.disabled = true;
+
+            try {
+                const patient = getPatientById(currentPatientId);
+
+                const reports = [];
+                for (let i = 0; i < selectedFiles.length; i++) {
+                    showMessage(`Analyzing image ${i + 1} of ${selectedFiles.length}...`, "success");
+
+                    const base64Image = await fileToDataUrl(selectedFiles[i]);
+                    const analysis = await analyzeXrayWithBackend(base64Image, currentPatientId);
+
+                    reports.push({
+                        id: generateReportId(),
+                        patientId: currentPatientId,
+                        patientName: patient.name,
+                        date: new Date().toISOString(),
+                        severity: analysis.severity,
+                        confidence: analysis.confidence,
+                        predictedClass: analysis.predicted_class,
+                        analysisMethod: analysis.analysis_method,
+                        classProbabilities: analysis.class_probabilities,
+                        imageData: base64Image,
+                        notes: ''
+                    });
+                }
+
+                currentReports = reports;
+                currentReportIndex = 0;
+                currentReport = currentReports[0] || null;
+
+                if (!currentReport) {
+                    throw new Error('No reports were generated');
+                }
+
+                displayReport(currentReport);
+                showMessage("Analysis complete!", "success");
+            } catch (err) {
+                console.error(err);
+                showMessage(err && err.message ? err.message : "Analysis failed", "error");
+            } finally {
+                updateButton();
+            }
+        }
+
+        async function fileToDataUrl(file) {
+            return await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = () => reject(new Error('Failed to read the selected file'));
+
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function analyzeXrayWithBackend(base64Image, patientId) {
+            const response = await fetch('http://127.0.0.1:5000/api/analyze-xray', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    image: base64Image,
+                    patientId: patientId
+                })
+            });
+
+            const data = await response.json().catch(() => null);
+
+            if (!response.ok) {
+                const msg = data && data.error ? data.error : `Request failed with status ${response.status}`;
+                throw new Error(msg);
+            }
+
+            if (!data || data.success !== true || !data.results) {
+                throw new Error('Invalid response from analysis server');
+            }
+
+            return data.results;
+        }
+
+        // Get patient by ID
+        function getPatientById(id) {
+            const patients = JSON.parse(localStorage.getItem('arthrosheild_patients') || '[]');
+            return patients.find(p => p.id == id) || { name: 'Unknown Patient' };
+        }
+
+        function setCurrentReportIndex(index) {
+            if (!Array.isArray(currentReports) || currentReports.length === 0) return;
+
+            const safeIndex = Math.max(0, Math.min(index, currentReports.length - 1));
+            currentReportIndex = safeIndex;
+            currentReport = currentReports[currentReportIndex];
+            displayReport(currentReport);
+        }
+
+        // Display report in modal
+        function displayReport(report) {
+            const reportContent = document.getElementById('reportContent');
+            const severityValue = (report && typeof report.severity === 'string' ? report.severity : '').toLowerCase();
+            const safeSeverity = ['low', 'medium', 'high'].includes(severityValue) ? severityValue : 'medium';
+            const severityClass = `severity-${safeSeverity}`;
+            const severityText = safeSeverity.charAt(0).toUpperCase() + safeSeverity.slice(1);
+
+            const confidenceText = (typeof report.confidence === 'number')
+                ? `${Math.round(report.confidence * 100)}%`
+                : (report.confidence != null ? String(report.confidence) : '');
+
+            const selectorHtml = (Array.isArray(currentReports) && currentReports.length > 1)
+                ? `
+                    <div class="report-section">
+                        <h3><i class="fas fa-layer-group"></i> Report Selection</h3>
+                        <select class="form-select" onchange="setCurrentReportIndex(parseInt(this.value, 10))">
+                            ${currentReports.map((r, idx) => {
+                                const label = `Image ${idx + 1} - ${String(r.severity || '').toUpperCase()}`;
+                                return `<option value="${idx}" ${idx === currentReportIndex ? 'selected' : ''}>${label}</option>`;
+                            }).join('')}
+                        </select>
+                    </div>
+                `
+                : '';
+            
+            reportContent.innerHTML = `
+                ${selectorHtml}
+                <!-- Patient Information -->
+                <div class="report-section">
+                    <h3><i class="fas fa-user"></i> Patient Information</h3>
+                    <p><strong>Name:</strong> ${report.patientName}</p>
+                    <p><strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}</p>
+                    <p><strong>Report ID:</strong> #${report.id}</p>
+                </div>
+                
+                <!-- Severity Assessment -->
+                <div class="report-section">
+                    <h3><i class="fas fa-exclamation-triangle"></i> Severity Assessment</h3>
+                    <div class="severity-indicator ${severityClass}">
+                        <i class="fas fa-circle"></i>
+                        <span>${severityText} Severity</span>
+                    </div>
+                    <p>Based on X-ray analysis, patient condition is classified as ${severityText} severity.</p>
+                    <p><strong>Predicted Class:</strong> ${report.predictedClass || ''}</p>
+                    <p><strong>Confidence:</strong> ${confidenceText}</p>
+                </div>
+                
+                <!-- X-Ray Image -->
+                <div class="report-section">
+                    <h3><i class="fas fa-x-ray"></i> X-Ray Image</h3>
+                    <img src="${report.imageData}" alt="X-Ray" class="report-image">
+                </div>
+                
+                <!-- Follow-up and Notes -->
+                <div class="report-section">
+                    <h3><i class="fas fa-calendar"></i> Follow-up & Notes</h3>
+                    <div style="margin-top: 1rem;">
+                        <h4 style="margin-bottom: 0.5rem; color: #333;">Doctor's Notes</h4>
+                        <div class="editable" id="doctorNotes" contenteditable="false">${report.notes}</div>
+                        <button class="action-btn btn-secondary" onclick="editNotes()" style="margin-top: 0.5rem;">
+                            <i class="fas fa-edit"></i> Edit Notes
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Show modal
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        // Modal functions
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.remove('active');
+        }
+
+        function editReport() {
+            showMessage("Edit mode activated - Click on editable sections", "success");
+            document.querySelectorAll('.editable').forEach(el => {
+                el.contentEditable = true;
+                el.style.background = '#f0f9ff';
+            });
+        }
+
+        function saveReport() {
+            if (!currentReport) return;
+            
+            // Get edited notes
+            const notesEl = document.getElementById('doctorNotes');
+            if (notesEl) {
+                currentReport.doctorComments = notesEl.textContent;
+            }
+            
+            // Ensure the report has all required fields for patient view
+            const completeReport = {
+                id: currentReport.id || generateReportId(),
+                patientId: currentReport.patientId || currentReport.patientId,
+                patientName: currentReport.patientName || 'Unknown Patient',
+                doctorId: currentUser.id,
+                doctorName: currentUser.name,
+                severity: currentReport.severity || 'medium',
+                doctorComments: currentReport.doctorComments || currentReport.notes || '',
+                analysisDate: currentReport.date || new Date().toISOString(),
+                confidence: currentReport.confidence || 0.85,
+                imageData: currentReport.imageData || null,
+                predictedClass: currentReport.predictedClass || '',
+                analysisMethod: currentReport.analysisMethod || '',
+                classProbabilities: currentReport.classProbabilities || null,
+                createdAt: new Date().toISOString()
+            };
+            
+            // Save to localStorage (this will be available to both doctor and patient)
+            const reports = JSON.parse(localStorage.getItem('arthrosheild_reports') || '[]');
+            
+            // Check if report with same ID already exists and update it
+            const existingIndex = reports.findIndex(r => r.id === completeReport.id);
+            if (existingIndex >= 0) {
+                reports[existingIndex] = completeReport;
+            } else {
+                reports.push(completeReport);
+            }
+            
+            localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+            
+            // Also store in patient-specific collection for patient isolation
+            if (completeReport.patientId) {
+                const patientReportsKey = `patient_reports_${completeReport.patientId}`;
+                const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                
+                // Check if report already exists in patient collection and update it
+                const patientExistingIndex = patientReports.findIndex(r => r.id === completeReport.id);
+                if (patientExistingIndex >= 0) {
+                    patientReports[patientExistingIndex] = completeReport;
+                } else {
+                    patientReports.push(completeReport);
+                }
+                
+                localStorage.setItem(patientReportsKey, JSON.stringify(patientReports));
+                console.log(`Report saved to both global and patient-specific storage (${patientReportsKey})`);
+            }
+            
+            showMessage("Report saved successfully! Patient can now view this report.", "success");
+            closeReportModal();
+            
+            // Refresh the reports list if on doctor's reports page
+            if (typeof refreshReportsList === 'function') {
+                refreshReportsList();
+            }
+        }
+        
+        function generateReportId() {
+            return 'XR' + Date.now().toString(36).toUpperCase() + Math.random().toString(36).substr(2, 5).toUpperCase();
+        }
+
+        function downloadPDF() {
+            if (!currentReport) return;
+            
+            // Create PDF content
+            const pdfContent = `
+X-RAY ANALYSIS REPORT
+====================
+
+Patient: ${currentReport.patientName}
+Date: ${new Date(currentReport.date).toLocaleDateString()}
+Report ID: #${currentReport.id}
+Severity: ${currentReport.severity.toUpperCase()}
+Predicted Class: ${currentReport.predictedClass || ''}
+Confidence: ${typeof currentReport.confidence === 'number' ? Math.round(currentReport.confidence * 100) + '%' : currentReport.confidence}
+
+DOCTOR'S NOTES:
+${currentReport.notes}
+            `;
+            
+            // Download as text file (PDF would require external library)
+            const blob = new Blob([pdfContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `XRay_Report_${currentReport.id}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            
+            showMessage("Report downloaded as text file", "success");
+        }
+
+        function deleteReport() {
+            if (!currentReport) return;
+            
+            if (confirm('Are you sure you want to delete this report?')) {
+                // Remove from global localStorage
+                const reports = JSON.parse(localStorage.getItem('arthrosheild_reports') || '[]');
+                const updatedReports = reports.filter(r => r.id !== currentReport.id);
+                localStorage.setItem('arthrosheild_reports', JSON.stringify(updatedReports));
+                
+                // Also remove from patient-specific storage
+                if (currentReport.patientId) {
+                    const patientReportsKey = `patient_reports_${currentReport.patientId}`;
+                    const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                    const updatedPatientReports = patientReports.filter(r => r.id !== currentReport.id);
+                    localStorage.setItem(patientReportsKey, JSON.stringify(updatedPatientReports));
+                    console.log(`Report deleted from both global and patient-specific storage (${patientReportsKey})`);
+                }
+                
+                showMessage("Report deleted successfully!", "success");
+                closeReportModal();
+                currentReport = null;
+            }
+        }
+
+        function editNotes() {
+            const notesEl = document.getElementById('doctorNotes');
+            if (notesEl) {
+                notesEl.contentEditable = !notesEl.contentEditable;
+                if (notesEl.contentEditable) {
+                    notesEl.style.background = '#f0f9ff';
+                    notesEl.focus();
+                } else {
+                    notesEl.style.background = 'white';
+                    currentReport.notes = notesEl.textContent;
+                }
+            }
+        }
+
+        // Clear all files
+        function clearFiles() {
+            selectedFiles.forEach(f => URL.revokeObjectURL(f.preview));
+            selectedFiles = [];
+            renderPreview();
+            updateButton();
+        }
+
+        // Show message
+        function showMessage(msg, type) {
+            messageBox.textContent = msg;
+            messageBox.className = "message " + type;
+            messageBox.style.display = "block";
+
+            setTimeout(() => {
+                messageBox.style.display = "none";
+            }, 3000);
+        }
+
+        // Notification functions
+        function showNotifications() {
+            const modal = document.getElementById('notificationsModal');
+            loadNotifications();
+            modal.classList.add('active');
+        }
+
+        function closeNotifications() {
+            document.getElementById('notificationsModal').classList.remove('active');
+        }
+
+        function loadNotifications() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const list = document.getElementById('notificationsList');
+            const allNotifications = notifications.filter(n => 
+                n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder'
+            );
+
+            if (allNotifications.length === 0) {
+                list.innerHTML = `
+                    <div class="no-notifications">
+                        <i class="fas fa-bell-slash" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <p>No notifications yet</p>
+                        <p style="font-size: 0.9rem; color: #999;">You will receive notifications for appointment reminders, activity updates, and reschedule alerts.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            allNotifications.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            let html = '';
+            allNotifications.forEach(notification => {
+                const isUnread = !notification.read;
+                const time = new Date(notification.createdAt).toLocaleString();
+                const typeClass = notification.type === 'reschedule' ? 'reschedule' : 
+                                 notification.type === 'activity_skip' ? 'activity-skip' : 'appointment-reminder';
+                html += `
+                    <div class="notification-item ${isUnread ? 'unread' : ''} ${typeClass}">
+                        <div class="notification-header">
+                            <span class="notification-title">${notification.title}</span>
+                            <span class="notification-time">${time}</span>
+                        </div>
+                        <div class="notification-message">
+                            ${notification.doctorName ? `<span class="notification-doctor">${notification.doctorName}</span>: ` : ''}${notification.message}
+                        </div>
+                        ${isUnread ? `<button class="mark-read-btn" onclick="markAsRead('${notification.id}')">Mark as Read</button>` : ''}
+                    </div>
+                `;
+            });
+            list.innerHTML = html;
+        }
+
+        function markAsRead(notificationId) {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const index = notifications.findIndex(n => n.id === notificationId);
+            if (index !== -1) {
+                notifications[index].read = true;
+                localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+                loadNotifications();
+                updateNotificationBadge();
+            }
+        }
+
+        function updateNotificationBadge() {
+            if (!currentUser) return;
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            const unreadCount = notifications.filter(n => 
+                (n.type === 'reschedule' || n.type === 'activity_skip' || n.type === 'appointment_reminder') && !n.read
+            ).length;
+            const badge = document.getElementById('notificationBadge');
+            if (unreadCount > 0) {
+                badge.textContent = unreadCount;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        // Check for skipped activities and create notifications
+        function checkSkippedActivities() {
+            if (!currentUser) return;
+            
+            const patientActivities = JSON.parse(localStorage.getItem('patientActivities') || '[]');
+            const userActivities = patientActivities.filter(a => a.patientId === currentUser.id);
+            
+            const today = new Date().toISOString().split('T')[0];
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            userActivities.forEach(activity => {
+                if (activity.date === today && !activity.completed) {
+                    const alreadyNotified = notifications.some(n => 
+                        n.type === 'activity_skip' && 
+                        n.activityId === activity.id && 
+                        n.createdAt.startsWith(today)
+                    );
+                    
+                    if (!alreadyNotified) {
+                        notifications.push({
+                            id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                            type: 'activity_skip',
+                            activityId: activity.id,
+                            title: 'Activity Skipped',
+                            message: `You missed your scheduled activity: "${activity.title}" for today. Stay consistent with your health routine!`,
+                            read: false,
+                            createdAt: new Date().toISOString()
+                        });
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Check for upcoming appointments and create reminder notifications
+        function checkUpcomingAppointments() {
+            if (!currentUser) return;
+            
+            const patientAppointments = JSON.parse(localStorage.getItem(`patient_appointments_${currentUser.id}`) || '[]');
+            const today = new Date();
+            
+            const notifications = JSON.parse(localStorage.getItem(`patient_notifications_${currentUser.id}`) || '[]');
+            
+            patientAppointments.forEach(apt => {
+                if (apt.status === 'upcoming' || apt.status === 'approved') {
+                    const aptDate = new Date(apt.date);
+                    const daysUntil = Math.ceil((aptDate - today) / (1000 * 60 * 60 * 24));
+                    
+                    if (daysUntil === 1 || daysUntil === 0) {
+                        const timeMsg = daysUntil === 0 ? 'today' : 'tomorrow';
+                        
+                        const alreadyNotified = notifications.some(n => 
+                            n.type === 'appointment_reminder' && 
+                            n.appointmentId === apt.id &&
+                            n.createdAt.startsWith(today.toISOString().split('T')[0])
+                        );
+                        
+                        if (!alreadyNotified) {
+                            notifications.push({
+                                id: 'NOTIF-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9),
+                                type: 'appointment_reminder',
+                                appointmentId: apt.id,
+                                title: 'Appointment Reminder',
+                                message: `You have an appointment ${timeMsg} at ${apt.time} with Dr. ${apt.doctorName}. Don't forget to attend!`,
+                                read: false,
+                                createdAt: new Date().toISOString()
+                            });
+                        }
+                    }
+                }
+            });
+            
+            if (notifications.length > 5) {
+                notifications.splice(0, notifications.length - 5);
+            }
+            
+            localStorage.setItem(`patient_notifications_${currentUser.id}`, JSON.stringify(notifications));
+        }
+
+        // Close modals on ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeNotifications();
+        });
+
+        // Close notifications modal when clicking outside
+        document.getElementById('notificationsModal').addEventListener('click', function(e) {
+            if (e.target === this) closeNotifications();
+        });
+
+        // Update notification badge on load
+        document.addEventListener('DOMContentLoaded', function() {
+            if (currentUser) {
+                checkSkippedActivities();
+                checkUpcomingAppointments();
+                updateNotificationBadge();
+            }
+        });
+    </script>
+
+    <!-- Notifications Modal -->
+    <div class="notifications-modal" id="notificationsModal">
+        <div class="notifications-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                <h3 style="margin: 0; color: #333;"><i class="fas fa-bell"></i> Notifications</h3>
+                <button style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666;" onclick="closeNotifications()">&times;</button>
+            </div>
+            <div id="notificationsList"></div>
+            <button class="close-modal-btn" onclick="closeNotifications()">
+                <i class="fas fa-times"></i> Close
+            </button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Analysis Reports</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .page-container { min-height: 100vh; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 2rem 3%; }
+        .page-header { background: white; border-radius: 15px; padding: 2rem; margin-bottom: 2rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+        .header-content { display: flex; justify-content: space-between; align-items: center; }
+        .page-title { font-size: 2rem; color: #333; font-weight: 700; }
+        .back-btn { background: linear-gradient(135deg, #667eea, #764ba2); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 10px; text-decoration: none; font-weight: 600; transition: all 0.3s ease; display: flex; align-items: center; gap: 0.5rem; }
+        .back-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3); }
+        .content-card { background: white; border-radius: 15px; padding: 2rem; box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); }
+        .controls-section { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem; }
+        .search-box { flex: 1; min-width: 300px; position: relative; }
+        .search-input { width: 100%; padding: 0.75rem 1rem 0.75rem 3rem; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem; transition: all 0.3s ease; }
+        .search-input:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .search-icon { position: absolute; left: 1rem; top: 50%; transform: translateY(-50%); color: #666; }
+        .filter-group { display: flex; gap: 1rem; align-items: center; }
+        .filter-select { padding: 0.75rem; border: 2px solid #e5e7eb; border-radius: 10px; font-size: 1rem; background: white; cursor: pointer; transition: all 0.3s ease; }
+        .filter-select:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin-bottom: 2rem; }
+        .stat-card { background: linear-gradient(135deg, #f8f9fa, #e9ecef); padding: 1.5rem; border-radius: 10px; text-align: center; border: 1px solid #e5e7eb; }
+        .stat-number { font-size: 2rem; font-weight: 700; color: #667eea; margin-bottom: 0.5rem; }
+        .stat-label { color: #666; font-size: 0.9rem; }
+        .reports-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 1.5rem; }
+        .report-card { background: #f8f8f8; border: 1px solid #e5e7eb; border-radius: 14px; padding: 1rem; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; cursor: pointer; }
+        .report-card:hover { transform: translateY(-4px); box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12); }
+        .report-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1rem; }
+        .patient-meta { display: flex; flex-direction: column; gap: 0.25rem; }
+        .patient-name-row { display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap; }
+        .patient-name { font-size: 1rem; font-weight: 700; color: #333; }
+        .report-date { font-size: 0.8rem; color: #6b7280; font-weight: 500; }
+        .severity-badge { display: inline-flex; align-items: center; justify-content: center; padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.7rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .severity-low { background: #d1fae5; color: #065f46; }
+        .severity-medium { background: #fed7aa; color: #92400e; }
+        .severity-high { background: #fee2e2; color: #991b1b; }
+        .report-actions { display: flex; gap: 0.5rem; margin-top: 1rem; flex-wrap: wrap; }
+        .action-btn { border: none; border-radius: 8px; font-size: 0.8rem; font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.55rem 0.85rem; }
+        .action-btn:hover { transform: translateY(-1px); }
+        .btn-primary { background: #2f7d68; color: white; }
+        .btn-secondary { background: #e5e7eb; color: #374151; }
+        .btn-danger { background: #fee2e2; color: #dc2626; }
+        .btn-success { background: #10b981; color: white; }
+        .empty-state { text-align: center; padding: 3rem; color: #666; }
+        .empty-icon { font-size: 4rem; color: #ccc; margin-bottom: 1rem; }
+        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); backdrop-filter: blur(5px); overflow-y: auto; }
+        .modal.active { display: flex; align-items: flex-start; justify-content: center; padding: 2rem 0; }
+        .modal-content { background: white; border-radius: 15px; width: 90%; max-width: 800px; max-height: 90vh; overflow-y: auto; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2); position: relative; }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; padding: 1.5rem; border-bottom: 1px solid #e5e7eb; }
+        .modal-title { font-size: 1.5rem; color: #333; font-weight: 600; }
+        .close-btn { background: none; border: none; font-size: 1.5rem; cursor: pointer; color: #666; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; transition: all 0.3s ease; }
+        .close-btn:hover { background: #f3f4f6; color: #333; }
+        .report-content { padding: 1.5rem; }
+        .report-section { margin-bottom: 2rem; padding: 1rem; border: 1px solid #e5e7eb; border-radius: 10px; background: #f9fafb; }
+        .report-section h3 { color: #333; font-size: 1.2rem; margin-bottom: 1rem; display: flex; align-items: center; gap: 0.5rem; }
+        .report-image { width: 100%; max-width: 300px; border-radius: 10px; margin: 1rem 0; border: 2px solid #e5e7eb; }
+        .findings-list, .recommendations-list { list-style: none; padding: 0; }
+        .findings-list li, .recommendations-list li { padding: 0.5rem 0; border-bottom: 1px solid #e5e7eb; color: #4b5563; }
+        .findings-list li:last-child, .recommendations-list li:last-child { border-bottom: none; }
+        .editable { background: white; border: 1px solid #e5e7eb; border-radius: 5px; padding: 0.5rem; min-height: 60px; width: 100%; resize: vertical; }
+        .editable:focus { outline: none; border-color: #667eea; box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1); }
+        .action-buttons { display: flex; gap: 1rem; margin-top: 2rem; padding: 1.5rem; border-top: 1px solid #e5e7eb; }
+        @media (max-width: 768px) { .header-content { flex-direction: column; gap: 1rem; } .controls-section { flex-direction: column; align-items: stretch; } .search-box { min-width: 100%; } .reports-grid { grid-template-columns: 1fr; } .report-actions { flex-direction: column; } .action-btn { width: 100%; justify-content: center; } }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title">Analysis Reports</h1>
+                <a href="doctor-welcome.html" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    Back
+                </a>
+            </div>
+        </div>
+
+        <div class="content-card">
+            <div class="controls-section">
+                <div class="search-box">
+                    <i class="fas fa-search search-icon"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Search patient reports...">
+                </div>
+                <div class="filter-group">
+                    <select class="filter-select" id="severityFilter">
+                        <option value="">All Severities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="stats-grid" id="statsGrid"></div>
+            <div class="reports-grid" id="reportsGrid"></div>
+            <div class="empty-state" id="emptyState" style="display:none;">
+                <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+                <h3>No Reports Found</h3>
+                <p>Try adjusting your search or filters.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="reportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">X-Ray Analysis Report</h2>
+                <button class="close-btn" onclick="closeReportModal()">&times;</button>
+            </div>
+            <div class="report-content" id="reportContent"></div>
+            <div class="action-buttons">
+                <button class="action-btn btn-secondary" onclick="editReport()"><i class="fas fa-edit"></i> Edit Report</button>
+                <button class="action-btn btn-success" onclick="saveReport()"><i class="fas fa-save"></i> Save Report</button>
+                <button class="action-btn btn-primary" onclick="downloadPDF()"><i class="fas fa-download"></i> Download PDF</button>
+                <button class="action-btn btn-danger" onclick="deleteReport()"><i class="fas fa-trash"></i> Delete Report</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let reports = [], filteredReports = [], currentReport = null, currentPatientId = null;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Get patient ID from URL parameters
+            const urlParams = new URLSearchParams(window.location.search);
+            currentPatientId = urlParams.get('patientId');
+            
+            // Update page title if patient-specific
+            if (currentPatientId) {
+                document.querySelector('.page-title').textContent = 'Patient Reports';
+                // Get patient name for better context
+                const patients = JSON.parse(localStorage.getItem('arthrosheild_patients') || '[]');
+                const patient = patients.find(p => p.id == currentPatientId);
+                if (patient) {
+                    document.querySelector('.page-title').textContent = `Reports - ${patient.name}`;
+                }
+            }
+            
+            loadReports();
+            setupEventListeners();
+            updateStatistics();
+        });
+
+        function redirectToUpload() {
+            if (currentPatientId) {
+                window.location.href = `upload-xrays.html?patientId=${currentPatientId}`;
+            } else {
+                window.location.href = 'patients.html';
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterReports);
+            document.getElementById('severityFilter').addEventListener('change', filterReports);
+        }
+
+        function loadReports() {
+            reports = JSON.parse(localStorage.getItem('arthrosheild_reports') || '[]');
+            
+            // Remove duplicates based on ID
+            const uniqueIds = new Set();
+            reports = reports.filter(report => {
+                if (uniqueIds.has(report.id)) {
+                    return false;
+                }
+                uniqueIds.add(report.id);
+                return true;
+            });
+            
+            // Save deduplicated reports
+            localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+            
+            // If patient ID is specified, filter reports for that patient only
+            if (currentPatientId) {
+                // Get patient info
+                const patients = JSON.parse(localStorage.getItem('arthrosheild_patients') || '[]');
+                const patient = patients.find(p => p.id == currentPatientId);
+                
+                if (patient) {
+                    // Filter reports for this patient
+                    reports = reports.filter(report => report.patientId == currentPatientId);
+                    
+                    // If no reports found, show appropriate message
+                    if (reports.length === 0) {
+                        document.getElementById('emptyState').innerHTML = `
+                            <div class="empty-icon"><i class="fas fa-folder-open"></i></div>
+                            <h3>No Reports Found for ${patient.name}</h3>
+                            <p>This patient doesn't have any X-ray reports yet.</p>
+                            <button class="action-btn btn-primary" onclick="redirectToUpload()" style="margin-top: 1rem;">
+                                <i class="fas fa-plus"></i> Add X-Ray Report
+                            </button>
+                        `;
+                    }
+                } else {
+                    // Patient not found
+                    reports = [];
+                    document.getElementById('emptyState').innerHTML = `
+                        <div class="empty-icon"><i class="fas fa-user-slash"></i></div>
+                        <h3>Patient Not Found</h3>
+                        <p>The specified patient could not be found.</p>
+                    `;
+                }
+            } else {
+                // Original logic for showing all reports
+                if (reports.length === 0) {
+                    reports = [
+                        { id: 'sample-1', patientName: 'John Smith', date: new Date().toISOString(), severity: 'high', image: 'https://via.placeholder.com/300x400?text=X-Ray+Sample', findings: ['Joint space narrowing observed', 'Signs of early osteoarthritis'], recommendations: ['Physical therapy recommended', 'Pain management medication'], diet: ['Increase calcium intake', 'Vitamin D supplements'], exercise: ['Low-impact exercises', 'Swimming recommended'], followUp: '4 weeks', notes: 'Patient shows good response to initial treatment' },
+                        { id: 'sample-2', patientName: 'Emily Johnson', date: new Date(Date.now() - 86400000).toISOString(), severity: 'medium', image: 'https://via.placeholder.com/300x400?text=X-Ray+Sample+2', findings: ['Mild cartilage degeneration', 'No major fracture detected'], recommendations: ['Monitor condition', 'Regular exercise'], diet: ['Anti-inflammatory foods', 'Omega-3 supplements'], exercise: ['Gentle stretching', 'Walking 30 minutes daily'], followUp: '6 weeks', notes: 'Patient condition stable' }
+                    ];
+                    localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+                }
+            }
+            
+            filteredReports = [...reports];
+            renderReports();
+        }
+
+        function filterReports() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const severityFilter = document.getElementById('severityFilter').value;
+            filteredReports = reports.filter(report => {
+                const matchesSearch = !searchTerm || report.patientName.toLowerCase().includes(searchTerm);
+                const matchesSeverity = !severityFilter || report.severity === severityFilter;
+                return matchesSearch && matchesSeverity;
+            });
+            renderReports();
+        }
+
+        function renderReports() {
+            const reportsGrid = document.getElementById('reportsGrid');
+            const emptyState = document.getElementById('emptyState');
+            if (filteredReports.length === 0) {
+                reportsGrid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            reportsGrid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            reportsGrid.innerHTML = filteredReports.map(report => `
+                <div class="report-card" onclick="viewReport('${report.id}')">
+                    <div class="report-top">
+                        <div class="patient-meta">
+                            <div class="patient-name-row">
+                                <div class="severity-badge severity-${report.severity}">${report.severity}</div>
+                                <div class="patient-name">${report.patientName}</div>
+                            </div>
+                            <div class="report-date">${new Date(report.date).toLocaleDateString()}</div>
+                            <div style="font-size: 0.8rem; color: #6b7280;">ID: #${report.id}</div>
+                        </div>
+                    </div>
+                    <div class="report-actions">
+                        <button class="action-btn btn-primary" onclick="event.stopPropagation(); viewReport('${report.id}')"><i class="fas fa-eye"></i> View</button>
+                        <button class="action-btn btn-secondary" onclick="event.stopPropagation(); editReportSummary('${report.id}')"><i class="fas fa-edit"></i> Edit</button>
+                        <button class="action-btn btn-danger" onclick="event.stopPropagation(); deleteReportSummary('${report.id}')"><i class="fas fa-trash"></i> Delete</button>
+                        <button class="action-btn btn-success" onclick="event.stopPropagation(); printReport('${report.id}')"><i class="fas fa-print"></i> Print</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateStatistics() {
+            const statsGrid = document.getElementById('statsGrid');
+            const totalReports = reports.length;
+            const lowSeverity = reports.filter(r => r.severity === 'low').length;
+            const mediumSeverity = reports.filter(r => r.severity === 'medium').length;
+            const highSeverity = reports.filter(r => r.severity === 'high').length;
+            statsGrid.innerHTML = `
+                <div class="stat-card"><div class="stat-number">${totalReports}</div><div class="stat-label">Total Reports</div></div>
+                <div class="stat-card"><div class="stat-number">${highSeverity}</div><div class="stat-label">High Severity</div></div>
+                <div class="stat-card"><div class="stat-number">${mediumSeverity}</div><div class="stat-label">Medium Severity</div></div>
+                <div class="stat-card"><div class="stat-number">${lowSeverity}</div><div class="stat-label">Low Severity</div></div>
+            `;
+        }
+
+        function viewReport(reportId) {
+            currentReport = reports.find(r => r.id === reportId);
+            if (!currentReport) return;
+            displayFullReport(currentReport);
+        }
+
+        function displayFullReport(report) {
+            const reportContent = document.getElementById('reportContent');
+            const severityClass = `severity-${report.severity}`;
+            const severityText = report.severity.charAt(0).toUpperCase() + report.severity.slice(1);
+            reportContent.innerHTML = `
+                <div class="report-section"><h3><i class="fas fa-user"></i> Patient Information</h3><p><strong>Name:</strong> ${report.patientName}</p><p><strong>Date:</strong> ${new Date(report.date).toLocaleDateString()}</p><p><strong>Report ID:</strong> #${report.id}</p></div>
+                <div class="report-section"><h3><i class="fas fa-exclamation-triangle"></i> Severity Assessment</h3><div class="severity-badge ${severityClass}">${severityText} Severity</div><p>Based on X-ray analysis, patient condition is classified as ${severityText} severity.</p></div>
+                <div class="report-section"><h3><i class="fas fa-x-ray"></i> X-Ray Image</h3><img src="${report.image}" alt="X-Ray" class="report-image"></div>
+                <div class="report-section"><h3><i class="fas fa-search"></i> Detailed Findings</h3><ul class="findings-list">${report.findings.map(finding => `<li>${finding}</li>`).join('')}</ul></div>
+                <div class="report-section"><h3><i class="fas fa-stethoscope"></i> Medical Recommendations</h3><ul class="recommendations-list">${report.recommendations.map(rec => `<li>${rec}</li>`).join('')}</ul></div>
+                <div class="report-section"><h3><i class="fas fa-heartbeat"></i> Diet & Exercise Plan</h3><div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;"><div><h4 style="margin-bottom: 0.5rem; color: #333;">Diet Plan</h4><ul class="recommendations-list">${report.diet.map(item => `<li>${item}</li>`).join('')}</ul></div><div><h4 style="margin-bottom: 0.5rem; color: #333;">Exercise Plan</h4><ul class="recommendations-list">${report.exercise.map(exercise => `<li>${exercise}</li>`).join('')}</ul></div></div></div>
+                <div class="report-section"><h3><i class="fas fa-calendar"></i> Follow-up & Notes</h3><p><strong>Follow-up:</strong> ${report.followUp}</p><div style="margin-top: 1rem;"><h4 style="margin-bottom: 0.5rem; color: #333;">Doctor's Notes</h4><div class="editable" id="doctorNotes" contenteditable="false">${report.notes}</div></div></div>
+            `;
+            document.getElementById('reportModal').classList.add('active');
+        }
+
+        function closeReportModal() {
+            document.getElementById('reportModal').classList.remove('active');
+        }
+
+        function editReportSummary(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+            viewReport(reportId);
+            setTimeout(() => { editReport(); }, 500);
+        }
+
+        function deleteReportSummary(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+            if (confirm(`Are you sure you want to delete report for ${report.patientName}?`)) {
+                reports = reports.filter(r => r.id !== reportId);
+                filteredReports = filteredReports.filter(r => r.id !== reportId);
+                localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+                
+                // Also remove from patient-specific storage
+                if (report.patientId) {
+                    const patientReportsKey = `patient_reports_${report.patientId}`;
+                    const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                    const updatedPatientReports = patientReports.filter(r => r.id !== reportId);
+                    localStorage.setItem(patientReportsKey, JSON.stringify(updatedPatientReports));
+                }
+                
+                renderReports();
+                updateStatistics();
+            }
+        }
+
+        function printReport(reportId) {
+            const report = reports.find(r => r.id === reportId);
+            if (!report) return;
+            window.print();
+        }
+
+        function editReport() {
+            if (!currentReport) return;
+            const notesEl = document.getElementById('doctorNotes');
+            if (notesEl) {
+                notesEl.contentEditable = !notesEl.contentEditable;
+                if (notesEl.contentEditable) {
+                    notesEl.style.background = '#f0f9ff';
+                    notesEl.focus();
+                } else {
+                    notesEl.style.background = 'white';
+                    currentReport.notes = notesEl.textContent;
+                    const reportIndex = reports.findIndex(r => r.id === currentReport.id);
+                    if (reportIndex !== -1) {
+                        reports[reportIndex] = currentReport;
+                        localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+                        
+                        // Also save to patient-specific storage
+                        if (currentReport.patientId) {
+                            const patientReportsKey = `patient_reports_${currentReport.patientId}`;
+                            const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                            const patientReportIndex = patientReports.findIndex(r => r.id === currentReport.id);
+                            if (patientReportIndex !== -1) {
+                                patientReports[patientReportIndex] = currentReport;
+                            } else {
+                                patientReports.push(currentReport);
+                            }
+                            localStorage.setItem(patientReportsKey, JSON.stringify(patientReports));
+                        }
+                    }
+                }
+            }
+        }
+
+        function saveReport() {
+            if (!currentReport) return;
+            const reportIndex = reports.findIndex(r => r.id === currentReport.id);
+            if (reportIndex !== -1) {
+                reports[reportIndex] = currentReport;
+                localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+                
+                // Also save to patient-specific storage
+                if (currentReport.patientId) {
+                    const patientReportsKey = `patient_reports_${currentReport.patientId}`;
+                    const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                    const patientReportIndex = patientReports.findIndex(r => r.id === currentReport.id);
+                    if (patientReportIndex !== -1) {
+                        patientReports[patientReportIndex] = currentReport;
+                    } else {
+                        patientReports.push(currentReport);
+                    }
+                    localStorage.setItem(patientReportsKey, JSON.stringify(patientReports));
+                }
+            }
+            alert('Report saved successfully!');
+        }
+
+        function downloadPDF() {
+            if (!currentReport) return;
+            const pdfContent = `X-RAY ANALYSIS REPORT
+====================
+
+Patient: ${currentReport.patientName}
+Date: ${new Date(currentReport.date).toLocaleDateString()}
+Report ID: #${currentReport.id}
+Severity: ${currentReport.severity.toUpperCase()}
+
+FINDINGS:
+${currentReport.findings.map(f => `• ${f}`).join('\n')}
+
+RECOMMENDATIONS:
+${currentReport.recommendations.map(r => `• ${r}`).join('\n')}
+
+DIET PLAN:
+${currentReport.diet.map(d => `• ${d}`).join('\n')}
+
+EXERCISE PLAN:
+${currentReport.exercise.map(e => `• ${e}`).join('\n')}
+
+FOLLOW-UP: ${currentReport.followUp}
+
+DOCTOR'S NOTES:
+${currentReport.notes}`;
+            const blob = new Blob([pdfContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `XRay_Report_${currentReport.id}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+            alert('Report downloaded as text file');
+        }
+
+        function deleteReport() {
+            if (!currentReport) return;
+            if (confirm('Are you sure you want to delete this report?')) {
+                reports = reports.filter(r => r.id !== currentReport.id);
+                filteredReports = filteredReports.filter(r => r.id !== currentReport.id);
+                localStorage.setItem('arthrosheild_reports', JSON.stringify(reports));
+                
+                // Also remove from patient-specific storage
+                if (currentReport.patientId) {
+                    const patientReportsKey = `patient_reports_${currentReport.patientId}`;
+                    const patientReports = JSON.parse(localStorage.getItem(patientReportsKey) || '[]');
+                    const updatedPatientReports = patientReports.filter(r => r.id !== currentReport.id);
+                    localStorage.setItem(patientReportsKey, JSON.stringify(updatedPatientReports));
+                }
+                
+                closeReportModal();
+                renderReports();
+                updateStatistics();
+                alert('Report deleted successfully!');
+            }
+        }
+    </script>
+</body>
+</html>

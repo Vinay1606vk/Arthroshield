@@ -1,0 +1,2774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Activity Manager</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Enhanced Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .page-container { 
+            min-height: 100vh; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            padding: 2rem 3%; 
+            position: relative;
+        }
+
+        .page-container::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.05)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .page-header { 
+            background: white; 
+            border-radius: 20px; 
+            padding: 2.5rem; 
+            margin-bottom: 2rem; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); 
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .header-content { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            flex-wrap: wrap; 
+            gap: 1.5rem; 
+        }
+
+        .page-title { 
+            font-size: 2.5rem; 
+            color: #1f2937; 
+            font-weight: 800; 
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .page-title i {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .back-btn { 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 15px; 
+            text-decoration: none; 
+            font-weight: 600; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            font-size: 1rem;
+        }
+
+        .back-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4); 
+        }
+
+        .add-activity-btn { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 15px; 
+            font-weight: 600; 
+            cursor: pointer; 
+            transition: all 0.3s ease; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+            font-size: 1rem;
+        }
+
+        .add-activity-btn:hover { 
+            transform: translateY(-3px); 
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4); 
+        }
+
+        .progress-btn { 
+            background: linear-gradient(135deg, #f59e0b, #d97706); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 15px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+            font-size: 1rem;
+        }
+
+        .progress-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(245, 158, 11, 0.4);
+        }
+
+        .notification-icon { 
+            position: relative; 
+            background: rgba(255, 255, 255, 0.9); 
+            color: #dc2626; 
+            border: 2px solid #fee2e2;
+            padding: 1rem; 
+            border-radius: 15px; 
+            cursor: pointer; 
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+        }
+
+        .notification-icon:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.2);
+        }
+
+        .notification-badge { 
+            position: absolute; 
+            top: -8px; 
+            right: -8px; 
+            background: #dc2626; 
+            color: white; 
+            border-radius: 50%; 
+            width: 24px; 
+            height: 24px; 
+            font-size: 0.75rem; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            font-weight: 700;
+            box-shadow: 0 2px 8px rgba(220, 38, 38, 0.4);
+        }
+
+        .content-card { 
+            background: rgba(255, 255, 255, 0.95); 
+            border-radius: 20px; 
+            padding: 2.5rem; 
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1); 
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .activities-grid { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 2rem; 
+        }
+
+        .activity-card { 
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%); 
+            border: 1px solid #e5e7eb; 
+            border-radius: 20px; 
+            padding: 2rem; 
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08); 
+            transition: all 0.3s ease; 
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .activity-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+
+        .activity-card:hover { 
+            transform: translateY(-8px); 
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15); 
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-patient-info {
+            flex: 1;
+        }
+
+        .card-patient-name { 
+            font-size: 1.4rem; 
+            font-weight: 700; 
+            color: #1f2937; 
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-patient-name::before {
+            content: ' ';
+            width: 8px;
+            height: 8px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .card-patient-id { 
+            font-size: 0.95rem; 
+            color: #6b7280; 
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .card-duration { 
+            font-size: 0.95rem; 
+            color: #059669; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.5rem;
+            background: rgba(16, 185, 129, 0.1);
+            padding: 0.5rem 1rem;
+            border-radius: 10px;
+            width: fit-content;
+        }
+
+        .card-status { 
+            margin-top: 1.5rem; 
+            padding: 0.75rem 1rem; 
+            border-radius: 12px; 
+            font-size: 0.9rem; 
+            font-weight: 600; 
+            text-align: center; 
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-active { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+            border: 1px solid #10b981;
+        }
+
+        .status-completed { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af; 
+            border: 1px solid #3b82f6;
+        }
+
+        .status-overdue { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #991b1b; 
+            border: 1px solid #ef4444;
+        }
+
+        .empty-state { 
+            text-align: center; 
+            padding: 4rem; 
+            color: #6b7280; 
+        }
+
+        .empty-icon { 
+            font-size: 5rem; 
+            color: #d1d5db; 
+            margin-bottom: 2rem;
+            opacity: 0.6;
+        }
+
+        .empty-state h3 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            color: #4b5563;
+        }
+
+        .empty-state p {
+            font-size: 1.1rem;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Enhanced Modal Styles */
+        .modal { 
+            display: none; 
+            position: fixed; 
+            z-index: 2000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background-color: rgba(0, 0, 0, 0.6); 
+            backdrop-filter: blur(8px); 
+            overflow-y: auto;
+        }
+
+        .modal.active { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 2rem; 
+        }
+
+        .modal.active .modal-content {
+            animation: amModalIn 180ms ease-out;
+        }
+
+        @keyframes amModalIn {
+            from { transform: translateY(14px) scale(0.98); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
+        }
+
+        .modal-content { 
+            background: white; 
+            border-radius: 25px; 
+            width: 90%; 
+            max-width: 900px; 
+            max-height: 90vh; 
+            overflow-y: auto; 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); 
+            position: relative;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-content {
+            overflow: hidden;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .modal-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding: 2rem; 
+            border-bottom: 1px solid #e5e7eb;
+            background: linear-gradient(135deg, #f8fafc, #ffffff);
+            border-radius: 25px 25px 0 0;
+        }
+
+        .modal-header {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .modal-title { 
+            font-size: 1.8rem; 
+            color: #1f2937; 
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .close-btn { 
+            background: #f3f4f6; 
+            border: none; 
+            font-size: 1.5rem; 
+            cursor: pointer; 
+            color: #6b7280; 
+            width: 40px; 
+            height: 40px; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            border-radius: 50%; 
+            transition: all 0.3s ease;
+        }
+
+        .close-btn:hover { 
+            background: #fee2e2; 
+            color: #dc2626;
+            transform: rotate(90deg);
+        }
+
+        .close-btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(220, 38, 38, 0.2);
+        }
+
+        .modal-body { 
+            padding: 2rem; 
+            overflow: visible;
+        }
+
+        .modal-body {
+            overflow: auto;
+        }
+
+        /* Enhanced Form Styles */
+        .form-group { 
+            margin-bottom: 2rem; 
+        }
+
+        .form-label { 
+            display: block; 
+            margin-bottom: 0.75rem; 
+            font-weight: 600; 
+            color: #374151;
+            font-size: 1rem;
+        }
+
+        .form-input, .form-select, .form-textarea { 
+            width: 100%; 
+            padding: 1rem; 
+            border: 2px solid #e5e7eb; 
+            border-radius: 12px; 
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f9fafb;
+        }
+
+        .form-input:disabled, .form-select:disabled, .form-textarea:disabled {
+            background: #f3f4f6;
+            color: #6b7280;
+            cursor: not-allowed;
+            opacity: 1;
+        }
+
+        .form-input.am-invalid {
+            border-color: #ef4444;
+            box-shadow: 0 0 0 4px rgba(239, 68, 68, 0.10);
+            background: #fff1f2;
+        }
+
+        .form-input:focus-visible, .form-select:focus-visible, .form-textarea:focus-visible {
+            outline: none;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus { 
+            outline: none; 
+            border-color: #667eea; 
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+            background: white;
+        }
+
+        .form-textarea { 
+            min-height: 100px; 
+            resize: vertical; 
+        }
+
+        /* Enhanced Activity Type Tabs */
+        .activity-type-tabs { 
+            display: flex; 
+            gap: 0.75rem; 
+            margin-bottom: 2rem; 
+            background: #f3f4f6;
+            padding: 0.5rem;
+            border-radius: 15px;
+        }
+
+        .type-tab { 
+            padding: 1rem 2rem; 
+            border: none; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            transition: all 0.3s ease;
+            background: transparent;
+            color: #6b7280;
+            flex: 1;
+            text-align: center;
+        }
+
+        .type-tab.active { 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .type-tab:hover:not(.active) {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+        }
+
+        /* Enhanced Activity Sections */
+        .activity-section { 
+            background: #f9fafb; 
+            border: 1px solid #e5e7eb; 
+            border-radius: 15px; 
+            padding: 1.5rem; 
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-bottom: 1rem; 
+        }
+
+        .section-title { 
+            font-weight: 700; 
+            color: #1f2937;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .remove-btn { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #dc2626; 
+            border: none; 
+            padding: 0.5rem 1rem; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-size: 0.85rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .remove-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.2);
+        }
+
+        .add-item-btn { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+            border: none; 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 12px; 
+            cursor: pointer; 
+            font-weight: 600; 
+            margin-top: 1rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .add-item-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.2);
+        }
+
+        .item-row { 
+            display: grid; 
+            grid-template-columns: 2fr 1fr 1fr auto; 
+            gap: 1rem; 
+            margin-bottom: 1rem; 
+            align-items: center; 
+        }
+
+        /* Enhanced Button Styles */
+        .form-actions { 
+            display: flex; 
+            gap: 1rem; 
+            padding: 2rem; 
+            border-top: 1px solid #e5e7eb; 
+            justify-content: flex-end;
+            background: #f9fafb;
+            border-radius: 0 0 25px 25px;
+        }
+
+        .form-actions {
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .btn-primary:focus-visible,
+        .btn-secondary:focus-visible,
+        .btn-danger:focus-visible,
+        .btn-success:focus-visible,
+        .progress-btn:focus-visible {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.20);
+        }
+
+        .btn-primary:active,
+        .btn-secondary:active,
+        .btn-danger:active,
+        .btn-success:active,
+        .progress-btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary { 
+            background: linear-gradient(135deg, #667eea, #764ba2); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary { 
+            background: #f3f4f6; 
+            color: #374151; 
+            border: 2px solid #e5e7eb; 
+            padding: 1rem 2rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-secondary:hover {
+            background: #e5e7eb;
+            transform: translateY(-2px);
+        }
+
+        .btn-danger { 
+            background: linear-gradient(135deg, #ef4444, #dc2626); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-success { 
+            background: linear-gradient(135deg, #10b981, #059669); 
+            color: white; 
+            border: none; 
+            padding: 1rem 2rem; 
+            border-radius: 12px; 
+            font-weight: 600; 
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+        }
+
+        /* Enhanced Search and Suggestions */
+        .search-container { 
+            position: relative; 
+        }
+
+        .suggestions-dropdown { 
+            position: absolute; 
+            top: 100%; 
+            left: 0; 
+            right: 0; 
+            background: white; 
+            border: 2px solid #667eea; 
+            border-top: none; 
+            border-radius: 0 0 12px 12px; 
+            max-height: 300px; 
+            overflow-y: auto; 
+            z-index: 9999; 
+            display: none; 
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .suggestions-dropdown.active { 
+            display: block; 
+        }
+
+        .suggestion-item { 
+            padding: 1rem 1.5rem; 
+            cursor: pointer; 
+            border-bottom: 1px solid #f3f4f6; 
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .suggestion-item:hover { 
+            background: #f8fafc; 
+            color: #667eea;
+            padding-left: 2rem;
+        }
+
+        .suggestion-item:last-child { 
+            border-bottom: none; 
+        }
+
+        /* Enhanced Notification Panel */
+        .notification-panel { 
+            position: absolute; 
+            top: 80px; 
+            right: 20px; 
+            width: 380px; 
+            background: white; 
+            border-radius: 20px; 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.2); 
+            padding: 1.5rem; 
+            display: none; 
+            z-index: 3000;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .notification-panel.active { 
+            display: block; 
+        }
+
+        .notification-item { 
+            padding: 1rem; 
+            border-bottom: 1px solid #f3f4f6; 
+            cursor: pointer; 
+            border-radius: 12px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .notification-item:hover { 
+            background: #f8fafc; 
+            transform: translateX(-4px);
+        }
+
+        .notification-item:last-child { 
+            border-bottom: none; 
+            margin-bottom: 0;
+        }
+
+        /* Enhanced Progress Report Styles */
+        .progress-report { 
+            background: linear-gradient(135deg, #f8fafc, #ffffff); 
+            border-radius: 15px; 
+            padding: 2rem; 
+            border: 1px solid #e5e7eb;
+        }
+
+        .progress-category { 
+            margin-bottom: 2rem; 
+        }
+
+        .category-title { 
+            font-weight: 700; 
+            color: #1f2937; 
+            margin-bottom: 1rem; 
+            display: flex; 
+            align-items: center; 
+            gap: 0.75rem;
+            font-size: 1.1rem;
+        }
+
+        .stats-row { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 1rem; 
+            margin-bottom: 1.5rem; 
+        }
+
+        .am-section {
+            border: 1px solid #e5e7eb;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+        }
+
+        .am-section {
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+        }
+
+        .am-editing .am-section {
+            border-color: rgba(102, 126, 234, 0.35);
+            box-shadow: 0 10px 26px rgba(102, 126, 234, 0.10);
+        }
+
+        .am-section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .am-section-header button {
+            padding: 0.6rem 1rem;
+        }
+
+        .am-section-title {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            font-weight: 800;
+            color: #111827;
+            font-size: 1.05rem;
+        }
+
+        .am-section-title i {
+            color: #667eea;
+        }
+
+        .am-items {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .am-item {
+            display: grid;
+            grid-template-columns: auto 1fr;
+            gap: 0.75rem;
+            align-items: start;
+            padding: 0.9rem;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+        }
+
+        .am-item-meta {
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 0.75rem;
+            align-items: start;
+        }
+
+        .am-item-actions {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+            justify-content: flex-end;
+        }
+
+        .am-icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            border: 1px solid #e5e7eb;
+            background: #f9fafb;
+            color: #374151;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .am-icon-btn:hover {
+            transform: translateY(-1px);
+            border-color: rgba(220, 38, 38, 0.45);
+            background: #fff1f2;
+            color: #dc2626;
+        }
+
+        .am-icon-btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .am-view-value {
+            display: grid;
+            gap: 0.25rem;
+        }
+
+        .am-view-title {
+            font-weight: 800;
+            color: #111827;
+        }
+
+        .am-view-sub {
+            color: #6b7280;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .am-item:hover {
+            border-color: rgba(102, 126, 234, 0.45);
+            box-shadow: 0 8px 18px rgba(102, 126, 234, 0.12);
+        }
+
+        .am-field-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+        }
+
+        .am-field-row {
+            align-items: center;
+        }
+
+        .am-checkbox {
+            width: 18px;
+            height: 18px;
+            margin-top: 0.1rem;
+            accent-color: #10b981;
+        }
+
+        .am-checkbox {
+            cursor: pointer;
+        }
+
+        .am-muted {
+            color: #6b7280;
+            font-size: 0.92rem;
+        }
+
+        .am-kv {
+            display: grid;
+            grid-template-columns: 160px 1fr;
+            gap: 0.75rem;
+            padding: 0.75rem 0;
+            border-top: 1px dashed #e5e7eb;
+            margin-top: 0.5rem;
+        }
+
+        .am-kv:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 0;
+        }
+
+        .am-k {
+            color: #374151;
+            font-weight: 700;
+        }
+
+        .am-v {
+            color: #111827;
+            font-weight: 600;
+        }
+
+        .am-graph {
+            margin-top: 1rem;
+            border-radius: 14px;
+            border: 1px solid #e5e7eb;
+            background: #ffffff;
+            padding: 1rem;
+        }
+
+        .am-graph {
+            box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+        }
+
+        .am-bar-row {
+            display: grid;
+            grid-template-columns: 140px 1fr 56px;
+            gap: 0.75rem;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .am-bar {
+            height: 10px;
+            background: #e5e7eb;
+            border-radius: 999px;
+            overflow: hidden;
+        }
+
+        .am-bar > div {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #059669);
+            width: 0%;
+        }
+
+        .stat-box { 
+            text-align: center; 
+            padding: 1.5rem; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-box.completed { 
+            background: linear-gradient(135deg, #d1fae5, #a7f3d0); 
+            color: #065f46; 
+        }
+
+        .stat-box.incomplete { 
+            background: linear-gradient(135deg, #fee2e2, #fecaca); 
+            color: #991b1b; 
+        }
+
+        .stat-box.total { 
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe); 
+            color: #1e40af; 
+        }
+
+        .stat-number { 
+            font-size: 2rem; 
+            font-weight: 800; 
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label { 
+            font-size: 0.9rem; 
+            font-weight: 600;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) { 
+            .page-container { padding: 1rem; }
+            .page-header { padding: 1.5rem; }
+            .header-content { flex-direction: column; text-align: center; }
+            .page-title { font-size: 2rem; }
+            .activities-grid { grid-template-columns: 1fr; } 
+            .item-row { grid-template-columns: 1fr; } 
+            .stats-row { grid-template-columns: 1fr; }
+            .modal.active { padding: 1rem; }
+            .modal-content { width: 95%; }
+            .activity-type-tabs { flex-direction: column; }
+            .type-tab { width: 100%; }
+            .notification-panel { width: 90%; right: 5%; }
+        }
+
+        @media (max-width: 768px) {
+            .am-field-row {
+                grid-template-columns: 1fr;
+            }
+            .am-bar-row {
+                grid-template-columns: 1fr;
+                gap: 0.35rem;
+            }
+            .form-actions {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .form-actions button {
+                flex: 1;
+                min-width: 140px;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="page-container">
+        <div class="page-header">
+            <div class="header-content">
+                <h1 class="page-title"><i class="fas fa-tasks"></i> Activity Manager</h1>
+                <div class="header-actions">
+                    <button class="progress-btn" onclick="showPatientProgress()">
+                        <i class="fas fa-chart-line"></i> Patient Progress
+                    </button>
+                    <button class="notification-icon" onclick="toggleNotifications()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notifBadge" style="display: none;">0</span>
+                    </button>
+                    <button class="add-activity-btn" onclick="startAddActivity()">
+                        <i class="fas fa-plus"></i> Add Activity
+                    </button>
+                    <a href="doctor-welcome.html" class="back-btn">
+                        <i class="fas fa-arrow-left"></i> Back
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="notification-panel" id="notificationPanel"></div>
+
+        <div class="content-card">
+            <div class="activities-grid" id="activitiesGrid"></div>
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-icon"><i class="fas fa-clipboard-list"></i></div>
+                <h3>No Activities Created</h3>
+                <p>Click "Add Activity" to create your first activity plan.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Activity Plan Modal -->
+    <div class="modal" id="createActivityModal">
+        <div class="modal-content" style="max-width: 900px;">
+            <div class="modal-header">
+                <h2 class="modal-title">Create Activity Plan</h2>
+                <button class="close-btn" onclick="closeModal('createActivityModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Patient Search -->
+                <div class="form-group">
+                    <label class="form-label">Search Patient</label>
+                    <div class="search-container">
+                        <input type="text" class="form-input" id="patientSearch" placeholder="Type patient name..." autocomplete="off">
+                        <div class="suggestions-dropdown" id="suggestionsDropdown"></div>
+                    </div>
+                    <input type="hidden" id="selectedPatientId">
+                    <input type="hidden" id="selectedPatientName">
+                </div>
+
+                <div class="activity-type-tabs">
+                    <div class="type-tab active" onclick="switchTab('diet')" id="dietTab">Diet</div>
+                    <div class="type-tab" onclick="switchTab('exercise')" id="exerciseTab">Exercise</div>
+                    <div class="type-tab" onclick="switchTab('medication')" id="medicationTab">Medication</div>
+                </div>
+
+                <!-- Diet Section -->
+                <div id="dietSection" class="tab-content">
+                    <div id="dietList"></div>
+                    <button class="add-item-btn" onclick="addDietItem()">+ Add Diet Item</button>
+                </div>
+
+                <!-- Exercise Section -->
+                <div id="exerciseSection" class="tab-content" style="display: none;">
+                    <div id="exerciseList"></div>
+                    <button class="add-item-btn" onclick="addExerciseItem()">+ Add Exercise</button>
+                </div>
+
+                <!-- Medication Section -->
+                <div id="medicationSection" class="tab-content" style="display: none;">
+                    <div id="medicationList"></div>
+                    <button class="add-item-btn" onclick="addMedicationItem()">+ Add Medication</button>
+                </div>
+
+                <!-- Duration -->
+                <div class="form-group" style="margin-top: 2rem; padding-top: 1rem; border-top: 2px solid #e5e7eb;">
+                    <label class="form-label">Duration for All Activities</label>
+                    <div class="duration-input">
+                        <input type="number" id="durationValue" min="1" value="4">
+                        <select id="durationUnit">
+                            <option value="days">Days</option>
+                            <option value="weeks" selected>Weeks</option>
+                            <option value="months">Months</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeModal('createActivityModal')">Cancel</button>
+                <button class="btn-primary" onclick="saveActivityPlan()">Save Activity Plan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="viewActivityModal" role="dialog" aria-modal="true" aria-labelledby="viewModalTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="viewModalTitle">Activity Details</h2>
+                <button class="close-btn" aria-label="Close activity plan" onclick="closeModal('viewActivityModal')">&times;</button>
+            </div>
+            <div class="modal-body" id="viewModalBody"></div>
+            <div class="form-actions" id="viewModalActions" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <button class="btn-primary" id="editActivityBtn" onclick="enterEditMode()" style="width: 100%;">Edit</button>
+                <div style="display: flex; gap: 0.75rem; width: 100%;">
+                    <button class="progress-btn" id="progressActivityBtn" onclick="showProgressReport()" style="flex: 1;">View Progress</button>
+                    <button class="btn-danger" id="deletePlanBtn" onclick="deleteCurrentActivity()" style="flex: 1;">Delete</button>
+                </div>
+                <button class="btn-secondary" id="cancelEditBtn" onclick="cancelEditMode()" style="display: none;">Cancel</button>
+                <button class="btn-success" id="saveActivityBtn" onclick="saveActivityChanges()" style="display: none;">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="progressReportModal" role="dialog" aria-modal="true" aria-labelledby="progressReportTitle">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="progressReportTitle">Progress Report - <span id="progressPatientName"></span></h2>
+                <button class="close-btn" aria-label="Close progress report" onclick="closeModal('progressReportModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="progress-report" id="progressReportContent"></div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeModal('progressReportModal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/app.js"></script>
+    <script>
+        let activities = [];
+        let patients = [];
+        let selectedPatient = null;
+        let currentActivity = null;
+        let currentEditId = null;
+        let dietItems = [];
+        let exerciseItems = [];
+        let medicationItems = [];
+        let completedNotifications = [];
+        let currentUser = null;
+        let isEditMode = false;
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check authentication and get current user
+            currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            if (!currentUser || currentUser.role !== 'doctor') {
+                alert('Please login as a doctor to access this page');
+                setTimeout(() => {
+                    window.location.href = 'home.html';
+                }, 2000);
+                return;
+            }
+            
+            loadPatients();
+            loadActivities();
+            checkCompletedActivities();
+            setupPatientSearch();
+            startProgressMonitoring(); // Start real-time progress monitoring
+
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') {
+                    const viewModal = document.getElementById('viewActivityModal');
+                    const progressModal = document.getElementById('progressReportModal');
+                    if (progressModal && progressModal.classList.contains('active')) closeModal('progressReportModal');
+                    else if (viewModal && viewModal.classList.contains('active')) closeModal('viewActivityModal');
+                }
+            });
+        });
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('amToast');
+            if (!toast) return;
+            toast.textContent = message;
+            toast.classList.remove('success', 'error');
+            toast.classList.add(type);
+            toast.style.display = 'flex';
+            toast.setAttribute('aria-live', 'polite');
+            clearTimeout(window.__amToastTimer);
+            window.__amToastTimer = setTimeout(() => {
+                toast.style.display = 'none';
+            }, 2500);
+        }
+
+        function loadPatients() {
+            const patientData = localStorage.getItem('arthrosheild_patients');
+            const reportsData = localStorage.getItem('arthrosheild_reports');
+            
+            patients = [];
+            const uniqueNames = new Set();
+            
+            if (patientData) {
+                const parsed = JSON.parse(patientData);
+                parsed.forEach(p => {
+                    const name = p.name || p.patientName;
+                    if (name && !uniqueNames.has(name)) {
+                        uniqueNames.add(name);
+                        patients.push({ id: p.id || p.patientId, name: name });
+                    }
+                });
+            }
+            
+            if (reportsData) {
+                const reports = JSON.parse(reportsData);
+                reports.forEach(r => {
+                    if (!uniqueNames.has(r.patientName)) {
+                        uniqueNames.add(r.patientName);
+                        patients.push({ id: r.id, name: r.patientName });
+                    }
+                });
+            }
+            
+            // Add diverse sample patients if none exist
+            if (patients.length === 0) {
+                const samplePatients = [
+                    { id: 'P001', name: 'John Smith' },
+                    { id: 'P002', name: 'Emily Johnson' },
+                    { id: 'P003', name: 'Michael Brown' },
+                    { id: 'P004', name: 'Sarah Wilson' },
+                    { id: 'P005', name: 'David Lee' },
+                    { id: 'P006', name: 'Jennifer Martinez' },
+                    { id: 'P007', name: 'Robert Taylor' },
+                    { id: 'P008', name: 'Lisa Anderson' }
+                ];
+                patients = samplePatients;
+            }
+        }
+
+        function setupPatientSearch() {
+            const searchInput = document.getElementById('patientSearch');
+            const dropdown = document.getElementById('suggestionsDropdown');
+            
+            searchInput.addEventListener('input', function() {
+                const value = this.value.toLowerCase();
+                if (value.length < 1) {
+                    dropdown.classList.remove('active');
+                    return;
+                }
+                
+                const matches = patients.filter(p => p.name.toLowerCase().includes(value));
+                
+                if (matches.length > 0) {
+                    dropdown.innerHTML = matches.map(p => `
+                        <div class="suggestion-item" onclick="selectPatient('${p.id}', '${p.name}')">
+                            <strong>${p.name}</strong> (ID: ${p.id})
+                        </div>
+                    `).join('');
+                    dropdown.classList.add('active');
+                } else {
+                    dropdown.innerHTML = '<div class="suggestion-item" style="color: #6b7280;">No patients found</div>';
+                    dropdown.classList.add('active');
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.search-container')) {
+                    dropdown.classList.remove('active');
+                }
+            });
+        }
+
+        function selectPatient(id, name) {
+            selectedPatient = { id, name };
+            document.getElementById('patientSearch').value = name;
+            document.getElementById('selectedPatientId').value = id;
+            document.getElementById('selectedPatientName').value = name;
+            document.getElementById('suggestionsDropdown').classList.remove('active');
+        }
+
+        function loadActivities() {
+            // Load from shared activity plans instead of local storage
+            const activityPlans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            
+            // Convert activity plans back to activity format for display
+            activities = [];
+            const planMap = new Map();
+            
+            activityPlans.forEach(plan => {
+                const baseId = plan.id.split('-')[0]; // Remove type suffix
+                
+                if (!planMap.has(baseId)) {
+                    planMap.set(baseId, {
+                        id: baseId,
+                        patientId: plan.patientId,
+                        patientName: plan.patientName,
+                        doctorId: plan.doctorId,
+                        doctorName: plan.doctorName,
+                        duration: plan.duration,
+                        endDate: plan.endDate,
+                        createdAt: plan.createdAt,
+                        updatedAt: plan.updatedAt,
+                        exercise: [],
+                        diet: [],
+                        medication: []
+                    });
+                }
+                
+                const activity = planMap.get(baseId);
+                if (plan.type === 'exercise') activity.exercise = plan.exercise;
+                if (plan.type === 'diet') activity.diet = plan.diet;
+                if (plan.type === 'medication') activity.medication = plan.medication;
+            });
+            
+            activities = Array.from(planMap.values());
+            renderActivities();
+        }
+
+        function renderActivities() {
+            const grid = document.getElementById('activitiesGrid');
+            const emptyState = document.getElementById('emptyState');
+            
+            if (activities.length === 0) {
+                grid.style.display = 'none';
+                emptyState.style.display = 'block';
+                return;
+            }
+            
+            grid.style.display = 'grid';
+            emptyState.style.display = 'none';
+            
+            grid.innerHTML = activities.map(activity => {
+                const status = getActivityStatus(activity);
+                const statusClass = status === 'completed' ? 'status-completed' : status === 'overdue' ? 'status-overdue' : 'status-active';
+                
+                return `
+                    <div class="activity-card" onclick="viewActivity('${activity.id}')">
+                        <div class="card-patient-name">${activity.patientName || 'Unknown Patient'}</div>
+                        <div class="card-patient-id">ID: ${activity.patientId}</div>
+                        <div class="card-duration"><i class="fas fa-calendar-alt"></i> Duration: ${activity.duration}</div>
+                        <div class="card-status ${statusClass}">${status.toUpperCase()}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function getActivityStatus(activity) {
+            const endDate = new Date(activity.endDate);
+            const now = new Date();
+            const allCompleted = activity.diet.every(d => d.completed) && 
+                                activity.exercise.every(e => e.completed) && 
+                                activity.medication.every(m => m.completed);
+            
+            if (allCompleted) return 'completed';
+            if (endDate < now) return 'overdue';
+            return 'active';
+        }
+
+        function startAddActivity() {
+            currentEditId = null;
+            selectedPatient = null;
+            dietItems = [];
+            exerciseItems = [];
+            medicationItems = [];
+            
+            document.getElementById('patientSearch').value = '';
+            document.getElementById('selectedPatientId').value = '';
+            document.getElementById('selectedPatientName').value = '';
+            
+            switchTab('diet');
+            renderDietList();
+            renderExerciseList();
+            renderMedicationList();
+            
+            document.getElementById('createActivityModal').classList.add('active');
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.style.display = 'none');
+            
+            document.getElementById(tab + 'Tab').classList.add('active');
+            document.getElementById(tab + 'Section').style.display = 'block';
+        }
+
+        function addDietItem(food = '', times = '') {
+            dietItems.push({ food, times, completed: false });
+            renderDietList();
+        }
+
+        function renderDietList() {
+            const list = document.getElementById('dietList');
+            list.innerHTML = dietItems.map((item, index) => `
+                <div class="activity-section">
+                    <div class="item-row">
+                        <input type="text" class="form-input" placeholder="Food to eat" value="${item.food}" onchange="updateDietItem(${index}, 'food', this.value)">
+                        <input type="text" class="form-input" placeholder="Times per day" value="${item.times}" onchange="updateDietItem(${index}, 'times', this.value)">
+                        <button class="remove-btn" onclick="removeDietItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateDietItem(index, field, value) {
+            dietItems[index][field] = value;
+        }
+
+        function removeDietItem(index) {
+            dietItems.splice(index, 1);
+            renderDietList();
+        }
+
+        function addExerciseItem(name = '', times = '', duration = '') {
+            exerciseItems.push({ name, times, duration, completed: false });
+            renderExerciseList();
+        }
+
+        function renderExerciseList() {
+            const list = document.getElementById('exerciseList');
+            list.innerHTML = exerciseItems.map((item, index) => `
+                <div class="activity-section">
+                    <div class="item-row" style="grid-template-columns: 2fr 1fr 1fr auto;">
+                        <input type="text" class="form-input" placeholder="Exercise name" value="${item.name}" onchange="updateExerciseItem(${index}, 'name', this.value)">
+                        <input type="text" class="form-input" placeholder="Times" value="${item.times}" onchange="updateExerciseItem(${index}, 'times', this.value)">
+                        <input type="text" class="form-input" placeholder="Duration" value="${item.duration}" onchange="updateExerciseItem(${index}, 'duration', this.value)">
+                        <button class="remove-btn" onclick="removeExerciseItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateExerciseItem(index, field, value) {
+            exerciseItems[index][field] = value;
+        }
+
+        function removeExerciseItem(index) {
+            exerciseItems.splice(index, 1);
+            renderExerciseList();
+        }
+
+        function addMedicationItem(medicine = '', times = '') {
+            medicationItems.push({ medicine, times, completed: false });
+            renderMedicationList();
+        }
+
+        function renderMedicationList() {
+            const list = document.getElementById('medicationList');
+            list.innerHTML = medicationItems.map((item, index) => `
+                <div class="activity-section">
+                    <div class="item-row">
+                        <input type="text" class="form-input" placeholder="Medicine name" value="${item.medicine}" onchange="updateMedicationItem(${index}, 'medicine', this.value)">
+                        <input type="text" class="form-input" placeholder="Times to take" value="${item.times}" onchange="updateMedicationItem(${index}, 'times', this.value)">
+                        <button class="remove-btn" onclick="removeMedicationItem(${index})"><i class="fas fa-trash"></i></button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateMedicationItem(index, field, value) {
+            medicationItems[index][field] = value;
+        }
+
+        function removeMedicationItem(index) {
+            medicationItems.splice(index, 1);
+            renderMedicationList();
+        }
+
+        function saveActivityPlan() {
+            const patientName = document.getElementById('patientSearch').value;
+            const patientId = document.getElementById('selectedPatientId').value;
+            
+            if (!patientName || !patientId) {
+                alert('Please select a valid patient from the dropdown');
+                return;
+            }
+            
+            const durationValue = document.getElementById('durationValue').value;
+            const durationUnit = document.getElementById('durationUnit').value;
+            const duration = `${durationValue} ${durationUnit}`;
+            
+            const endDate = new Date();
+            if (durationUnit === 'days') endDate.setDate(endDate.getDate() + parseInt(durationValue));
+            else if (durationUnit === 'weeks') endDate.setDate(endDate.getDate() + parseInt(durationValue) * 7);
+            else if (durationUnit === 'months') endDate.setMonth(endDate.getMonth() + parseInt(durationValue));
+            
+            const activity = {
+                id: currentEditId || 'ACT-' + Date.now(),
+                patientId: patientId,
+                patientName: patientName,
+                duration: duration,
+                endDate: endDate.toISOString(),
+                createdAt: new Date().toISOString(),
+                diet: dietItems.filter(d => d.food),
+                exercise: exerciseItems.filter(e => e.name),
+                medication: medicationItems.filter(m => m.medicine)
+            };
+            
+            if (currentEditId) {
+                const index = activities.findIndex(a => a.id === currentEditId);
+                if (index !== -1) activities[index] = activity;
+            } else {
+                activities.push(activity);
+            }
+            
+            // Create activity plans for each type to match patient expectations
+            const activityPlans = [];
+            
+            // Create exercise plan if items exist
+            if (activity.exercise && activity.exercise.length > 0) {
+                activityPlans.push({
+                    id: activity.id + '-exercise',
+                    patientId: activity.patientId,
+                    patientName: activity.patientName,
+                    doctorId: currentUser.id,
+                    doctorName: currentUser.name,
+                    type: 'exercise',
+                    exercise: activity.exercise,
+                    duration: activity.duration,
+                    endDate: activity.endDate,
+                    createdAt: activity.createdAt,
+                    updatedAt: new Date().toISOString()
+                });
+            }
+            
+            // Create diet plan if items exist
+            if (activity.diet && activity.diet.length > 0) {
+                activityPlans.push({
+                    id: activity.id + '-diet',
+                    patientId: activity.patientId,
+                    patientName: activity.patientName,
+                    doctorId: currentUser.id,
+                    doctorName: currentUser.name,
+                    type: 'diet',
+                    diet: activity.diet,
+                    duration: activity.duration,
+                    endDate: activity.endDate,
+                    createdAt: activity.createdAt,
+                    updatedAt: new Date().toISOString()
+                });
+            }
+            
+            // Create medication plan if items exist
+            if (activity.medication && activity.medication.length > 0) {
+                activityPlans.push({
+                    id: activity.id + '-medication',
+                    patientId: activity.patientId,
+                    patientName: activity.patientName,
+                    doctorId: currentUser.id,
+                    doctorName: currentUser.name,
+                    type: 'medication',
+                    medication: activity.medication,
+                    duration: activity.duration,
+                    endDate: activity.endDate,
+                    createdAt: activity.createdAt,
+                    updatedAt: new Date().toISOString()
+                });
+            }
+            
+            // Save to shared activity plans only (no more old format)
+            const existingPlans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            
+            if (currentEditId) {
+                // Remove existing plans for this activity
+                const filteredPlans = existingPlans.filter(plan => !plan.id.startsWith(currentEditId));
+                filteredPlans.push(...activityPlans);
+                localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(filteredPlans));
+            } else {
+                existingPlans.push(...activityPlans);
+                localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(existingPlans));
+            }
+            closeModal('createActivityModal');
+            renderActivities();
+            alert('Activity plan saved successfully!');
+        }
+
+        function viewActivity(id) {
+            currentActivity = activities.find(a => a.id === id);
+            if (!currentActivity) return;
+            
+            currentEditId = id;
+            const patient = patients.find(p => p.id === currentActivity.patientId);
+            
+            document.getElementById('viewModalTitle').textContent = `Activity Plan - ${patient ? patient.name : 'Unknown'}`;
+            
+            dietItems = [...currentActivity.diet];
+            exerciseItems = [...currentActivity.exercise];
+            medicationItems = [...currentActivity.medication];
+
+            isEditMode = false;
+            updateEditModeUI();
+            
+            let html = '';
+
+            html += renderViewModalSections();
+            
+            document.getElementById('viewModalBody').innerHTML = html;
+            document.getElementById('viewActivityModal').classList.add('active');
+
+            setTimeout(() => {
+                const closeBtn = document.querySelector('#viewActivityModal .close-btn');
+                if (closeBtn) closeBtn.focus();
+            }, 0);
+        }
+
+        function renderViewModalSections() {
+            if (!currentActivity) return '';
+
+            const dietCount = dietItems.length;
+            const exerciseCount = exerciseItems.length;
+            const medicationCount = medicationItems.length;
+
+            const dietHeaderActions = isEditMode ? `
+                <button class="btn-secondary" type="button" onclick="addPlanItem('diet')" aria-label="Add diet item" style="padding: 0.6rem 1rem;">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            ` : '';
+
+            const exerciseHeaderActions = isEditMode ? `
+                <button class="btn-secondary" type="button" onclick="addPlanItem('exercise')" aria-label="Add activity item" style="padding: 0.6rem 1rem;">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            ` : '';
+
+            const medicationHeaderActions = isEditMode ? `
+                <button class="btn-secondary" type="button" onclick="addPlanItem('medication')" aria-label="Add medication item" style="padding: 0.6rem 1rem;">
+                    <i class="fas fa-plus"></i> Add Item
+                </button>
+            ` : '';
+
+            const dietHtml = `
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-apple-alt"></i> Diet Plan</div>
+                        <div class="am-item-actions">
+                            <div class="am-muted">${dietCount} item(s)</div>
+                            ${dietHeaderActions}
+                        </div>
+                    </div>
+                    <div class="am-items">
+                        ${dietItems.length === 0 ? `<div class="am-muted">No diet items added.</div>` : dietItems.map((d, i) => isEditMode ? `
+                            <div class="am-item">
+                                <div class="am-item-meta">
+                                    <div>
+                                        <div class="am-field-row">
+                                            <input type="text" class="form-input" aria-label="Diet food item ${i + 1}" data-type="diet" data-index="${i}" data-field="food" value="${escapeAttr(d.food || '')}" placeholder="Food Item">
+                                            <input type="text" class="form-input" aria-label="Diet quantity ${i + 1}" data-type="diet" data-index="${i}" data-field="times" value="${escapeAttr(d.times || '')}" placeholder="Quantity / Times">
+                                        </div>
+                                    </div>
+                                    <button class="am-icon-btn" type="button" onclick="removePlanItem('diet', ${i})" aria-label="Delete diet item ${i + 1}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="am-item">
+                                <div class="am-view-value">
+                                    <div class="am-view-title">${escapeAttr(d.food || '-')}</div>
+                                    <div class="am-view-sub">${escapeAttr(d.times || '-')}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const activityHtml = `
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-dumbbell"></i> Activity</div>
+                        <div class="am-item-actions">
+                            <div class="am-muted">${exerciseCount} item(s)</div>
+                            ${exerciseHeaderActions}
+                        </div>
+                    </div>
+                    <div class="am-items">
+                        ${exerciseItems.length === 0 ? `<div class="am-muted">No activities added.</div>` : exerciseItems.map((e, i) => isEditMode ? `
+                            <div class="am-item">
+                                <div class="am-item-meta">
+                                    <div>
+                                        <div class="am-field-row">
+                                            <input type="text" class="form-input" aria-label="Activity name ${i + 1}" data-type="exercise" data-index="${i}" data-field="name" value="${escapeAttr(e.name || '')}" placeholder="Activity">
+                                            <input type="text" class="form-input" aria-label="Activity quantity ${i + 1}" data-type="exercise" data-index="${i}" data-field="times" value="${escapeAttr(e.times || '')}" placeholder="Quantity / Times">
+                                        </div>
+                                        <div style="margin-top: 0.75rem;">
+                                            <input type="text" class="form-input" aria-label="Activity duration ${i + 1}" data-type="exercise" data-index="${i}" data-field="duration" value="${escapeAttr(e.duration || '')}" placeholder="Duration (e.g., 1 hr)">
+                                        </div>
+                                    </div>
+                                    <button class="am-icon-btn" type="button" onclick="removePlanItem('exercise', ${i})" aria-label="Delete activity item ${i + 1}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="am-item">
+                                <div class="am-view-value">
+                                    <div class="am-view-title">${escapeAttr(e.name || '-')}${e.duration ? ` — ${escapeAttr(e.duration)}` : ''}</div>
+                                    <div class="am-view-sub">${escapeAttr(e.times || '-')}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const medicationHtml = `
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-pills"></i> Medication</div>
+                        <div class="am-item-actions">
+                            <div class="am-muted">${medicationCount} item(s)</div>
+                            ${medicationHeaderActions}
+                        </div>
+                    </div>
+                    <div class="am-items">
+                        ${medicationItems.length === 0 ? `<div class="am-muted">No medications added.</div>` : medicationItems.map((m, i) => isEditMode ? `
+                            <div class="am-item">
+                                <div class="am-item-meta">
+                                    <div>
+                                        <div class="am-field-row">
+                                            <input type="text" class="form-input" aria-label="Medication name ${i + 1}" data-type="medication" data-index="${i}" data-field="medicine" value="${escapeAttr(m.medicine || '')}" placeholder="Medicine">
+                                            <input type="text" class="form-input" aria-label="Medication quantity ${i + 1}" data-type="medication" data-index="${i}" data-field="times" value="${escapeAttr(m.times || '')}" placeholder="Quantity / Times">
+                                        </div>
+                                    </div>
+                                    <button class="am-icon-btn" type="button" onclick="removePlanItem('medication', ${i})" aria-label="Delete medication item ${i + 1}">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="am-item">
+                                <div class="am-view-value">
+                                    <div class="am-view-title">${escapeAttr(m.medicine || '-')}</div>
+                                    <div class="am-view-sub">${escapeAttr(m.times || '-')}</div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+            `;
+
+            const detailsHtml = `
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-calendar-alt"></i> Plan Details</div>
+                    </div>
+                    ${isEditMode ? `
+                    <div class="am-kv">
+                        <div class="am-k">Duration</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="text" class="form-input" id="planDuration" data-field="duration" value="${escapeAttr(currentActivity.duration || '')}" placeholder="e.g., 4 weeks" onchange="updateEndDateFromDuration()" style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+                    <div class="am-kv">
+                        <div class="am-k">Ends</div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <input type="date" class="form-input" id="planEndDate" data-field="endDate" value="${currentActivity.endDate ? currentActivity.endDate.split('T')[0] : ''}" style="flex: 1; padding: 0.5rem; border: 1px solid #d1d5db; border-radius: 0.375rem; font-size: 0.9rem;">
+                        </div>
+                    </div>
+                    ` : `
+                    <div class="am-kv">
+                        <div class="am-k">Duration</div>
+                        <div class="am-v">${currentActivity.duration || '-'}</div>
+                    </div>
+                    <div class="am-kv">
+                        <div class="am-k">Ends</div>
+                        <div class="am-v">${currentActivity.endDate ? formatDateDDMMYYYY(currentActivity.endDate) : '-'}</div>
+                    </div>
+                    `}
+                </div>
+            `;
+
+            return `${dietHtml}${activityHtml}${medicationHtml}${detailsHtml}`;
+        }
+
+        function escapeAttr(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        function formatDateDDMMYYYY(dateStr) {
+            if (!dateStr) return '-';
+            const date = new Date(dateStr);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        function updateEndDateFromDuration() {
+            const durationInput = document.getElementById('planDuration');
+            const endDateInput = document.getElementById('planEndDate');
+            if (!durationInput || !endDateInput) return;
+
+            const durationText = durationInput.value.toLowerCase();
+            const weeksMatch = durationText.match(/(\\d+)\\s*weeks?/);
+            
+            if (weeksMatch) {
+                const weeks = parseInt(weeksMatch[1], 10);
+                const today = new Date();
+                const endDate = new Date(today.getTime() + weeks * 7 * 24 * 60 * 60 * 1000);
+                const year = endDate.getFullYear();
+                const month = String(endDate.getMonth() + 1).padStart(2, '0');
+                const day = String(endDate.getDate()).padStart(2, '0');
+                endDateInput.value = `${year}-${month}-${day}`;
+            }
+        }
+
+        function enterEditMode() {
+            if (!currentActivity) return;
+            isEditMode = true;
+            updateEditModeUI();
+            document.getElementById('viewModalBody').innerHTML = renderViewModalSections();
+            setTimeout(() => {
+                const firstInput = document.querySelector('#viewModalBody input.form-input');
+                if (firstInput) firstInput.focus();
+            }, 0);
+        }
+
+        function cancelEditMode() {
+            if (!currentActivity) return;
+            isEditMode = false;
+            // Reset working copies
+            dietItems = [...currentActivity.diet];
+            exerciseItems = [...currentActivity.exercise];
+            medicationItems = [...currentActivity.medication];
+            updateEditModeUI();
+            document.getElementById('viewModalBody').innerHTML = renderViewModalSections();
+            showToast('Edits discarded.', 'success');
+        }
+
+        function validateEditInputs() {
+            let ok = true;
+            document.querySelectorAll('#viewModalBody .form-input').forEach(el => {
+                el.classList.remove('am-invalid');
+            });
+
+            if (!isEditMode) return true;
+
+            document.querySelectorAll('#viewModalBody [data-type][data-index][data-field]').forEach(el => {
+                const type = el.getAttribute('data-type');
+                const field = el.getAttribute('data-field');
+                const value = (el.value || '').trim();
+                const isRequired = (type === 'diet' && field === 'food') || (type === 'exercise' && field === 'name') || (type === 'medication' && field === 'medicine');
+                if (isRequired && value.length === 0) {
+                    ok = false;
+                    el.classList.add('am-invalid');
+                }
+            });
+            return ok;
+        }
+
+        function updateEditModeUI() {
+            const editBtn = document.getElementById('editActivityBtn');
+            const saveBtn = document.getElementById('saveActivityBtn');
+            const cancelBtn = document.getElementById('cancelEditBtn');
+            const progressBtnContainer = document.querySelector('#progressActivityBtn').parentElement;
+            const modalContent = document.querySelector('#viewActivityModal .modal-content');
+
+            if (modalContent) modalContent.classList.toggle('am-editing', !!isEditMode);
+
+            if (editBtn) editBtn.style.display = isEditMode ? 'none' : 'block';
+            if (cancelBtn) cancelBtn.style.display = isEditMode ? 'block' : 'none';
+            if (saveBtn) saveBtn.style.display = isEditMode ? 'block' : 'none';
+            if (progressBtnContainer) progressBtnContainer.style.display = isEditMode ? 'none' : 'flex';
+
+            if (saveBtn) saveBtn.disabled = !isEditMode;
+            if (saveBtn) saveBtn.style.opacity = !isEditMode ? '0.6' : '1';
+            if (saveBtn) saveBtn.style.cursor = !isEditMode ? 'not-allowed' : 'pointer';
+        }
+
+        function toggleItemComplete(type, index) {
+            if (!currentActivity) return;
+
+            if (!isEditMode) return;
+
+            currentActivity[type][index].completed = !currentActivity[type][index].completed;
+
+            if (type === 'diet' && dietItems[index]) dietItems[index].completed = currentActivity[type][index].completed;
+            if (type === 'exercise' && exerciseItems[index]) exerciseItems[index].completed = currentActivity[type][index].completed;
+            if (type === 'medication' && medicationItems[index]) medicationItems[index].completed = currentActivity[type][index].completed;
+
+            // Persist completion immediately
+            updateActivityPlans(currentEditId, currentActivity);
+
+            // Maintain patient_progress_* compatibility for progress screens
+            persistPatientProgressFromActivity(currentActivity);
+        }
+
+        function addPlanItem(type) {
+            if (!currentActivity || !isEditMode) return;
+            if (type === 'diet') dietItems.push({ food: '', times: '', completed: false });
+            if (type === 'exercise') exerciseItems.push({ name: '', times: '', duration: '', completed: false });
+            if (type === 'medication') medicationItems.push({ medicine: '', times: '', completed: false });
+            document.getElementById('viewModalBody').innerHTML = renderViewModalSections();
+            showToast('Item added. Fill details and Save Changes.', 'success');
+        }
+
+        function removePlanItem(type, index) {
+            if (!currentActivity || !isEditMode) return;
+            if (!confirm('Delete this item?')) return;
+            if (type === 'diet') dietItems.splice(index, 1);
+            if (type === 'exercise') exerciseItems.splice(index, 1);
+            if (type === 'medication') medicationItems.splice(index, 1);
+            document.getElementById('viewModalBody').innerHTML = renderViewModalSections();
+        }
+
+        function persistPatientProgressFromActivity(activity) {
+            if (!activity || !activity.patientId || !activity.id) return;
+            const key = `patient_progress_${activity.patientId}`;
+            const all = JSON.parse(localStorage.getItem(key) || '{}');
+
+            const progress = all[activity.id] || {};
+            progress.lastUpdated = new Date().toISOString();
+
+            (activity.exercise || []).forEach((item, idx) => {
+                progress[`exercise_${idx}`] = {
+                    completed: !!item.completed,
+                    completedAt: item.completed ? (progress[`exercise_${idx}`]?.completedAt || new Date().toISOString()) : null
+                };
+            });
+            (activity.diet || []).forEach((item, idx) => {
+                progress[`diet_${idx}`] = {
+                    completed: !!item.completed,
+                    completedAt: item.completed ? (progress[`diet_${idx}`]?.completedAt || new Date().toISOString()) : null
+                };
+            });
+            (activity.medication || []).forEach((item, idx) => {
+                progress[`medication_${idx}`] = {
+                    completed: !!item.completed,
+                    completedAt: item.completed ? (progress[`medication_${idx}`]?.completedAt || new Date().toISOString()) : null
+                };
+            });
+
+            all[activity.id] = progress;
+            localStorage.setItem(key, JSON.stringify(all));
+        }
+
+        function saveActivityChanges() {
+            if (!currentActivity || !currentEditId) return;
+
+            if (!isEditMode) {
+                showToast('Click Edit to make changes before saving.', 'error');
+                return;
+            }
+
+            if (!validateEditInputs()) {
+                showToast('Please fill required fields before saving.', 'error');
+                return;
+            }
+
+            // Pull updated field values from inputs
+            document.querySelectorAll('#viewModalBody [data-type][data-index][data-field]').forEach(el => {
+                const type = el.getAttribute('data-type');
+                const index = parseInt(el.getAttribute('data-index'), 10);
+                const field = el.getAttribute('data-field');
+                const value = el.value;
+                if (type === 'diet' && dietItems[index]) dietItems[index][field] = value;
+                if (type === 'exercise' && exerciseItems[index]) exerciseItems[index][field] = value;
+                if (type === 'medication' && medicationItems[index]) medicationItems[index][field] = value;
+            });
+
+            // Update Plan Details fields
+            const durationField = document.getElementById('planDuration');
+            const endDateField = document.getElementById('planEndDate');
+            if (durationField) currentActivity.duration = durationField.value;
+            if (endDateField) currentActivity.endDate = endDateField.value;
+
+            currentActivity.diet = dietItems.filter(d => (d.food || '').trim() !== '');
+            currentActivity.exercise = exerciseItems.filter(e => (e.name || '').trim() !== '');
+            currentActivity.medication = medicationItems.filter(m => (m.medicine || '').trim() !== '');
+            
+            const index = activities.findIndex(a => a.id === currentEditId);
+            if (index !== -1) {
+                activities[index] = currentActivity;
+                
+                // Update the activity plans with changes
+                updateActivityPlans(currentEditId, currentActivity);
+
+                persistPatientProgressFromActivity(currentActivity);
+                
+                renderActivities();
+                closeModal('viewActivityModal');
+                showToast('Activity plan updated successfully.', 'success');
+            }
+        }
+        
+        // Update activity plans when changes are made
+        function updateActivityPlans(activityId, updatedActivity) {
+            const existingPlans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            
+            // Update each plan type with new data
+            existingPlans.forEach(plan => {
+                if (plan.id.startsWith(activityId)) {
+                    plan.patientId = updatedActivity.patientId;
+                    plan.patientName = updatedActivity.patientName;
+                    plan.doctorId = updatedActivity.doctorId;
+                    plan.doctorName = updatedActivity.doctorName;
+                    plan.duration = updatedActivity.duration;
+                    plan.endDate = updatedActivity.endDate;
+                    plan.updatedAt = new Date().toISOString();
+
+                    if (plan.type === 'exercise') plan.exercise = updatedActivity.exercise || [];
+                    if (plan.type === 'diet') plan.diet = updatedActivity.diet || [];
+                    if (plan.type === 'medication') plan.medication = updatedActivity.medication || [];
+                }
+            });
+            
+            localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(existingPlans));
+        }
+
+        function deleteCurrentActivity() {
+            if (!currentEditId) return;
+            
+            if (confirm('Are you sure you want to delete this activity plan? This will remove it from the patient\'s view as well.')) {
+                // Get the activity to be deleted for patient notification
+                const activityToDelete = activities.find(a => a.id === currentEditId);
+                
+                // Remove from doctor's activities (in memory only)
+                activities = activities.filter(a => a.id !== currentEditId);
+                
+                // Remove from shared activity plans (patient view) - this is the main storage
+                const activityPlans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+                const filteredPlans = activityPlans.filter(plan => !plan.id.startsWith(currentEditId));
+                localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(filteredPlans));
+                
+                // Remove from patient progress data
+                if (activityToDelete) {
+                    const patientProgressKey = `patient_progress_${activityToDelete.patientId}`;
+                    const patientProgress = JSON.parse(localStorage.getItem(patientProgressKey) || '{}');
+                    
+                    if (patientProgress[currentEditId]) {
+                        delete patientProgress[currentEditId];
+                        localStorage.setItem(patientProgressKey, JSON.stringify(patientProgress));
+                    }
+                    
+                    // Send notification to patient (if they're online)
+                    sendDeletionNotification(activityToDelete);
+                }
+                
+                renderActivities();
+                closeModal('viewActivityModal');
+                showToast('Activity plan deleted.', 'success');
+            }
+        }
+        
+        // Send deletion notification to patient
+        function sendDeletionNotification(activity) {
+            // Create a notification for the patient
+            const notification = {
+                id: 'DEL-' + Date.now(),
+                type: 'activity_deleted',
+                message: `Your doctor has removed the activity plan: ${getActivityTypeDisplay(activity.type)}`,
+                activityId: currentEditId,
+                timestamp: new Date().toISOString()
+            };
+            
+            // Store in patient notifications (you could implement a notification system)
+            const patientNotifications = JSON.parse(localStorage.getItem(`patient_notifications_${activity.patientId}`) || '[]');
+            patientNotifications.unshift(notification);
+            
+            // Keep only last 20 notifications
+            if (patientNotifications.length > 20) {
+                patientNotifications.splice(20);
+            }
+            
+            localStorage.setItem(`patient_notifications_${activity.patientId}`, JSON.stringify(patientNotifications));
+        }
+        
+        // Get activity type display name
+        function getActivityTypeDisplay(type) {
+            const types = {
+                exercise: 'Exercise Plan',
+                diet: 'Diet Plan', 
+                medication: 'Medication Schedule'
+            };
+            return types[type] || 'Activity Plan';
+        }
+
+        function showProgressReport() {
+            const activity = activities.find(a => a.id === currentEditId);
+            if (!activity) return;
+
+            const progressContent = document.getElementById('progressReportContent');
+            const patientName = document.getElementById('progressPatientName');
+
+            patientName.textContent = activity.patientName || 'Unknown';
+
+            const progressStore = JSON.parse(localStorage.getItem(`patient_progress_${activity.patientId}`) || '{}');
+            const activityProgress = progressStore[activity.id] || {};
+
+            progressContent.innerHTML = generateDetailedProgressHTML(activity, activityProgress);
+            document.getElementById('progressReportModal').classList.add('active');
+        }
+
+        function checkCompletedActivities() {
+            const now = new Date();
+            completedNotifications = [];
+            
+            activities.forEach(activity => {
+                const endDate = new Date(activity.endDate);
+                if (endDate < now) {
+                    const patient = patients.find(p => p.id === activity.patientId);
+                    const allCompleted = activity.diet.every(d => d.completed) && 
+                                        activity.exercise.every(e => e.completed) && 
+                                        activity.medication.every(m => m.completed);
+                    
+                    if (!activity.notificationShown) {
+                        completedNotifications.push({
+                            activityId: activity.id,
+                            patientName: patient ? patient.name : 'Unknown',
+                            message: allCompleted ? 'Activity plan completed successfully!' : 'Activity plan duration ended. View progress report.',
+                            type: allCompleted ? 'success' : 'warning'
+                        });
+                        activity.notificationShown = true;
+                    }
+                }
+            });
+            
+            if (completedNotifications.length > 0) {
+                // Update notification badge
+                updateNotificationBadge();
+            }
+        }
+
+        function toggleNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            panel.classList.toggle('active');
+            if (panel.classList.contains('active')) renderNotifications();
+        }
+
+        function updateNotificationBadge() {
+            const badge = document.getElementById('notifBadge');
+            if (completedNotifications.length > 0) {
+                badge.textContent = completedNotifications.length;
+                badge.style.display = 'flex';
+            } else {
+                badge.style.display = 'none';
+            }
+        }
+
+        function renderNotifications() {
+            const panel = document.getElementById('notificationPanel');
+            if (completedNotifications.length === 0) {
+                panel.innerHTML = '<div style="padding: 1rem; text-align: center; color: #6b7280;">No notifications</div>';
+                return;
+            }
+            panel.innerHTML = completedNotifications.map(notif => `
+                <div class="notification-item" onclick="viewNotificationActivity('${notif.activityId}')">
+                    <div style="font-weight: 600; margin-bottom: 0.25rem;">${notif.patientName}</div>
+                    <div style="font-size: 0.85rem; color: ${notif.type === 'success' ? '#065f46' : '#92400e'};">
+                        <i class="fas fa-${notif.type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i> ${notif.message}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewNotificationActivity(activityId) {
+            document.getElementById('notificationPanel').classList.remove('active');
+            viewActivity(activityId);
+            setTimeout(() => showProgressReport(), 500);
+        }
+
+        // Show patient progress overview
+        function showPatientProgress() {
+            const progressContent = document.getElementById('progressReportContent');
+            const patientName = document.getElementById('progressPatientName');
+            
+            // Get all patients with activities
+            const patientsWithProgress = getPatientsWithProgress();
+            
+            if (patientsWithProgress.length === 0) {
+                progressContent.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon"><i class="fas fa-chart-line"></i></div>
+                        <h3>No Patient Progress Available</h3>
+                        <p>No patients have activity plans assigned yet.</p>
+                    </div>
+                `;
+                patientName.textContent = 'All Patients';
+            } else {
+                patientName.textContent = 'All Patients';
+                progressContent.innerHTML = patientsWithProgress.map(patient => `
+                    <div class="patient-progress-section">
+                        <h3 style="color: #333; margin-bottom: 1rem;">
+                            <i class="fas fa-user"></i> ${patient.name}
+                        </h3>
+                        ${generatePatientProgressHTML(patient)}
+                    </div>
+                `).join('');
+            }
+            
+            document.getElementById('progressReportModal').classList.add('active');
+        }
+
+        // Get patients with their progress data
+        function getPatientsWithProgress() {
+            const uniquePatients = [];
+            const patientMap = new Map();
+            
+            // Get patients from activities
+            activities.forEach(activity => {
+                if (!patientMap.has(activity.patientId)) {
+                    patientMap.set(activity.patientId, {
+                        id: activity.patientId,
+                        name: activity.patientName,
+                        activities: []
+                    });
+                }
+                patientMap.get(activity.patientId).activities.push(activity);
+            });
+            
+            // Convert to array and add progress data
+            return Array.from(patientMap.values()).map(patient => {
+                patient.progress = getPatientProgressData(patient.id);
+                return patient;
+            });
+        }
+
+        // Get patient progress data
+        function getPatientProgressData(patientId) {
+            // Get patient progress from localStorage
+            const patientProgress = JSON.parse(localStorage.getItem(`patient_progress_${patientId}`) || '{}');
+            
+            // Get activity plans for this patient
+            const activityPlans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]')
+                .filter(plan => plan.patientId === patientId);
+            
+            // Calculate overall progress
+            const progress = {
+                totalActivities: activityPlans.length,
+                completedActivities: 0,
+                overallCompletion: 0,
+                categories: {
+                    exercise: { total: 0, completed: 0, completion: 0 },
+                    diet: { total: 0, completed: 0, completion: 0 },
+                    medication: { total: 0, completed: 0, completion: 0 }
+                },
+                recentActivity: null,
+                lastUpdated: null
+            };
+            
+            // Calculate progress for each activity
+            activityPlans.forEach(plan => {
+                const planProgress = patientProgress[plan.id] || {};
+                
+                // Count items in each category
+                if (plan.exercise && plan.exercise.length > 0) {
+                    progress.categories.exercise.total += plan.exercise.length;
+                    const completed = plan.exercise.filter((item, index) => 
+                        planProgress[`exercise_${index}`]?.completed
+                    ).length;
+                    progress.categories.exercise.completed += completed;
+                }
+                
+                if (plan.diet && plan.diet.length > 0) {
+                    progress.categories.diet.total += plan.diet.length;
+                    const completed = plan.diet.filter((item, index) => 
+                        planProgress[`diet_${index}`]?.completed
+                    ).length;
+                    progress.categories.diet.completed += completed;
+                }
+                
+                if (plan.medication && plan.medication.length > 0) {
+                    progress.categories.medication.total += plan.medication.length;
+                    const completed = plan.medication.filter((item, index) => 
+                        planProgress[`medication_${index}`]?.completed
+                    ).length;
+                    progress.categories.medication.completed += completed;
+                }
+                
+                // Check if activity is completed
+                const activityCompleted = isActivityCompleted(plan, planProgress);
+                if (activityCompleted) {
+                    progress.completedActivities++;
+                }
+                
+                // Track recent activity
+                if (planProgress.lastUpdated) {
+                    if (!progress.lastUpdated || new Date(planProgress.lastUpdated) > new Date(progress.lastUpdated)) {
+                        progress.lastUpdated = planProgress.lastUpdated;
+                    }
+                }
+            });
+            
+            // Calculate completion percentages
+            Object.keys(progress.categories).forEach(category => {
+                const cat = progress.categories[category];
+                cat.completion = cat.total > 0 ? Math.round((cat.completed / cat.total) * 100) : 0;
+            });
+            
+            // Calculate overall completion
+            const totalItems = Object.values(progress.categories).reduce((sum, cat) => sum + cat.total, 0);
+            const totalCompleted = Object.values(progress.categories).reduce((sum, cat) => sum + cat.completed, 0);
+            progress.overallCompletion = totalItems > 0 ? Math.round((totalCompleted / totalItems) * 100) : 0;
+            
+            return progress;
+        }
+
+        // Check if activity is completed
+        function isActivityCompleted(activity, progress) {
+            // Check exercise completion
+            if (activity.exercise && activity.exercise.length > 0) {
+                const exerciseCompleted = activity.exercise.every((item, index) => 
+                    progress[`exercise_${index}`]?.completed
+                );
+                if (!exerciseCompleted) return false;
+            }
+            
+            // Check diet completion
+            if (activity.diet && activity.diet.length > 0) {
+                const dietCompleted = activity.diet.every((item, index) => 
+                    progress[`diet_${index}`]?.completed
+                );
+                if (!dietCompleted) return false;
+            }
+            
+            // Check medication completion
+            if (activity.medication && activity.medication.length > 0) {
+                const medicationCompleted = activity.medication.every((item, index) => 
+                    progress[`medication_${index}`]?.completed
+                );
+                if (!medicationCompleted) return false;
+            }
+            
+            return true;
+        }
+
+        // Generate patient progress HTML
+        function generatePatientProgressHTML(patient) {
+            const progress = patient.progress;
+            
+            return `
+                <div class="stats-row">
+                    <div class="stat-box total">
+                        <div class="stat-number">${progress.totalActivities}</div>
+                        <div class="stat-label">Total Activities</div>
+                    </div>
+                    <div class="stat-box completed">
+                        <div class="stat-number">${progress.completedActivities}</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-box ${progress.overallCompletion >= 75 ? 'completed' : progress.overallCompletion >= 50 ? 'total' : 'incomplete'}">
+                        <div class="stat-number">${progress.overallCompletion}%</div>
+                        <div class="stat-label">Overall Progress</div>
+                    </div>
+                </div>
+                
+                <div class="progress-category">
+                    <div class="category-title">
+                        <i class="fas fa-dumbbell"></i> Exercise
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-box total">
+                            <div class="stat-number">${progress.categories.exercise.total}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat-box completed">
+                            <div class="stat-number">${progress.categories.exercise.completed}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-box ${progress.categories.exercise.completion >= 75 ? 'completed' : 'incomplete'}">
+                            <div class="stat-number">${progress.categories.exercise.completion}%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-category">
+                    <div class="category-title">
+                        <i class="fas fa-apple-alt"></i> Diet
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-box total">
+                            <div class="stat-number">${progress.categories.diet.total}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat-box completed">
+                            <div class="stat-number">${progress.categories.diet.completed}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-box ${progress.categories.diet.completion >= 75 ? 'completed' : 'incomplete'}">
+                            <div class="stat-number">${progress.categories.diet.completion}%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="progress-category">
+                    <div class="category-title">
+                        <i class="fas fa-pills"></i> Medication
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-box total">
+                            <div class="stat-number">${progress.categories.medication.total}</div>
+                            <div class="stat-label">Total</div>
+                        </div>
+                        <div class="stat-box completed">
+                            <div class="stat-number">${progress.categories.medication.completed}</div>
+                            <div class="stat-label">Completed</div>
+                        </div>
+                        <div class="stat-box ${progress.categories.medication.completion >= 75 ? 'completed' : 'incomplete'}">
+                            <div class="stat-number">${progress.categories.medication.completion}%</div>
+                            <div class="stat-label">Progress</div>
+                        </div>
+                    </div>
+                </div>
+                
+                ${progress.lastUpdated ? `
+                    <div style="margin-top: 1rem; padding: 0.75rem; background: #f3f4f6; border-radius: 8px; text-align: center;">
+                        <small style="color: #666;">Last updated: ${new Date(progress.lastUpdated).toLocaleString()}</small>
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        
+
+        // Generate detailed progress HTML
+        function generateDetailedProgressHTML(activity, progress) {
+            const summary = buildProgressSummary(activity, progress);
+            return `
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-info-circle"></i> Progress Summary</div>
+                        <div class="am-muted">${summary.overallPercent}% complete</div>
+                    </div>
+                    <div class="stats-row">
+                        <div class="stat-box total"><div class="stat-number">${summary.totalItems}</div><div class="stat-label">Total Activities</div></div>
+                        <div class="stat-box completed"><div class="stat-number">${summary.completedItems}</div><div class="stat-label">Completed</div></div>
+                        <div class="stat-box incomplete"><div class="stat-number">${summary.pendingItems}</div><div class="stat-label">Not Completed</div></div>
+                    </div>
+                    <div class="am-kv"><div class="am-k">Duration</div><div class="am-v">${activity.duration || '-'}</div></div>
+                    <div class="am-kv"><div class="am-k">End Date</div><div class="am-v">${activity.endDate ? new Date(activity.endDate).toLocaleDateString() : '-'}</div></div>
+                    <div class="am-kv"><div class="am-k">Activities / day</div><div class="am-v">${summary.activitiesPerDay}</div></div>
+                    <div class="am-kv"><div class="am-k">Total planned days</div><div class="am-v">${summary.totalDays}</div></div>
+                </div>
+                
+                ${activity.exercise && activity.exercise.length > 0 ? `
+                    <div class="progress-category">
+                        <div class="category-title">
+                            <i class="fas fa-dumbbell"></i> Exercise Progress
+                        </div>
+                        ${activity.exercise.map((item, index) => `
+                            <div class="detail-item ${progress[`exercise_${index}`]?.completed ? 'completed' : ''}">
+                                <strong>${item.name}</strong> - ${item.duration || '-'}
+                                ${progress[`exercise_${index}`]?.completed ? 
+                                    '<span style="color: #10b981; margin-left: 1rem;">✓ Completed</span>' : 
+                                    '<span style="color: #ef4444; margin-left: 1rem;">○ Pending</span>'
+                                }
+                                ${progress[`exercise_${index}`]?.completedAt ? 
+                                    `<br><small style="color: #666;">Completed: ${new Date(progress[`exercise_${index}`].completedAt).toLocaleString()}</small>` : ''
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                ${activity.diet && activity.diet.length > 0 ? `
+                    <div class="progress-category">
+                        <div class="category-title">
+                            <i class="fas fa-apple-alt"></i> Diet Progress
+                        </div>
+                        ${activity.diet.map((item, index) => `
+                            <div class="detail-item ${progress[`diet_${index}`]?.completed ? 'completed' : ''}">
+                                <strong>${item.food}</strong> - ${item.times || '-'}
+                                ${progress[`diet_${index}`]?.completed ? 
+                                    '<span style="color: #10b981; margin-left: 1rem;">✓ Completed</span>' : 
+                                    '<span style="color: #ef4444; margin-left: 1rem;">○ Pending</span>'
+                                }
+                                ${progress[`diet_${index}`]?.completedAt ? 
+                                    `<br><small style="color: #666;">Completed: ${new Date(progress[`diet_${index}`].completedAt).toLocaleString()}</small>` : ''
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                ${activity.medication && activity.medication.length > 0 ? `
+                    <div class="progress-category">
+                        <div class="category-title">
+                            <i class="fas fa-pills"></i> Medication Progress
+                        </div>
+                        ${activity.medication.map((item, index) => `
+                            <div class="detail-item ${progress[`medication_${index}`]?.completed ? 'completed' : ''}">
+                                <strong>${item.medicine}</strong> - ${item.times}
+                                ${progress[`medication_${index}`]?.completed ? 
+                                    '<span style="color: #10b981; margin-left: 1rem;">✓ Completed</span>' : 
+                                    '<span style="color: #ef4444; margin-left: 1rem;">○ Pending</span>'
+                                }
+                                ${progress[`medication_${index}`]?.completedAt ? 
+                                    `<br><small style="color: #666;">Completed: ${new Date(progress[`medication_${index}`].completedAt).toLocaleString()}</small>` : ''
+                                }
+                            </div>
+                        `).join('')}
+                    </div>
+                ` : ''}
+                
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #f9fafb; border-radius: 8px;">
+                    <h4 style="margin: 0 0 0.5rem 0; color: #333;">Overall Status</h4>
+                    <div style="display: flex; align-items: center; gap: 1rem;">
+                        <div style="flex: 1;">
+                            <div style="background: #e5e7eb; height: 8px; border-radius: 4px; overflow: hidden;">
+                                <div style="width: ${calculateActivityProgress(activity, progress)}%; height: 100%; background: linear-gradient(90deg, #10b981, #059669);"></div>
+                            </div>
+                        </div>
+                        <span style="font-weight: 600; color: #333;">${calculateActivityProgress(activity, progress)}% Complete</span>
+                    </div>
+                </div>
+
+                <div class="am-section">
+                    <div class="am-section-header">
+                        <div class="am-section-title"><i class="fas fa-chart-bar"></i> Progress Graph</div>
+                        <button class="btn-secondary" type="button" onclick="toggleProgressGraph()" style="padding: 0.6rem 1rem;">View Graph</button>
+                    </div>
+                    <div id="amGraph" class="am-graph" style="display: none;">
+                        ${renderProgressGraphRows(summary)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleProgressGraph() {
+            const el = document.getElementById('amGraph');
+            if (!el) return;
+            el.style.display = el.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function renderProgressGraphRows(summary) {
+            const rows = [
+                { label: 'Diet', percent: summary.dietPercent },
+                { label: 'Activity', percent: summary.exercisePercent },
+                { label: 'Medication', percent: summary.medicationPercent },
+                { label: 'Overall', percent: summary.overallPercent }
+            ];
+
+            return rows.map(r => `
+                <div class="am-bar-row">
+                    <div class="am-k">${r.label}</div>
+                    <div class="am-bar"><div style="width:${r.percent}%;"></div></div>
+                    <div class="am-v" style="text-align:right;">${r.percent}%</div>
+                </div>
+            `).join('');
+        }
+
+        function buildProgressSummary(activity, progress) {
+            const totals = {
+                diet: (activity.diet || []).length,
+                exercise: (activity.exercise || []).length,
+                medication: (activity.medication || []).length
+            };
+            const completed = {
+                diet: (activity.diet || []).filter((_, idx) => !!progress[`diet_${idx}`]?.completed).length,
+                exercise: (activity.exercise || []).filter((_, idx) => !!progress[`exercise_${idx}`]?.completed).length,
+                medication: (activity.medication || []).filter((_, idx) => !!progress[`medication_${idx}`]?.completed).length
+            };
+
+            const totalItems = totals.diet + totals.exercise + totals.medication;
+            const completedItems = completed.diet + completed.exercise + completed.medication;
+            const pendingItems = totalItems - completedItems;
+            const overallPercent = totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+
+            const totalDays = estimateTotalDaysFromDuration(activity.duration);
+            const activitiesPerDay = totalDays > 0 ? (totalItems / totalDays).toFixed(2) : '0';
+
+            const dietPercent = totals.diet > 0 ? Math.round((completed.diet / totals.diet) * 100) : 0;
+            const exercisePercent = totals.exercise > 0 ? Math.round((completed.exercise / totals.exercise) * 100) : 0;
+            const medicationPercent = totals.medication > 0 ? Math.round((completed.medication / totals.medication) * 100) : 0;
+
+            return {
+                totalItems,
+                completedItems,
+                pendingItems,
+                overallPercent,
+                totalDays,
+                activitiesPerDay,
+                dietPercent,
+                exercisePercent,
+                medicationPercent
+            };
+        }
+
+        function estimateTotalDaysFromDuration(durationStr) {
+            if (!durationStr) return 0;
+            const m = String(durationStr).trim().match(/^(\d+)\s*(day|days|week|weeks|month|months)$/i);
+            if (!m) return 0;
+            const value = parseInt(m[1], 10);
+            const unit = m[2].toLowerCase();
+            if (unit.startsWith('day')) return value;
+            if (unit.startsWith('week')) return value * 7;
+            if (unit.startsWith('month')) return value * 30;
+            return 0;
+        }
+
+        // Calculate activity progress percentage
+        function calculateActivityProgress(activity, progress) {
+            let totalItems = 0;
+            let completedItems = 0;
+            
+            // Count exercise items
+            if (activity.exercise && activity.exercise.length > 0) {
+                totalItems += activity.exercise.length;
+                completedItems += activity.exercise.filter((item, index) => 
+                    progress[`exercise_${index}`]?.completed
+                ).length;
+            }
+            
+            // Count diet items
+            if (activity.diet && activity.diet.length > 0) {
+                totalItems += activity.diet.length;
+                completedItems += activity.diet.filter((item, index) => 
+                    progress[`diet_${index}`]?.completed
+                ).length;
+            }
+            
+            // Count medication items
+            if (activity.medication && activity.medication.length > 0) {
+                totalItems += activity.medication.length;
+                completedItems += activity.medication.filter((item, index) => 
+                    progress[`medication_${index}`]?.completed
+                ).length;
+            }
+            
+            return totalItems > 0 ? Math.round((completedItems / totalItems) * 100) : 0;
+        }
+
+        // Start real-time progress monitoring
+        function startProgressMonitoring() {
+            // Check for progress updates every 30 seconds
+            setInterval(() => {
+                checkProgressUpdates();
+            }, 30000);
+        }
+
+        // Check for progress updates
+        function checkProgressUpdates() {
+            const previousProgress = new Map();
+            
+            // Store current progress
+            activities.forEach(activity => {
+                const progress = getPatientProgressData(activity.patientId);
+                previousProgress.set(activity.patientId, progress);
+            });
+            
+            // Check for updates after a short delay
+            setTimeout(() => {
+                activities.forEach(activity => {
+                    const currentProgress = getPatientProgressData(activity.patientId);
+                    const previous = previousProgress.get(activity.patientId);
+                    
+                    // Check if progress has changed
+                    if (JSON.stringify(currentProgress) !== JSON.stringify(previous)) {
+                        // Show notification for significant progress
+                        if (currentProgress.overallCompletion > previous.overallCompletion) {
+                            showProgressNotification(activity.patientName, currentProgress.overallCompletion);
+                        }
+                    }
+                });
+            }, 1000);
+        }
+
+        // Show progress notification
+        function showProgressNotification(patientName, progress) {
+            const notification = {
+                id: 'PROG-' + Date.now(),
+                type: 'progress',
+                message: `${patientName} has reached ${progress}% completion!`,
+                timestamp: new Date().toISOString(),
+                activityId: null
+            };
+            
+            const notifications = JSON.parse(localStorage.getItem('doctor_notifications') || '[]');
+            notifications.unshift(notification);
+            
+            // Keep only last 50 notifications
+            if (notifications.length > 50) {
+                notifications.splice(50);
+            }
+            
+            localStorage.setItem('doctor_notifications', JSON.stringify(notifications));
+            updateNotificationBadge();
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+    </script>
+
+    <div id="amToast" style="display:none; position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 5000; padding: 0.85rem 1.1rem; border-radius: 999px; font-weight: 700; gap: 0.6rem; align-items: center; box-shadow: 0 18px 40px rgba(0,0,0,0.25);"></div>
+    <style>
+        #amToast.success { background: linear-gradient(135deg, #10b981, #059669); color: #ffffff; }
+        #amToast.error { background: linear-gradient(135deg, #ef4444, #dc2626); color: #ffffff; }
+    </style>
+</body>
+</html>

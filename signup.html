@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - ARTHROSHIELD</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar.scrolled {
+            padding: 0.75rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            height: 70px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding-left: 45px;
+            text-decoration: none;
+            background: transparent !important;
+        }
+
+        .logo img {
+            height: 175px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav-login {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-nav-login:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-nav-signup {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-nav-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Signup Container */
+        .signup-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 3%;
+            padding-top: 95px;
+        }
+
+        .signup-card {
+            background: white;
+            border-radius: 25px;
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            min-height: 700px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Left Panel - Visual */
+        .signup-visual {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .signup-visual::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            animation: rotate 30s linear infinite;
+        }
+
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .visual-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .visual-icon {
+            font-size: 4rem;
+            margin-bottom: 2rem;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .visual-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 1rem;
+        }
+
+        .visual-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 2rem;
+        }
+
+        .benefits-list {
+            list-style: none;
+            text-align: left;
+        }
+
+        .benefits-list li {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .benefits-list i {
+            margin-right: 1rem;
+            color: #10b981;
+            font-size: 1.2rem;
+        }
+
+        /* Right Panel - Form */
+        .signup-form {
+            padding: 3rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            max-height: 700px;
+            overflow-y: auto;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .form-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-subtitle {
+            color: #6b7280;
+            font-size: 1rem;
+        }
+
+        /* Role Selection */
+        .role-selection {
+            margin-bottom: 2rem;
+        }
+
+        .role-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 1rem;
+        }
+
+        .role-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .role-option {
+            position: relative;
+            cursor: pointer;
+        }
+
+        .role-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+        }
+
+        .role-card {
+            background: #f8f9fa;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .role-option input[type="radio"]:checked + .role-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .role-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .role-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .role-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        /* Signup Form */
+        .signup-form-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+
+        .signup-form-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input-group {
+            position: relative;
+        }
+
+        .form-input-group i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+        }
+
+        .form-input-group .form-input {
+            padding-left: 3rem;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+            cursor: pointer;
+        }
+
+        .form-select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .form-checkbox {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .form-checkbox input {
+            margin-right: 0.5rem;
+        }
+
+        .form-checkbox label {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+
+        .form-checkbox a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .form-checkbox a:hover {
+            color: #764ba2;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 1rem;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .submit-btn:active::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .login-link {
+            text-align: center;
+            margin-top: 2rem;
+            color: #6b7280;
+        }
+
+        .login-link a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .login-link a:hover {
+            color: #764ba2;
+        }
+
+        /* Password Toggle Styles */
+        .password-toggle {
+            position: absolute;
+            right: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #9ca3af;
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+            z-index: 10;
+        }
+
+        .password-toggle:hover {
+            color: #667eea;
+            background: rgba(102, 126, 234, 0.1);
+        }
+
+        .form-input-group {
+            position: relative;
+        }
+
+        .form-input-group .form-input {
+            padding-right: 3rem;
+        }
+
+        /* Mobile Responsive */
+        @media (max-width: 768px) {
+            .signup-card {
+                grid-template-columns: 1fr;
+                max-width: 500px;
+            }
+
+            .signup-visual {
+                display: none;
+            }
+
+            .role-options {
+                grid-template-columns: 1fr;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <img src="images/logo.png" alt="ARTHROSHIELD">
+            </a>
+            <div class="nav-links">
+                <a href="home.html#features" class="nav-link">Features</a>
+                <a href="home.html#about" class="nav-link">About</a>
+                <a href="home.html#faq" class="nav-link">FAQ</a>
+                <a href="home.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-nav btn-nav-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="signup.html" class="btn-nav btn-nav-signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Signup Container -->
+    <div class="signup-container">
+        <div class="signup-card">
+            <!-- Left Panel -->
+            <div class="signup-visual">
+                <div class="visual-content">
+                    <div class="visual-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2 class="visual-title">Join ARTHROSHIELD</h2>
+                    <p class="visual-subtitle">Start your health journey today</p>
+                    <ul class="benefits-list">
+                        <li><i class="fas fa-check-circle"></i> Free AI-powered X-ray analysis</li>
+                        <li><i class="fas fa-check-circle"></i> Expert medical consultation</li>
+                        <li><i class="fas fa-check-circle"></i> Personalized treatment plans</li>
+                        <li><i class="fas fa-check-circle"></i> Secure health records</li>
+                        <li><i class="fas fa-check-circle"></i> 24/7 medical support</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Right Panel -->
+            <div class="signup-form">
+                <div class="form-header">
+                    <h2 class="form-title">Create Your Account</h2>
+                    <p class="form-subtitle">Join thousands of patients and doctors</p>
+                </div>
+
+                <!-- Role Selection -->
+                <div class="role-selection">
+                    <label class="role-label">I want to join as:</label>
+                    <div class="role-options">
+                        <div class="role-option">
+                            <input type="radio" name="role" id="doctor" value="doctor">
+                            <div class="role-card" onclick="selectRole('doctor')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user-md"></i>
+                                </div>
+                                <div class="role-name">Doctor</div>
+                            </div>
+                        </div>
+                        <div class="role-option">
+                            <input type="radio" name="role" id="patient" value="patient">
+                            <div class="role-card" onclick="selectRole('patient')">
+                                <div class="role-icon">
+                                    <i class="fas fa-user"></i>
+                                </div>
+                                <div class="role-name">Patient</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Signup Form -->
+                <div class="signup-form-content" id="signupForm">
+                    <form onsubmit="handleSignup(event)">
+                        <!-- Common Fields -->
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">First Name</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" class="form-input" id="firstName" required placeholder="Enter first name">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Last Name</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-user"></i>
+                                    <input type="text" class="form-input" id="lastName" required placeholder="Enter last name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Email Address</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-envelope"></i>
+                                <input type="email" class="form-input" id="email" required placeholder="Enter your email">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Phone Number</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-phone"></i>
+                                <input type="tel" class="form-input" id="phone" required placeholder="Enter phone number">
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Password</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" class="form-input" id="password" required placeholder="Create password">
+                                    <button type="button" class="password-toggle" onclick="togglePassword('password')">
+                                        <i class="fas fa-eye" id="password-toggle-icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Confirm Password</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-lock"></i>
+                                    <input type="password" class="form-input" id="confirmPassword" required placeholder="Confirm password">
+                                    <button type="button" class="password-toggle" onclick="togglePassword('confirmPassword')">
+                                        <i class="fas fa-eye" id="confirmPassword-toggle-icon"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Role-specific Fields -->
+                        <div id="doctorFields" style="display: none;">
+                            <div class="form-group">
+                                <label class="form-label">Medical Specialization</label>
+                                <select class="form-select" id="specialization">
+                                    <option value="">Select specialization</option>
+                                    <option value="Orthopedic Surgeon">Orthopedic Surgeon</option>
+                                    <option value="Rheumatologist">Rheumatologist</option>
+                                    <option value="General Practitioner">General Practitioner</option>
+                                    <option value="Physical Therapist">Physical Therapist</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Medical License Number</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-id-card"></i>
+                                    <input type="text" class="form-input" id="licenseNumber" placeholder="Enter license number">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Hospital/Clinic</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-hospital"></i>
+                                    <input type="text" class="form-input" id="hospital" placeholder="Enter hospital name">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div id="patientFields" style="display: none;">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Age</label>
+                                    <div class="form-input-group">
+                                        <i class="fas fa-calendar"></i>
+                                        <input type="number" class="form-input" id="age" placeholder="Enter age">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Gender</label>
+                                    <select class="form-select" id="gender">
+                                        <option value="">Select gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="other">Other</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Preferred Hospital</label>
+                                <div class="form-input-group">
+                                    <i class="fas fa-hospital"></i>
+                                    <input type="text" class="form-input" id="preferredHospital" placeholder="Enter preferred hospital">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Address</label>
+                            <div class="form-input-group">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <input type="text" class="form-input" id="address" required placeholder="Enter your address">
+                            </div>
+                        </div>
+
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="terms" required>
+                            <label for="terms">
+                                I agree to the <a href="terms-of-service.html" target="_blank">Terms of Service</a> and <a href="privacy-policy.html" target="_blank">Privacy Policy</a>
+                            </label>
+                        </div>
+
+                        <div class="form-checkbox">
+                            <input type="checkbox" id="newsletter">
+                            <label for="newsletter">
+                                I want to receive health tips and updates
+                            </label>
+                        </div>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="fas fa-user-plus"></i> Create Account
+                        </button>
+                    </form>
+
+                    <div class="login-link">
+                        Already have an account? <a href="login.html">Login here</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedRole = null;
+
+        function selectRole(role) {
+            selectedRole = role;
+            const radio = document.getElementById(role);
+            radio.checked = true;
+            
+            // Show signup form
+            const signupForm = document.getElementById('signupForm');
+            signupForm.classList.add('active');
+            
+            // Update form title based on role
+            const formTitle = document.querySelector('.form-title');
+            const formSubtitle = document.querySelector('.form-subtitle');
+            
+            // Hide all role-specific fields
+            document.getElementById('doctorFields').style.display = 'none';
+            document.getElementById('patientFields').style.display = 'none';
+            
+            if (role === 'doctor') {
+                formTitle.textContent = 'Doctor Registration';
+                formSubtitle.textContent = 'Join our network of medical professionals';
+                document.getElementById('doctorFields').style.display = 'block';
+            } else {
+                formTitle.textContent = 'Patient Registration';
+                formSubtitle.textContent = 'Start your personalized health journey';
+                document.getElementById('patientFields').style.display = 'block';
+            }
+        }
+
+        function handleSignup(event) {
+            event.preventDefault();
+            
+            if (!selectedRole) {
+                showErrorAnimation('Please select your role (Doctor or Patient)');
+                return;
+            }
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            if (password !== confirmPassword) {
+                showErrorAnimation('Passwords do not match');
+                return;
+            }
+            
+            // Collect form data
+            const formData = {
+                role: selectedRole,
+                firstName: document.getElementById('firstName').value,
+                lastName: document.getElementById('lastName').value,
+                email: document.getElementById('email').value,
+                phone: document.getElementById('phone').value,
+                password: password,
+                address: document.getElementById('address').value
+            };
+            
+            // Add role-specific data
+            if (selectedRole === 'doctor') {
+                formData.specialization = document.getElementById('specialization').value;
+                formData.licenseNumber = document.getElementById('licenseNumber').value;
+                formData.hospital = document.getElementById('hospital').value;
+            } else {
+                formData.age = document.getElementById('age').value;
+                formData.gender = document.getElementById('gender').value;
+                formData.preferredHospital = document.getElementById('preferredHospital').value;
+            }
+            
+            console.log('Signup data:', formData);
+            
+            // Show success animation
+            showSuccessAnimation('Account created successfully! Redirecting to login...');
+            
+            // Store user data (in real app, this would be sent to backend)
+            const users = JSON.parse(localStorage.getItem('arthrosheild_users') || '[]');
+            console.log('Existing users:', users);
+            console.log('New user data:', formData);
+            users.push(formData);
+            localStorage.setItem('arthrosheild_users', JSON.stringify(users));
+            
+            // Verify storage
+            const storedUsers = JSON.parse(localStorage.getItem('arthrosheild_users') || '[]');
+            console.log('All users after signup:', storedUsers);
+            
+            // Redirect to login after delay
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+        }
+
+        function showSuccessAnimation(message) {
+            const button = document.querySelector('.submit-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> ' + message;
+            button.style.background = 'linear-gradient(135deg, #10b981, #059669)';
+        }
+
+        function showErrorAnimation(message) {
+            const button = document.querySelector('.submit-btn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-times"></i> ' + message;
+            button.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)';
+            
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.style.background = '';
+            }, 3000);
+        }
+
+        function togglePassword(inputId) {
+            const passwordInput = document.getElementById(inputId);
+            const toggleIcon = document.getElementById(inputId + '-toggle-icon');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                toggleIcon.classList.remove('fa-eye');
+                toggleIcon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                toggleIcon.classList.remove('fa-eye-slash');
+                toggleIcon.classList.add('fa-eye');
+            }
+        }
+
+        // Add smooth animations on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.signup-card');
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(50px)';
+            
+            setTimeout(() => {
+                card.style.transition = 'all 0.8s ease-out';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
+            }, 100);
+        });
+
+        // Form validation
+        document.getElementById('confirmPassword').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                this.style.borderColor = '#ef4444';
+            } else {
+                this.style.borderColor = '#e5e7eb';
+            }
+        });
+    </script>
+</body>
+</html>

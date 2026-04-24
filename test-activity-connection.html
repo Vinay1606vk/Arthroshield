@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Activity Connection</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 15px; border: 1px solid #ccc; border-radius: 5px; }
+        button { padding: 10px 15px; margin: 5px; cursor: pointer; }
+        .result { background: #f5f5f5; padding: 10px; margin: 10px 0; border-radius: 3px; }
+        .error { background: #ffe6e6; color: #d00; }
+        .success { background: #e6ffe6; color: #080; }
+    </style>
+</head>
+<body>
+    <h1>Test Activity Connection</h1>
+    
+    <div class="test-section">
+        <h2>Current User</h2>
+        <div id="currentUser" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Activity Plans</h2>
+        <div id="activityPlans" class="result"></div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test Actions</h2>
+        <button onclick="createTestActivity()">Create Test Activity</button>
+        <button onclick="checkPatientActivities()">Check Patient Activities</button>
+        <button onclick="clearTestData()">Clear Test Data</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Results</h2>
+        <div id="results"></div>
+    </div>
+
+    <script>
+        function showCurrentUser() {
+            const user = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            document.getElementById('currentUser').innerHTML = user ? 
+                `<strong>Patient:</strong> ${user.name} (ID: ${user.id})` : 
+                'No user logged in';
+        }
+        
+        function showActivityPlans() {
+            const plans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            const html = plans.length > 0 ? 
+                plans.map(p => `
+                    <div style="margin: 5px 0; padding: 5px; border-left: 3px solid #667eea;">
+                        <strong>${p.patientName}</strong> (ID: ${p.patientId}) - ${p.type}
+                        <br><small>Created: ${new Date(p.createdAt).toLocaleString()}</small>
+                    </div>
+                `).join('') : 
+                'No activity plans found';
+            document.getElementById('activityPlans').innerHTML = html;
+        }
+        
+        function createTestActivity() {
+            const user = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            if (!user || user.role !== 'patient') {
+                addResult('Please login as a patient first', 'error');
+                return;
+            }
+            
+            const testActivity = {
+                id: 'TEST-' + Date.now(),
+                patientId: user.id,
+                patientName: user.name,
+                doctorId: 'DOC-001',
+                doctorName: 'Dr. Test Doctor',
+                type: 'exercise',
+                exercise: [
+                    { name: 'Test Exercise 1', duration: '15 minutes', frequency: 'daily' },
+                    { name: 'Test Exercise 2', duration: '10 minutes', frequency: 'twice daily' }
+                ],
+                duration: '2 weeks',
+                endDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(),
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
+            };
+            
+            const plans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            plans.push(testActivity);
+            localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(plans));
+            
+            addResult('Test activity created successfully!', 'success');
+            showActivityPlans();
+        }
+        
+        function checkPatientActivities() {
+            const user = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            if (!user) {
+                addResult('No user logged in', 'error');
+                return;
+            }
+            
+            const plans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            const userPlans = plans.filter(plan => {
+                return plan.patientId === user.id || plan.patientId === user.id.toString() || plan.patientName === user.name;
+            });
+            
+            addResult(`Found ${userPlans.length} activities for ${user.name}`, 
+                     userPlans.length > 0 ? 'success' : 'error');
+            
+            userPlans.forEach(plan => {
+                addResult(`- ${plan.type}: ${plan.exercise?.length || 0} exercises`, 'success');
+            });
+        }
+        
+        function clearTestData() {
+            const plans = JSON.parse(localStorage.getItem('arthrosheild_activity_plans') || '[]');
+            const filtered = plans.filter(p => !p.id.startsWith('TEST-'));
+            localStorage.setItem('arthrosheild_activity_plans', JSON.stringify(filtered));
+            
+            addResult('Test data cleared', 'success');
+            showActivityPlans();
+        }
+        
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${type}`;
+            div.innerHTML = `<strong>${new Date().toLocaleTimeString()}:</strong> ${message}`;
+            results.insertBefore(div, results.firstChild);
+            
+            // Keep only last 10 results
+            while (results.children.length > 10) {
+                results.removeChild(results.lastChild);
+            }
+        }
+        
+        // Initialize
+        showCurrentUser();
+        showActivityPlans();
+    </script>
+</body>
+</html>

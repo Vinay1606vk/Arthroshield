@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARTHROSHIELD - Doctor Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .welcome-container {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            padding-top: 95px;
+        }
+        
+        .welcome-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 3rem;
+            width: 100%;
+            max-width: 1200px;
+            text-align: center;
+        }
+        
+        .welcome-header {
+            margin-bottom: 3rem;
+        }
+        
+        .welcome-logo {
+            font-size: 2.2rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .welcome-title {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .welcome-subtitle {
+            font-size: 1.2rem;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+        
+        .user-info {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1.5rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+            display: inline-block;
+        }
+        
+        .user-info h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.5rem;
+        }
+        
+        .user-info p {
+            margin: 0;
+            opacity: 0.9;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        
+        .dashboard-card {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 2rem;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .dashboard-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(102, 126, 234, 0.2);
+            border-color: #667eea;
+        }
+        
+        .card-icon {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        
+        .card-description {
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .logout-btn {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .logout-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(239, 68, 68, 0.3);
+        }
+        
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            padding: 1.5rem;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #667eea;
+            margin-bottom: 0.5rem;
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+            height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .navbar.scrolled {
+            padding: 0.75rem 4%;
+            background: rgba(255, 255, 255, 0.98);
+            height: 70px;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            height: 100%;
+            width: 100%;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            padding-left: 45px;
+            text-decoration: none;
+            background: transparent !important;
+        }
+
+        .logo img {
+            height: 175px;
+            width: auto;
+            object-fit: contain;
+            display: block;
+            background: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2.5rem;
+            align-items: center;
+            flex: 1;
+            justify-content: center;
+        }
+
+        .nav-link {
+            color: #4b5563;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-link::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            transition: width 0.3s ease;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .nav-link:hover {
+            color: #667eea;
+        }
+
+        .auth-buttons {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn-nav {
+            padding: 0.6rem 1.5rem;
+            border-radius: 10px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+            font-size: 0.95rem;
+        }
+
+        .btn-nav-login {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-nav-login:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-nav-signup {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-nav-signup:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Profile Icon Styles */
+        .navbar .profile-container {
+            display: none;
+            position: relative;
+        }
+
+        .navbar .profile-container.logged-in {
+            display: block !important;
+        }
+
+        .navbar .auth-buttons.logged-out {
+            display: none !important;
+        }
+
+        .profile-icon {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 3px solid rgba(102, 126, 234, 0.2);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .profile-icon:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            border-color: rgba(102, 126, 234, 0.4);
+        }
+
+        .profile-dropdown {
+            position: absolute;
+            top: 60px;
+            right: 0;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+            border: 1px solid rgba(102, 126, 234, 0.1);
+            min-width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .profile-dropdown.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid rgba(102, 126, 234, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .profile-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .profile-info h4 {
+            margin: 0;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .profile-info p {
+            margin: 0;
+            font-size: 0.85rem;
+            color: #6b7280;
+        }
+
+        .profile-menu {
+            padding: 0.5rem;
+        }
+
+        .profile-menu-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.75rem 1rem;
+            color: #4b5563;
+            text-decoration: none;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(102, 126, 234, 0.1);
+            color: #667eea;
+            transform: translateX(5px);
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            text-align: center;
+            opacity: 0.7;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: rgba(102, 126, 234, 0.1);
+            margin: 0.5rem 1rem;
+        }
+
+        .profile-menu-item.logout {
+            color: #ef4444;
+        }
+
+        .profile-menu-item.logout:hover {
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 10% auto;
+            padding: 2rem;
+            border: none;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+            position: relative;
+        }
+
+        .close-button {
+            color: #aaa;
+            position: absolute;
+            right: 20px;
+            top: 15px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .close-button:hover {
+            color: #667eea;
+        }
+
+        .modal h2 {
+            color: #1f2937;
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .modal .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #374151;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .modal .form-group input,
+        .modal .form-group select,
+        .modal .form-group textarea {
+            width: 100%;
+            padding: 0.75rem 1rem;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+
+        .modal .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal .form-group input:focus,
+        .modal .form-group select:focus,
+        .modal .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .save-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .save-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes slideIn {
+            from { 
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <a href="home.html" class="logo">
+                <img src="images/logo.png" alt="ARTHROSHIELD">
+            </a>
+            <div class="nav-links">
+                <a href="home.html#features" class="nav-link">Features</a>
+                <a href="home.html#about" class="nav-link">About</a>
+                <a href="home.html#faq" class="nav-link">FAQ</a>
+                <a href="home.html#contact" class="nav-link">Contact</a>
+            </div>
+            <div class="auth-buttons">
+                <a href="login.html" class="btn-nav btn-nav-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </a>
+                <a href="signup.html" class="btn-nav btn-nav-signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </a>
+            </div>
+            <div class="profile-container">
+                <div class="profile-icon" onclick="toggleProfileDropdown()">
+                    <i class="fas fa-user"></i>
+                </div>
+                <div class="profile-dropdown" id="profileDropdown">
+                    <div class="profile-header">
+                        <div class="profile-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="profile-info">
+                            <h4 id="profileName">John Doe</h4>
+                            <p id="profileEmail">john.doe@example.com</p>
+                        </div>
+                    </div>
+                    <div class="profile-menu">
+                        <a href="#" class="profile-menu-item">
+                            <i class="fas fa-user-edit"></i>
+                            <span>Edit Profile</span>
+                        </a>
+                        <div class="profile-menu-divider"></div>
+                        <a href="#" class="profile-menu-item logout" onclick="handleLogout()">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="welcome-container">
+        <div class="welcome-card">
+            <div class="welcome-header">
+                <div class="welcome-logo">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <h1 class="welcome-title">Welcome Back, Doctor!</h1>
+                <p class="welcome-subtitle">ARTHROSHIELD Medical Dashboard</p>
+                
+                <div class="user-info">
+                    <h3 id="doctorName">Dr. Sarah Johnson</h3>
+                    <p id="doctorSpecialization">Orthopedic Surgeon</p>
+                    <p id="doctorHospital">City Medical Center</p>
+                </div>
+            </div>
+            
+            <div class="stats-row">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalPatients">0</div>
+                    <div class="stat-label">Total Patients</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="pendingReports">0</div>
+                    <div class="stat-label">Pending Reports</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="completedAnalysis">0</div>
+                    <div class="stat-label">Completed Analysis</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeActivities">0</div>
+                    <div class="stat-label">Active Activities</div>
+                </div>
+            </div>
+            
+            <div class="dashboard-grid">
+                <a href="patients.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="card-title">Patients</h3>
+                    <p class="card-description">Manage patient records, view patient information, and track treatment progress</p>
+                </a>
+                
+                <a href="upload-xrays.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-x-ray"></i>
+                    </div>
+                    <h3 class="card-title">Upload X-Rays</h3>
+                    <p class="card-description">Upload and analyze X-ray images for comprehensive medical assessment</p>
+                </a>
+                
+                <a href="reports.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-file-medical"></i>
+                    </div>
+                    <h3 class="card-title">Reports</h3>
+                    <p class="card-description">View, manage, and download detailed medical analysis reports</p>
+                </a>
+                
+                <a href="activity-manager.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3 class="card-title">Activity Manager</h3>
+                    <p class="card-description">Create and manage patient activity plans and track progress</p>
+                </a>
+                
+                <a href="doctor-appointments.html" class="dashboard-card">
+                    <div class="card-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <h3 class="card-title">Appointments</h3>
+                    <p class="card-description">View and manage patient appointments, schedule new appointments</p>
+                </a>
+            </div>
+            
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        // Profile Dropdown Toggle
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById('profileDropdown');
+            const isActive = dropdown.classList.contains('active');
+            
+            // Close all dropdowns
+            document.querySelectorAll('.profile-dropdown').forEach(d => {
+                d.classList.remove('active');
+            });
+            
+            // Toggle current dropdown
+            if (!isActive) {
+                dropdown.classList.add('active');
+            }
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const profileContainer = document.querySelector('.profile-container');
+            const dropdown = document.getElementById('profileDropdown');
+            
+            if (!profileContainer.contains(event.target)) {
+                dropdown.classList.remove('active');
+            }
+        });
+
+        // Check login state on page load
+        function checkLoginState() {
+            const currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            const authButtons = document.querySelector('.auth-buttons');
+            const profileContainer = document.querySelector('.profile-container');
+            
+            console.log('Checking login state:', currentUser);
+            console.log('Auth buttons:', authButtons);
+            console.log('Profile container:', profileContainer);
+            
+            if (currentUser && authButtons && profileContainer) {
+                authButtons.classList.add('logged-out');
+                profileContainer.classList.add('logged-in');
+                
+                // Update profile information
+                const userName = currentUser.name || 'John Doe';
+                const userEmail = currentUser.email || 'john.doe@example.com';
+                
+                document.getElementById('profileName').textContent = userName;
+                document.getElementById('profileEmail').textContent = userEmail;
+                
+                // Update profile icon with user initials
+                const profileIcon = document.querySelector('.profile-icon');
+                const initials = userName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+                profileIcon.innerHTML = initials;
+            }
+        }
+
+        // Handle logout
+        function handleLogout() {
+            localStorage.removeItem('arthrosheild_current_user');
+            
+            // Close dropdown
+            document.getElementById('profileDropdown').classList.remove('active');
+            
+            // Update UI using CSS classes
+            const authButtons = document.querySelector('.auth-buttons');
+            const profileContainer = document.querySelector('.profile-container');
+            authButtons.classList.remove('logged-out');
+            profileContainer.classList.remove('logged-in');
+            
+            // Show logout message
+            showNotification('You have been logged out successfully');
+            
+            // Redirect to home.html after a short delay
+            setTimeout(() => {
+                window.location.href = 'home.html';
+            }, 1500);
+        }
+
+        // Show notification function
+        function showNotification(message) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 100px;
+                right: 20px;
+                background: linear-gradient(135deg, #667eea, #764ba2);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+                z-index: 10000;
+                font-weight: 500;
+                transform: translateX(100%);
+                transition: transform 0.3s ease;
+            `;
+            notification.textContent = message;
+            
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Remove after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Load user information
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            if (!currentUser || currentUser.role !== 'doctor') {
+                window.location.href = 'home.html';
+                return;
+            }
+            
+            // Check login state and show profile icon if logged in
+            checkLoginState();
+            
+            // Update user info
+            document.getElementById('doctorName').textContent = currentUser.name || 'Doctor';
+            document.getElementById('doctorSpecialization').textContent = currentUser.specialization || 'Medical Specialist';
+            document.getElementById('doctorHospital').textContent = currentUser.hospital || 'Medical Center';
+            
+            // Load statistics (mock data for now)
+            loadStatistics();
+        });
+        
+        function loadStatistics() {
+            // Mock statistics - in real app, this would come from backend
+            document.getElementById('totalPatients').textContent = Math.floor(Math.random() * 50) + 10;
+            document.getElementById('pendingReports').textContent = Math.floor(Math.random() * 10) + 1;
+            document.getElementById('completedAnalysis').textContent = Math.floor(Math.random() * 100) + 20;
+            document.getElementById('activeActivities').textContent = Math.floor(Math.random() * 30) + 5;
+        }
+        
+        function logout() {
+            handleLogout();
+        }
+
+        // Edit Profile Modal Functions
+        function openEditProfileModal() {
+            const modal = document.getElementById('editProfileModal');
+            const currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            
+            // Populate form fields with current user data
+            document.getElementById('editName').value = currentUser.name || '';
+            document.getElementById('editEmail').value = currentUser.email || '';
+            document.getElementById('editPhone').value = currentUser.phone || '';
+            document.getElementById('editDOB').value = currentUser.dob || '';
+            document.getElementById('editGender').value = currentUser.gender || '';
+            document.getElementById('editSpecialization').value = currentUser.specialization || '';
+            document.getElementById('editHospital').value = currentUser.hospital || '';
+            document.getElementById('editBio').value = currentUser.bio || '';
+            
+            modal.style.display = 'block';
+        }
+
+        function closeEditProfileModal() {
+            document.getElementById('editProfileModal').style.display = 'none';
+        }
+
+        function saveProfileChanges(event) {
+            event.preventDefault();
+            
+            const currentUser = JSON.parse(localStorage.getItem('arthrosheild_current_user') || 'null');
+            const newName = document.getElementById('editName').value;
+            const newEmail = document.getElementById('editEmail').value;
+            const newPhone = document.getElementById('editPhone').value;
+            const newDOB = document.getElementById('editDOB').value;
+            const newGender = document.getElementById('editGender').value;
+            const newSpecialization = document.getElementById('editSpecialization').value;
+            const newHospital = document.getElementById('editHospital').value;
+            const newBio = document.getElementById('editBio').value;
+            
+            // Validate required fields
+            if (!newName || !newEmail) {
+                showNotification('Please fill in required fields (Name and Email)', 'error');
+                return;
+            }
+            
+            // Update user data in localStorage
+            const updatedUser = {
+                ...currentUser,
+                name: newName,
+                email: newEmail,
+                phone: newPhone,
+                dob: newDOB,
+                gender: newGender,
+                specialization: newSpecialization,
+                hospital: newHospital,
+                bio: newBio
+            };
+            
+            localStorage.setItem('arthrosheild_current_user', JSON.stringify(updatedUser));
+            
+            // Update UI
+            document.getElementById('profileName').textContent = newName;
+            document.getElementById('profileEmail').textContent = newEmail;
+            
+            // Update profile icon with new initials
+            const profileIcon = document.querySelector('.profile-icon');
+            const initials = newName.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+            profileIcon.innerHTML = initials;
+            
+            // Update doctor welcome info
+            document.getElementById('doctorName').textContent = newName;
+            document.getElementById('doctorSpecialization').textContent = newSpecialization || 'Medical Specialist';
+            document.getElementById('doctorHospital').textContent = newHospital || 'Medical Center';
+            
+            // Close modal
+            closeEditProfileModal();
+            
+            // Show success notification
+            showNotification('Profile updated successfully!');
+            
+            // Here you would typically send data to backend to update database
+            console.log('Profile updated:', updatedUser);
+            
+            // Simulate database update
+            updateProfileInDatabase(updatedUser);
+        }
+
+        function updateProfileInDatabase(userData) {
+            // This function would make an API call to your backend
+            // For demonstration, we'll just log the data
+            console.log('Updating database with:', userData);
+            
+            // Example API call (commented out for demo):
+            /*
+            fetch('/api/update-profile', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(userData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log('Database update successful:', data);
+            })
+            .catch(error => {
+                console.error('Database update failed:', error);
+                showNotification('Failed to update profile. Please try again.', 'error');
+            });
+            */
+        }
+
+        // Close modal when clicking outside
+        window.addEventListener('click', function(event) {
+            const modal = document.getElementById('editProfileModal');
+            if (event.target === modal) {
+                closeEditProfileModal();
+            }
+        });
+
+        // Update Edit Profile link to open modal
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(() => {
+                const editProfileLink = document.querySelector('.profile-menu-item i.fa-user-edit').closest('a');
+                if (editProfileLink) {
+                    editProfileLink.onclick = function(event) {
+                        event.preventDefault();
+                        openEditProfileModal();
+                    };
+                }
+            }, 100);
+        });
+    </script>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" onclick="closeEditProfileModal()">&times;</span>
+            <h2>Edit Profile</h2>
+            <form id="editProfileForm" onsubmit="saveProfileChanges(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editName">Name:</label>
+                        <input type="text" id="editName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editEmail">Email:</label>
+                        <input type="email" id="editEmail" name="email" required>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editPhone">Phone:</label>
+                        <input type="tel" id="editPhone" name="phone" placeholder="+1 (555) 123-4567">
+                    </div>
+                    <div class="form-group">
+                        <label for="editDOB">Date of Birth:</label>
+                        <input type="date" id="editDOB" name="dob">
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="editGender">Gender:</label>
+                        <select id="editGender" name="gender">
+                            <option value="">Select Gender</option>
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editSpecialization">Specialization:</label>
+                        <input type="text" id="editSpecialization" name="specialization" placeholder="e.g., Orthopedic Surgeon">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="editHospital">Hospital:</label>
+                    <input type="text" id="editHospital" name="hospital" placeholder="Medical Center">
+                </div>
+                <div class="form-group">
+                    <label for="editBio">Bio:</label>
+                    <textarea id="editBio" name="bio" rows="3" placeholder="Brief professional description..."></textarea>
+                </div>
+                <button type="submit" class="save-button">Save Changes</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>
